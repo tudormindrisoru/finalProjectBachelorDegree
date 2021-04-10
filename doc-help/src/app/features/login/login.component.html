@@ -1,3 +1,56 @@
-<div style="height: 100px; width: 200px; background-color: coral;">
-    <span style="color:white">login works</span>
+<div class="page" color="primary">
+    <div class="background-wrapper"></div>
+    <div class="wrapper">
+        <div class="logo">
+            <img src="../../../assets/speech-bubble.png" alt="">
+            <h2>Dr.
+                <br> &nbsp;&nbsp;
+                Help!
+            </h2>
+        </div>
+        <div class="centered-container shadow">
+            <div class="message">
+                <div class="message-header">
+                    <span>Welcome</span>
+                </div>
+                <div class="message-body">
+
+                </div>
+            </div>
+            <div class="login">
+                <div class="text">
+                    <img src="../../../assets/doctor.png" alt="">
+                    <span>Login</span>
+                </div>
+                <div class="content">
+                    <form class="login-form"  [formGroup]="loginForm">
+                        <mat-form-field appearance="legacy" class="email-input">
+                            <mat-label>E-mail</mat-label>
+                            <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
+                            <mat-icon matSuffix color="primary">email</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['email'].errors?.required && loginForm.controls['email'].touched">
+                                Please enter a valid email address
+                            </mat-error>
+                        </mat-form-field>
+  
+                        <mat-form-field appearance="legacy" class="password-input">
+                            <mat-label>Password</mat-label>
+                            <input matInput placeholder="Password" formControlName="password" type="password" class="form-control">
+                            <mat-icon matSuffix color="primary">lock</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['password'].errors?.required">
+                                Password is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                        <br>
+                        <button mat-raised-button color="primary">
+                            <span style="font-weight: 600;color:white;">Login</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="doc-image">
+        <img src="../../../assets/doctor-with-a-laptop.png" alt="">
+    </div>
 </div>
