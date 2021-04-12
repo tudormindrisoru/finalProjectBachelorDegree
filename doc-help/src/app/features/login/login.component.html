@@ -3,18 +3,25 @@
     <div class="wrapper">
         <div class="logo">
             <img src="../../../assets/speech-bubble.png" alt="">
-            <h2>Dr.
-                <br> &nbsp;&nbsp;
-                Help!
-            </h2>
+            <div class="text-wrapper">
+                <h2>Dr.</h2>
+                <h2>Help!</h2>
+            </div>
         </div>
         <div class="centered-container shadow">
             <div class="message">
                 <div class="message-header">
-                    <span>Welcome</span>
+                    <div class="logo">
+                        <img src="../../../assets/speech-bubble.png" alt="">
+                        <div class="text-wrapper">
+                            <h2>Dr.</h2>
+                            <h2>Help!</h2>
+                        </div>
+                    </div>
                 </div>
                 <div class="message-body">
-
+                    <h2>Welcome</h2>
+                    
                 </div>
             </div>
             <div class="login">
@@ -23,9 +30,8 @@
                     <span>Login</span>
                 </div>
                 <div class="content">
-                    <form class="login-form"  [formGroup]="loginForm">
+                    <form class="login-form"  [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
                         <mat-form-field appearance="legacy" class="email-input">
-                            <mat-label>E-mail</mat-label>
                             <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
                             <mat-icon matSuffix color="primary">email</mat-icon>
                             <mat-error *ngIf="loginForm.controls['email'].errors?.required && loginForm.controls['email'].touched">
@@ -34,16 +40,15 @@
                         </mat-form-field>
   
                         <mat-form-field appearance="legacy" class="password-input">
-                            <mat-label>Password</mat-label>
                             <input matInput placeholder="Password" formControlName="password" type="password" class="form-control">
                             <mat-icon matSuffix color="primary">lock</mat-icon>
                             <mat-error *ngIf="loginForm.controls['password'].errors?.required">
-                                Password is <strong>required</strong>
+                                Password is required
                             </mat-error>
                         </mat-form-field>
                         <br>
-                        <button mat-raised-button color="primary">
-                            <span style="font-weight: 600;color:white;">Login</span>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Login</span>
                         </button>
                     </form>
                 </div>

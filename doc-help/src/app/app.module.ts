@@ -30,7 +30,6 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-
     MatSliderModule,
     MatDividerModule,
     MatFormFieldModule,

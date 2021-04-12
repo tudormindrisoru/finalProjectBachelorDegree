@@ -1,9 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Yellowtail&display=swap');
+
+.disabled-login {
+    color: gray;
+}
+.enabled-login { 
+    color: white;
+}
+
 .shadow { 
     -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
     -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
 }
+
 .page {
     width: 100vw;
     height: 100vh;
@@ -31,14 +40,29 @@
     img {
         height: 130px;
         width: auto;
-    }
-    h2 {
-        font-family: 'Yellowtail', cursive;
-        font-size: 34px;
-        color: white;
         position: absolute;
-        top: 20px;
     }
+
+    .text-wrapper {
+        height: 130px; 
+        width: 130px; 
+        position: relative;
+
+        h2 {
+            font-family: 'Yellowtail', cursive;
+            font-size: 34px;
+            color: white;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+    
+        h2:nth-child(2) {
+            top: 55px;
+            left: 40px;
+        }
+    }
+    
 }
 
 .wrapper {
@@ -62,19 +86,59 @@
             background-color: #64b3f4d7;
             display: flex;
             flex-direction: column;
+            font-family: 'Yellowtail', cursive;
 
             &-header {
                 text-align: center;
                 padding-top: 15px;
-                font-size: 20px;
-                color: white;
-                font-weight: 600;
+                position: relative;
+                height: 150px;
+
+                .logo {
+                    width: auto;
+                    position: absolute;
+                    top: 30px;
+                    left: 0px;
+                    right: 0px;
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: center;
+                    align-items: center;
+
+                    img {
+                        height: 130px;
+                        width: auto;
+                        position: absolute;
+                    }
+
+                    h2 {
+                        font-family: 'Yellowtail', cursive;
+                        font-size: 34px;
+                        color: white;
+                        position: absolute;
+                        top: 20px;
+                        left: 20px;
+                    }
+
+                    h2:nth-child(2) {
+                        top: 55px;
+                        left: 40px;
+                    }
             }
+        }
 
-            &-body {
-                flex: 1;
-                padding-top: 15px;
+        &-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            text-align: center;
 
+            h2 {
+                font-size: 30px;
+                
+                
+            }
             
             }
         }
@@ -151,6 +215,12 @@
 
 //          --- MOBILE STYLES ---           //*********************
 
+@media screen and (min-width:  769px) {
+    .wrapper .logo {
+        display: none;
+    }
+}
+
 @media screen and (max-width:  768px) {
     .wrapper {
         .logo {
@@ -181,18 +251,16 @@
     
     .wrapper {
         .logo {
-            left: 0px;
-            right: 0px;
             top: 10px;
 
             img {
                 height: 120px;
             }
 
-            h2 {
-                font-size: 26px;
-                top: 16px;
-            }
+            // h2 {
+            //     font-size: 26px;
+            //     top: 16px;
+            // }
         }
     }
 
@@ -201,14 +269,14 @@
     }
 }
 
-@media screen and (min-width: 768px) and (max-height: 850px) {
-    .wrapper {
-        .logo {
-            top: 15px;
-            left: 30px;
-        }
-    }
-}
+// @media screen and (min-width: 769px) and (max-height: 850px) {
+//     .wrapper {
+//         .logo {
+//             top: 15px;
+//             left: 30px;
+//         }
+//     }
+// }
 
 @media screen and (max-width: 340px) {
     .centered-container {
