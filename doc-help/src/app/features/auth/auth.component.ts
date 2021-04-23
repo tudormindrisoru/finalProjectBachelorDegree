@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { AuthService } from './auth.service';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -21,7 +22,8 @@ export class AuthComponent implements OnInit {
   mobileView: boolean = window.innerWidth > 768 ? false : true;
 
   constructor(
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    public authService: AuthService
     ) { }
 
   ngOnInit(): void {
@@ -41,7 +43,7 @@ export class AuthComponent implements OnInit {
   }
 
   public onLoginSubmit(): void {
-    console.log(this.loginForm);
+    this.authService.onLogin(this.loginForm.value);
   }
 
   public signSlide(): void {
