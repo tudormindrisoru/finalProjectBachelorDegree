@@ -34,6 +34,23 @@ $doc-help-theme: mat-light-theme((
 @include angular-material-theme($doc-help-theme);
 
 /* You can add global styles to this file, and also import other style files */
-
+/* width */
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+::-webkit-scrollbar {
+  width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  }
+  
+  ::-webkit-scrollbar-thumb {
+  background: linear-gradient(0deg, #c2e59c 10%, #64b3f4 73%);
+  border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+  background: #64b3f4; 
+  }

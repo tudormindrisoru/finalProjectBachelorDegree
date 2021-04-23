@@ -1,0 +1,82 @@
+<div class="page" color="primary">
+    <div class="background-wrapper"></div>
+    <div class="wrapper">
+        <app-logo class="outer-logo noselect"></app-logo>
+
+        <div class="centered-container shadow"  >
+            <div class="message" [style.left] = 'sliderLeft'>
+                <div class="message-header">
+                    <app-logo class="inner-logo noselect"></app-logo>
+                </div>
+                <div class="message-body">
+                    <h2>Welcome</h2>
+                    
+                </div>
+            </div>
+            <!-- [(style.display)]="mobileView ? (renderRegister ? 'block' : 'none') : 'block' -->
+            <div class="register" *ngIf="!mobileView || (mobileView && sliderLeft=='50%')">
+                <div class="text">
+                    <img src="../../../assets/doctor.png" alt="">
+                    <span>Register</span>
+                </div>
+                <div class="content">
+                    <form class="login-form"  [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+                        <mat-form-field appearance="legacy" class="email-input">
+                            <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
+                            <mat-icon matSuffix color="primary">email</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['email'].errors?.required && loginForm.controls['email'].touched">
+                                Please enter a valid email address
+                            </mat-error>
+                        </mat-form-field>
+  
+                        <mat-form-field appearance="legacy" class="password-input">
+                            <input matInput placeholder="Password" formControlName="password" type="password" class="form-control">
+                            <mat-icon matSuffix color="primary">lock</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['password'].errors?.required">
+                                Password is required
+                            </mat-error>
+                        </mat-form-field>
+                        <br>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Register</span>
+                        </button>
+                    </form>
+                    <div>Have already an account? <span (click)="signSlide()">Log in</span></div>
+                </div>
+            </div>
+            <div class="login" *ngIf="!mobileView || (mobileView && sliderLeft=='0%')">
+                <div class="text">
+                    <img src="../../../assets/doctor.png" alt="">
+                    <span>Login</span>
+                </div>
+                <div class="content">
+                    <form class="login-form"  [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+                        <mat-form-field appearance="legacy" class="email-input">
+                            <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
+                            <mat-icon matSuffix color="primary">email</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['email'].errors?.required && loginForm.controls['email'].touched">
+                                Please enter a valid email address
+                            </mat-error>
+                        </mat-form-field>
+  
+                        <mat-form-field appearance="legacy" class="password-input">
+                            <input matInput placeholder="Password" formControlName="password" type="password" class="form-control">
+                            <mat-icon matSuffix color="primary">lock</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['password'].errors?.required">
+                                Password is required
+                            </mat-error>
+                        </mat-form-field>
+                        <br>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
+                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Login</span>
+                        </button>
+                    </form>
+                    <div>You don`t have an account? <span (click)="signSlide()">Register now</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="doc-image noselect">
+        <img src="../../../assets/med-background.png" alt="">
+    </div>
+</div>
