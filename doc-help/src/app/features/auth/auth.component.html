@@ -1,12 +1,12 @@
 <div class="page" color="primary">
     <div class="background-wrapper"></div>
     <div class="wrapper">
-        <app-logo class="outer-logo noselect"></app-logo>
+        <app-logo class="outer-logo noselect" routerLink="/"></app-logo>
 
         <div class="centered-container shadow"  >
             <div class="message" [style.left] = 'sliderLeft'>
                 <div class="message-header">
-                    <app-logo class="inner-logo noselect"></app-logo>
+                    <app-logo class="inner-logo noselect" routerLink="/"></app-logo>
                 </div>
                 <div class="message-body">
                     <h2>Welcome</h2>
@@ -16,11 +16,11 @@
             <!-- [(style.display)]="mobileView ? (renderRegister ? 'block' : 'none') : 'block' -->
             <div class="register" *ngIf="!mobileView || (mobileView && sliderLeft=='50%')">
                 <div class="text">
-                    <img src="../../../assets/doctor.png" alt="">
+                    <img src="../../../assets/register-img.png" alt="">
                     <span>Register</span>
                 </div>
                 <div class="content">
-                    <form class="login-form"  [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+                    <form class="auth-form"  [formGroup]="registerForm" (ngSubmit)="onLoginSubmit()">
                         <mat-form-field appearance="legacy" class="email-input">
                             <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
                             <mat-icon matSuffix color="primary">email</mat-icon>
@@ -36,7 +36,13 @@
                                 Password is required
                             </mat-error>
                         </mat-form-field>
-                        <br>
+                        <mat-form-field appearance="legacy" class="password-input">
+                            <input matInput placeholder="Rewrite password above" formControlName="secondPassword" type="password" class="form-control">
+                            <mat-icon matSuffix color="primary">security</mat-icon>
+                            <mat-error *ngIf="loginForm.controls['password'].errors?.required">
+                                Password should be the same as above one.
+                            </mat-error>
+                        </mat-form-field>
                         <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
                             <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Register</span>
                         </button>
@@ -46,11 +52,11 @@
             </div>
             <div class="login" *ngIf="!mobileView || (mobileView && sliderLeft=='0%')">
                 <div class="text">
-                    <img src="../../../assets/doctor.png" alt="">
+                    <img src="../../../assets/login-img.png" alt="">
                     <span>Login</span>
                 </div>
                 <div class="content">
-                    <form class="login-form"  [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
+                    <form class="auth-form"  [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
                         <mat-form-field appearance="legacy" class="email-input">
                             <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
                             <mat-icon matSuffix color="primary">email</mat-icon>

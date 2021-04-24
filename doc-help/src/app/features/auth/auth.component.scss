@@ -104,8 +104,8 @@
                 align-items: center;
 
                 img {
-                    height: 100px;
-                    width: 100px;
+                    height: 80px;
+                    width: 80px;
                     margin-top: 25px;
                 }
     
@@ -150,6 +150,10 @@
             flex-direction: column;
         }
     }
+}
+
+.outer-logo, .inner-logo {
+    cursor: pointer;
 }
 
 .doc-image {
@@ -197,7 +201,7 @@
     }
 
     .centered-container {
-        margin-top: 100px;
+        margin-top: 50px;
         width: 400px !important;
 
         .message {

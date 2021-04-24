@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { AuthService } from './auth.service';
@@ -15,12 +15,18 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.scss']
 })
+
+
 export class AuthComponent implements OnInit {
 
   loginForm: FormGroup;
+  registerForm: FormGroup;
   sliderLeft: string = '0%';
   mobileView: boolean = window.innerWidth > 768 ? false : true;
-
+  @HostListener('window:resize', ['$event']) onResize(event) {
+    this.mobileView = event.target.innerWidth > 768 ? false : true;
+ }
+  
   constructor(
     private _fb: FormBuilder,
     public authService: AuthService
@@ -31,14 +37,25 @@ export class AuthComponent implements OnInit {
     
     console.log('mobileView:',this.mobileView);
     console.log('sliderLeft:',this.sliderLeft);
+     
     
-    this.initForm();
+    this.initLoginForm();
+    this.initRegisterForm();
   }
 
-  protected initForm(): void {
-    this.loginForm = this._fb.group({
-      email: new FormControl('', [ Validators.required, Validators.email ]),
+  protected initLoginForm(): void {
+    
+    this.loginForm = new FormGroup({
+      email: new FormControl('',[ Validators.required, Validators.email ]),
       password: new FormControl('', [ Validators.required]) 
+    });
+  }
+
+  protected initRegisterForm(): void {
+    this.registerForm = new FormGroup({
+      email: new FormControl('',[ Validators.required, Validators.email ]),
+      password: new FormControl('', [ Validators.required]), 
+      secondPassword: new FormControl('', [ Validators.required]) 
     });
   }
 
@@ -52,9 +69,11 @@ export class AuthComponent implements OnInit {
     } else {
       this.sliderLeft = '0%';
     }
+    this.resetForms();
+  }
 
-    // if(this.mobileView) {
-
-    // }
+  private resetForms(): void {
+    this.loginForm.reset();
+    this.registerForm.reset();
   }
 }
