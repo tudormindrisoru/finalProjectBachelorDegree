@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LogoComponent } from './components/logo/logo.component';
 import { SidenavItemListComponent } from './components/sidenav-item-list/sidenav-item-list.component';
 import { MaterialModule } from '../material.module';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -13,7 +14,8 @@ import { MaterialModule } from '../material.module';
   ],
   imports: [
     CommonModule,
-    MaterialModule
+    MaterialModule,
+    RouterModule
   ],
   exports: [
     LogoComponent,

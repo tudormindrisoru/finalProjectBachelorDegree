@@ -56,21 +56,26 @@
     }
 }
 
-.example-container {
+.drawer-container {
     width: 100%;
     border-radius: 4px;
     height: 100%;
     background-color: white;
 
-    .drawer-container {
+    .drawer {
         padding: 12px 12px 0px 12px;
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         background-color: #64b3f4;
         color: white;
-    
-       
+      }
+      .content {
+          display: flex;
+
+          .feature-container {
+              flex: 1;
+          }
       }
   }
   
@@ -114,33 +119,8 @@
        -khtml-user-select: none; /* Konqueror HTML */
          -moz-user-select: none; /* Old versions of Firefox */
           -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
-                                    supported by Chrome, Edge, Opera and Firefox */
-  }
+              user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  } 
 
 .display-none { display: none !important;}
 
-//          --- MOBILE STYLES ---           //*********************
-
-// @media screen and (min-width:  769px) {
-//     .outer-logo {
-//         display: none;
-//     }
-// }
-
-// @media screen and (max-width:  768px) {
-//     .outer-logo {
-//         left: 0px;
-//         right: 0px;
-//         top: 25px;
-//     }
-
-// }
-
-// @media screen and (max-width:  360px) {
-    
-//     .outer-logo {
-//         top: 10px;
-//     }
-
-// }

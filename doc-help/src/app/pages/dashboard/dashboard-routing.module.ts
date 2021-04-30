@@ -1,13 +1,21 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { EventsComponent } from 'src/app/features/events/events.component';
+import { PatientsComponent } from 'src/app/features/patients/patients.component';
+import { ProfileComponent } from 'src/app/features/profile/profile.component';
 import { PageNotFoundComponent } from '../page-not-found/page-not-found.component';
 import { DashboardComponent } from './dashboard.component';
 
+const DASHBOARD_ROUTES = [
+  { path: 'events', component: EventsComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'patients', component: PatientsComponent },
+]
+
 const routes: Routes = [
-  { path: '', component: DashboardComponent },
-  { path: 'events', component: DashboardComponent },
-  { path: 'account-settings', component: DashboardComponent },
-  { path: 'patients', component: DashboardComponent },
+  { path: '', component: DashboardComponent ,
+    children: DASHBOARD_ROUTES
+  },
   { path: '404-error', component: PageNotFoundComponent },
   { path: '**', redirectTo: '/404-error', pathMatch: 'full' }
 ];
