@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MainComponent } from './features/main/main.component';
 import { MaterialModule } from './material.module';
 import { AuthGuard } from './features/auth/auth.guard';
+import { SharedModule } from './shared/shared.module';
 
 
 @NgModule({
@@ -20,7 +21,6 @@ import { AuthGuard } from './features/auth/auth.guard';
     AppComponent,
     MainComponent,
     AuthComponent,
-    LogoComponent,
     PageNotFoundComponent,
   ],
   imports: [
@@ -30,6 +30,7 @@ import { AuthGuard } from './features/auth/auth.guard';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
+    SharedModule
   ],
   providers: [ AuthGuard ],
   bootstrap: [ AppComponent ],

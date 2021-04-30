@@ -12,8 +12,8 @@ const routes: Routes = [
   {
     path: 'dashboard',
     loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
-    canActivate: [AuthGuard],
-    canLoad: [ AuthGuard ]
+    // canActivate: [AuthGuard],
+    // canLoad: [ AuthGuard ]
   },
   { path: '404-error', component: PageNotFoundComponent },
   { path: '**', redirectTo: '/404-error', pathMatch: 'full' }

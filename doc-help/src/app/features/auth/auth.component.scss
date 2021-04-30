@@ -63,21 +63,20 @@
                 position: relative;
                 height: 150px;
 
-        }
-
-        &-body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            color: white;
-            text-align: center;
-
-            h2 {
-                font-size: 30px;
-                
-                
             }
-            
+
+            &-body {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                justify-content: space-evenly;
+                color: white;
+                text-align: center;
+
+                h2 {
+                    font-size: 30px;
+                }
+                
             }
         }
 
@@ -150,6 +149,11 @@
             flex-direction: column;
         }
     }
+}
+
+.go-to-main-page-button {
+    margin-top: 10px; 
+    color: white;
 }
 
 .outer-logo, .inner-logo {

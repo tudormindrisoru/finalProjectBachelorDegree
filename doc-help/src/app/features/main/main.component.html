@@ -3,15 +3,26 @@
     <div id="header">
         <app-logo id="logo" class="outer-logo noselect"></app-logo>
         <div class="menu">
-            <button mat-button [matMenuTriggerFor]="beforeMenu">
-                <mat-icon aria-hidden="false">menu</mat-icon>
-            </button>
-            <mat-menu #beforeMenu="matMenu" xPosition="before">
-                <button mat-menu-item routerLink="/auth">
-                    <mat-icon color="primary">login</mat-icon>
-                    <span class="primary-color font-bold">Login</span>
+            <ng-template [ngIf]="mobileView" [ngIfElse]="notMobileView">
+                <button mat-button [matMenuTriggerFor]="beforeMenu">
+                    <mat-icon aria-hidden="false">menu</mat-icon>
                 </button>
-            </mat-menu>
+                <mat-menu #beforeMenu="matMenu" xPosition="before">
+                    <button mat-menu-item routerLink="/auth">
+                        <mat-icon color="primary">login</mat-icon>
+                        <span class="primary-color font-bold">Login</span>
+                    </button>
+                </mat-menu>
+            </ng-template>
+            <ng-template #notMobileView>
+                <nav>
+                    <ul>
+                        <li>test2</li>
+                        <li>test</li>
+                        <li>Login</li>
+                    </ul>
+                </nav>
+            </ng-template>
         </div>
     </div>
     <div class="wrapper">

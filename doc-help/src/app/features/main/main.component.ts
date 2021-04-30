@@ -13,7 +13,12 @@ export class MainComponent implements OnInit {
 
   // header = document.getElementById('header');
   
-
+  mobileView: boolean = window.innerWidth > 768 ? false : true;
+  @HostListener('window:resize', ['$event']) onResize(event) {
+    this.mobileView = event.target.innerWidth > 768 ? false : true;
+    console.log(this.mobileView);
+ }
+  
   @HostListener('window:scroll', ['$event'])
   onScroll(event: any) {
     const number = event.target['scrollingElement'].scrollTop;

@@ -16,6 +16,20 @@
     .menu {
         margin: 20px;
         color: white;
+        align-self: center;
+        nav ul{
+            display: flex;
+            width: auto;
+            flex-direction: row;
+            list-style-type: none;
+            font-weight: 600;
+            justify-content: center;
+            
+            li {
+                padding: 0px 15px;
+                text-align: center;
+            }
+        }
     }
 
 }

@@ -1,0 +1,12 @@
+<div class="sidenav-item-list">
+    <ul>
+        <li *ngFor="let item of itemList" routerLink="item.navigateTo">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <span *ngIf="useLabels">{{ item.label }}</span>
+        </li>
+        <li (click)="onToggleClick()" *ngIf="toggleButton">
+            <mat-icon>{{ toggleButton.icon }}</mat-icon>
+            <span *ngIf="useLabels">{{ toggleButton.label }}</span>
+        </li>
+    </ul>
+</div>

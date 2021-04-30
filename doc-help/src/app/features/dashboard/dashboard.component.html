@@ -1,1 +1,27 @@
-<p>dashboard works!</p>
+<div class="page" color="primary">
+    <div class="background-wrapper"></div>
+    <div class="wrapper">
+        <div class="centered-container">
+
+            <mat-drawer-container class="example-container" [hasBackdrop]="false" >
+                <mat-drawer #drawer mode="side" class="drawer-container">           
+                     <app-logo class="outer-logo noselect"></app-logo>
+                     <div class="sidenav-wrapper" (click)="drawer.toggle()">
+                        <app-sidenav-item-list [useLabels]="true" [openAction]="false"></app-sidenav-item-list>
+                    </div>
+                </mat-drawer>
+                <mat-drawer-content>
+                    <div class="always-visible-sidenav" *ngIf="!drawer.opened">
+                        <div class="sidenav-wrapper">
+                            <app-sidenav-item-list [useLabels]="false" [openAction]="true" (toggleEvent)="onToggleClick()"></app-sidenav-item-list>
+                        </div>
+                    </div>
+                </mat-drawer-content>
+              </mat-drawer-container>
+
+        </div>
+    </div>
+    <div class="doc-image noselect">
+        <img src="../../../assets/med-background.png" alt="">
+    </div>
+</div>

@@ -5,6 +5,9 @@ import { DashboardComponent } from './dashboard.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
+  { path: 'events', component: DashboardComponent },
+  { path: 'account-settings', component: DashboardComponent },
+  { path: 'patients', component: DashboardComponent },
   { path: '404-error', component: PageNotFoundComponent },
   { path: '**', redirectTo: '/404-error', pathMatch: 'full' }
 ];
