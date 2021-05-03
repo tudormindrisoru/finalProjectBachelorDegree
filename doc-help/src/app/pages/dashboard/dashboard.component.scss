@@ -14,26 +14,12 @@
     }
 }
 
-.shadow { 
-    -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
-    -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
-}
-
 .page {
     width: 100vw;
     height: 100vh;
     margin: 0 auto;
     align-items: center;
 }
-.background-wrapper {
-    width:100%;
-    height: 100%;
-    background: linear-gradient(0deg, #c2e59c 1%, #64b3f4 73%);
-    z-index: 1;
-    position: absolute;
-}
-
 
 
 .wrapper {
@@ -45,20 +31,10 @@
     justify-content: center;
     z-index: 3;
     position: relative;
-
-    .centered-container {
-        width: 95%;
-        height: 95%;
-        border-radius: 4px;
-        display: flex;
-        position: relative;
-    
-    }
 }
 
 .drawer-container {
     width: 100%;
-    border-radius: 4px;
     height: 100%;
     background-color: white;
 
