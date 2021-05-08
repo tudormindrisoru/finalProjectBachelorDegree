@@ -1,5 +1,5 @@
 <div class="sidenav-item-list">
-    <ul>
+    <ul [ngStyle]="{'text-align' : openAction ? 'center' : 'inherit'}">
         <li *ngFor="let item of itemList" routerLink={{item.navigateTo}}>
             <mat-icon>{{ item.icon }}</mat-icon>
             <span *ngIf="useLabels">{{ item.label }}</span>

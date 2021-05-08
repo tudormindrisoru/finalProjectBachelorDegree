@@ -8,7 +8,7 @@
                 </div>
             </mat-drawer>
             <mat-drawer-content class="content">
-                <div class="always-visible-sidenav" *ngIf="!drawer.opened">
+                <div class="always-visible-sidenav">
                     <div class="sidenav-wrapper">
                         <app-sidenav-item-list [useLabels]="false" [openAction]="true" (toggleEvent)="onToggleClick()"></app-sidenav-item-list>
                     </div>

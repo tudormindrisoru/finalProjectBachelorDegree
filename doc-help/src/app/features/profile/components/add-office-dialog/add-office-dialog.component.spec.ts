@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EventsComponent } from './events.component';
+import { AddOfficeDialogComponent } from './add-office-dialog.component';
 
-describe('EventsComponent', () => {
-  let component: EventsComponent;
-  let fixture: ComponentFixture<EventsComponent>;
+describe('AddOfficeDialogComponent', () => {
+  let component: AddOfficeDialogComponent;
+  let fixture: ComponentFixture<AddOfficeDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ EventsComponent ]
+      declarations: [ AddOfficeDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EventsComponent);
+    fixture = TestBed.createComponent(AddOfficeDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

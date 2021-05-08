@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { AuthService } from './auth.service';
 
@@ -28,16 +28,10 @@ export class AuthComponent implements OnInit {
  }
   
   constructor(
-    private _fb: FormBuilder,
     public authService: AuthService
     ) { }
 
   ngOnInit(): void {
-    console.log('width',window.innerWidth);
-    
-    console.log('mobileView:',this.mobileView);
-    console.log('sliderLeft:',this.sliderLeft);
-     
     
     this.initLoginForm();
     this.initRegisterForm();

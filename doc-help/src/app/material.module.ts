@@ -11,6 +11,12 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 const materialModules = [
   MatSliderModule,
@@ -23,7 +29,12 @@ const materialModules = [
   MatGridListModule,
   MatSidenavModule,
   MatCardModule,
-  MatSelectModule
+  MatSelectModule,
+  MatCheckboxModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatBadgeModule,
+  MatDialogModule
 ]
 
 @NgModule({

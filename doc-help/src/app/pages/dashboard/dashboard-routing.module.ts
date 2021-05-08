@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { EventsComponent } from 'src/app/features/events/events.component';
+import { AppointmentsComponent } from 'src/app/features/appointments/appointments.component';
 import { PatientsComponent } from 'src/app/features/patients/patients.component';
 import { ProfileComponent } from 'src/app/features/profile/profile.component';
 import { PageNotFoundComponent } from '../page-not-found/page-not-found.component';
 import { DashboardComponent } from './dashboard.component';
 
 const DASHBOARD_ROUTES = [
-  { path: 'events', component: EventsComponent },
+  { path: 'appointments', component: AppointmentsComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'patients', component: PatientsComponent },
 ]

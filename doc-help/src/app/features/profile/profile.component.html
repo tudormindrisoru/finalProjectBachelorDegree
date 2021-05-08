@@ -1,37 +1,121 @@
 <div class="feature-page">
     <div class="profile-info-wrapper">
-        <mat-card class="basic-info-card">
+        <mat-card class="profile-info-card">
             <input type="file" style="display:none;" #imageInput (change)="selectPhoto($event)">
-            <div class="profile-image">
+            <div class="profile-image noselect">
                 <img src={{profileImage}} alt="" >
                 <div class="icon" (click)="onPhotoChange(imageInput)">
                     <mat-icon>add_photo_alternate</mat-icon>
                 </div>
             </div>
             <div class="info">
-                <div class="fields">
-                    <mat-form-field class="example-full-width">
-                        <mat-label>Name</mat-label>
-                        <input matInput placeholder="Ex. Andrei Popescu">
-                      </mat-form-field>
-                      <mat-form-field class="example-full-width">
-                        <mat-label>Age</mat-label>
-                        <input matInput placeholder="Ex. 20" type="number">
-                      </mat-form-field>
-                      <mat-form-field appearance="fill">
-                        <mat-label>Favorite food</mat-label>
-                        <mat-select>
-                          <mat-option *ngFor="let gender of genders" [value]="gender">
-                            {{ gender }}
-                          </mat-option>
-                        </mat-select>
-                      </mat-form-field>
-                </div>
-                <button mat-flat-button color="primary">Save changes</button>
+                <form class="important-info-form" [formGroup]="importantInfoFormGroup">
+                  <div class="fields">
+                    <mat-form-field>
+                      <mat-label>First name</mat-label>
+                      <input matInput placeholder="Ex. Popescu" formControlName="firstName" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                      <mat-label>Last name</mat-label>
+                      <input matInput placeholder="Ex. Alex" formControlName="lastName" required>
+                    </mat-form-field>
+                  </div>
+                    <button mat-flat-button color="primary" class="material-button">Save changes</button>
+                </form>
             </div>
         </mat-card>
         <mat-card class="main-info-card">
-            <div class="main-info-block"></div>
+          <div class="account-bedge">
+            <span>Inactive doctor</span>
+          </div>
+          <form [formGroup]="mainInfoFormGroup" class="main-info-form">
+            <div class="fields">
+              <div class="left-side">
+                <h3 class="info-label">Basic informations 
+                  <span>
+                    <mat-icon color="primary">info</mat-icon>
+                  </span>
+                </h3> 
+                <mat-form-field>
+                  <mat-label>Cell phone</mat-label>
+                  <span matPrefix>+07 &nbsp;</span>
+                  <input type="tel" matInput placeholder="ex 40000000" formControlName="cellPhone" required>
+                  <mat-icon matSuffix color="primary">smartphone</mat-icon>
+                </mat-form-field>
+                
+                <mat-form-field>
+                  <mat-label>City</mat-label>
+                  <mat-select formControlName="city" required>
+                    <mat-option *ngFor="let city of cities" [value]="city">
+                      {{ city }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix color="primary">location_city</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field>
+                  <mat-label>Birth date</mat-label>
+                  <input matInput [matDatepicker]="datepicker" formControlName="birthDate">
+                  <mat-datepicker-toggle matSuffix [for]="datepicker" color="primary"></mat-datepicker-toggle>
+                  <mat-datepicker #datepicker>
+                    <mat-datepicker-actions>
+                      <button mat-button matDatepickerCancel>Cancel</button>
+                      <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+                    </mat-datepicker-actions>
+                  </mat-datepicker>
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Gender</mat-label>
+                  <mat-select formControlName="gender" (click)="test()" >
+                    <mat-select-trigger *ngIf="selectedGender !== undefined">
+                      <mat-icon [ngStyle]="{'color': selectedGender.color, 'vertical-align': 'middle'}">{{ selectedGender.icon }}</mat-icon> &nbsp;
+                      <span>{{ selectedGender.label }}</span>
+                    </mat-select-trigger>
+                    <mat-option *ngFor="let gender of genders" [value]="gender" name="gender" >
+                      <mat-icon matSuffix [ngStyle]="{'color': gender.color }">{{ gender.icon }}</mat-icon>
+                      {{ gender.label }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                </div>
+              <div class="right-side">
+
+                <h3 class="info-label">
+                  Doctor informations
+                  <span>
+                    <mat-icon color="primary">info</mat-icon>
+                  </span>
+                </h3>
+                <mat-checkbox formControlName="isDoctor" color="primary" (click)="isDoctorToggle()">I am doctor</mat-checkbox>
+                <mat-form-field  *ngIf="isDoctor" >
+                  <mat-label>Medical seal code</mat-label>
+                  <input matInput formControlName="sealCode" [required]="isDoctor">
+                </mat-form-field>
+              </div>
+            </div>
+            <button mat-flat-button color="primary" class="material-button">Save changes</button>
+          </form>
         </mat-card>
+    </div>
+    <div class="office">
+      <mat-card class="office-card">
+        <div class="office-card-buttons">
+          <button mat-flat-button color="primary" class="material-button office-card-button" (click)="onOpenAddOfficeDialog()">
+            <mat-icon>add</mat-icon>
+            Add office
+          </button>
+          <button mat-flat-button color="primary" class="material-button office-card-button" (click)="onOpenJoinOfficeDialog()">
+            <mat-icon>add</mat-icon>
+            Join an office
+          </button>
+        </div>
+        <div class="office-card-content">
+          <div class="no-offices-message">
+            <span>
+              No office added 
+            </span>
+          </div>
+        </div>
+      </mat-card>
     </div>
 </div>
