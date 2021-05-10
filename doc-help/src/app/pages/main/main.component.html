@@ -3,7 +3,7 @@
     <div id="header">
         <app-logo id="logo" class="outer-logo noselect"></app-logo>
         <div class="menu">
-            <ng-template [ngIf]="mobileView" [ngIfElse]="notMobileView">
+            <!-- <ng-template [ngIf]="mobileView" [ngIfElse]="notMobileView"> -->
                 <button mat-button [matMenuTriggerFor]="beforeMenu">
                     <mat-icon aria-hidden="false">menu</mat-icon>
                 </button>
@@ -13,8 +13,8 @@
                         <span class="primary-color font-bold">Login</span>
                     </button>
                 </mat-menu>
-            </ng-template>
-            <ng-template #notMobileView>
+            <!-- </ng-template> -->
+            <!-- <ng-template #notMobileView>
                 <nav>
                     <ul>
                         <li>test2</li>
@@ -22,11 +22,11 @@
                         <li>Login</li>
                     </ul>
                 </nav>
-            </ng-template>
+            </ng-template> -->
         </div>
     </div>
     <div class="wrapper">
-        <div class="informations shadow">
+        <!-- <div class="informations shadow">
             <div class="question">
                 <span>I am ...</span>
             </div>
@@ -45,7 +45,7 @@
                 </div>
                 <span>Patient</span>
             </div>
-        </div>
+        </div> -->
 
     </div>
     <div class="doc-image noselect">

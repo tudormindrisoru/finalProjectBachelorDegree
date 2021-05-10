@@ -29,10 +29,11 @@ export class ProfileComponent implements OnInit {
       icon: 'help_outline',
       color: 'black'
     }];
+    specialties = ['Alergologie', 'Balneofizioterapie','Cardiologie','Dermatologie','Endocrinologie','Epidemiologie','Gastroenterologie','Genetica medicala','Hematologie','Hepatologie','Nefrologie','Neonatologie','Neurochirurgie','Neurologie','Ginecologie','Oftalmologie','Oncologie','Ortopedie','Patologie','Pediatrie','Psihiatrie','Reumatologie','Stomatologie','Urologie'];
+
 
   userType: string[] = ['patient', 'doctor'];
   cities: string[] = ['Bacau','Iasi','Bucuresti'];
-  isDoctor: boolean = false;
   
   importantInfoFormGroup: FormGroup;
   mainInfoFormGroup: FormGroup;
@@ -48,8 +49,8 @@ export class ProfileComponent implements OnInit {
       city: new FormControl('', [ Validators.required]),
       birthDate: new FormControl(new Date()),
       gender: new FormControl({}),
-      isDoctor: new FormControl(this.isDoctor),
-      sealCode: new FormControl('')
+      cuim: new FormControl(''),
+      specialty: new FormControl('', [ Validators.required ])
     });
   }
 
@@ -75,13 +76,9 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  isDoctorToggle(): void {
-    this.isDoctor = !this.isDoctor;        
-  }
-
   onOpenAddOfficeDialog(): void {
     const dialogRef = this.dialog.open(AddOfficeDialogComponent, {
-      width: '250px',
+      width: '400px',
       data: {name: 'Add office dialog'}
     });
 
@@ -92,7 +89,7 @@ export class ProfileComponent implements OnInit {
 
   onOpenJoinOfficeDialog(): void {
     const dialogRef = this.dialog.open(JoinOfficeDialogComponent, {
-      width: '250px',
+      width: '400px',
       data: {name: 'open office dialog' }
     });
 

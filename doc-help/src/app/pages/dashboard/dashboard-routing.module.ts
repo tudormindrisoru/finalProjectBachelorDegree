@@ -3,21 +3,20 @@ import { Routes, RouterModule } from '@angular/router';
 import { AppointmentsComponent } from 'src/app/features/appointments/appointments.component';
 import { PatientsComponent } from 'src/app/features/patients/patients.component';
 import { ProfileComponent } from 'src/app/features/profile/profile.component';
-import { PageNotFoundComponent } from '../page-not-found/page-not-found.component';
 import { DashboardComponent } from './dashboard.component';
 
 const DASHBOARD_ROUTES = [
+  { path: '', redirectTo: 'profile' },
   { path: 'appointments', component: AppointmentsComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'patients', component: PatientsComponent },
 ]
 
 const routes: Routes = [
-  { path: '', component: DashboardComponent ,
+  { path: '', 
+    component: DashboardComponent ,
     children: DASHBOARD_ROUTES
   },
-  { path: '404-error', component: PageNotFoundComponent },
-  { path: '**', redirectTo: '/404-error', pathMatch: 'full' }
 ];
 
 @NgModule({

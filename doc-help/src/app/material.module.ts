@@ -16,7 +16,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDialogModule } from '@angular/material/dialog';
-
+import { MatStepperModule } from '@angular/material/stepper';
 
 const materialModules = [
   MatSliderModule,
@@ -34,7 +34,8 @@ const materialModules = [
   MatDatepickerModule,
   MatNativeDateModule,
   MatBadgeModule,
-  MatDialogModule
+  MatDialogModule,
+  MatStepperModule
 ]
 
 @NgModule({

@@ -1,8 +1,56 @@
-<h1 mat-dialog-title>Hi {{data.name}}</h1>
+<h1 mat-dialog-title>Add office</h1>
 <div mat-dialog-content>
-  <p>What's your favorite animal?</p>
+  <mat-vertical-stepper [linear]="true" #stepper>
+    <mat-step [stepControl]="firstStepForm">
+      <form [formGroup]="firstStepForm">
+        <ng-template matStepLabel>Office name</ng-template>
+        <mat-form-field>
+          <mat-label>Office name</mat-label>
+          <input matInput formControlName="officeName" required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="secondStepForm">
+      <form [formGroup]="secondStepForm">
+        <ng-template matStepLabel>Office address</ng-template>
+        <mat-form-field>
+          <mat-label>Address</mat-label>
+          <input matInput formControlName="address" placeholder="Ex. 1 Decembrie, Piatra Neamt, Romania"
+                 required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="thirdStepForm">
+      <form [formGroup]="thirdStepForm">
+        <ng-template matStepLabel>Code received via SMS</ng-template>
+        <mat-form-field>
+          <mat-label>Code</mat-label>
+          <input matInput formControlName="validationCode" placeholder="Ex. 123456"
+                 required>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      <p>You are now done.</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button  cdkFocusInitial>Ok</button>
+  <button mat-button (click)="onNoClick()">Close</button>
 </div>

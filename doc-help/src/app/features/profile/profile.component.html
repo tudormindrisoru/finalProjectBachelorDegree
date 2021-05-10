@@ -86,10 +86,18 @@
                     <mat-icon color="primary">info</mat-icon>
                   </span>
                 </h3>
-                <mat-checkbox formControlName="isDoctor" color="primary" (click)="isDoctorToggle()">I am doctor</mat-checkbox>
-                <mat-form-field  *ngIf="isDoctor" >
-                  <mat-label>Medical seal code</mat-label>
-                  <input matInput formControlName="sealCode" [required]="isDoctor">
+                <mat-form-field>
+                  <mat-label>Section</mat-label>
+                  <mat-select formControlName="specialty" required>
+                    <mat-option *ngFor="let specialty of specialties" [value]="specialty">
+                      {{ specialty }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix color="primary">task_alt</mat-icon>
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>CUIM</mat-label>
+                  <input matInput formControlName="cuim" required>
                 </mat-form-field>
               </div>
             </div>
