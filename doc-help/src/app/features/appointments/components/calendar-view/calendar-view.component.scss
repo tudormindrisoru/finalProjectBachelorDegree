@@ -1,9 +1,12 @@
 .calendar-container { 
     width: auto;
-    height: 1000px;
-    padding: 25px;
 
     .fullcalendar {
         width: auto;
+    }
+}
+:host::ng-deep {
+    .fc-day-today {
+        background-color: #c2e59c46 !important;
     }
 }

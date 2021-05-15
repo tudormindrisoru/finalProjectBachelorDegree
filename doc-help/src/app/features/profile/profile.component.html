@@ -64,19 +64,6 @@
                     </mat-datepicker-actions>
                   </mat-datepicker>
                 </mat-form-field>
-                <mat-form-field>
-                  <mat-label>Gender</mat-label>
-                  <mat-select formControlName="gender" (click)="test()" >
-                    <mat-select-trigger *ngIf="selectedGender !== undefined">
-                      <mat-icon [ngStyle]="{'color': selectedGender.color, 'vertical-align': 'middle'}">{{ selectedGender.icon }}</mat-icon> &nbsp;
-                      <span>{{ selectedGender.label }}</span>
-                    </mat-select-trigger>
-                    <mat-option *ngFor="let gender of genders" [value]="gender" name="gender" >
-                      <mat-icon matSuffix [ngStyle]="{'color': gender.color }">{{ gender.icon }}</mat-icon>
-                      {{ gender.label }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
                 </div>
               <div class="right-side">
 
@@ -87,7 +74,7 @@
                   </span>
                 </h3>
                 <mat-form-field>
-                  <mat-label>Section</mat-label>
+                  <mat-label>Speciality</mat-label>
                   <mat-select formControlName="specialty" required>
                     <mat-option *ngFor="let specialty of specialties" [value]="specialty">
                       {{ specialty }}
@@ -101,28 +88,48 @@
                 </mat-form-field>
               </div>
             </div>
-            <button mat-flat-button color="primary" class="material-button">Save changes</button>
+            <button mat-raised-button color="primary" class="material-button">Save changes</button>
           </form>
         </mat-card>
     </div>
     <div class="office">
       <mat-card class="office-card">
-        <div class="office-card-buttons">
-          <button mat-flat-button color="primary" class="material-button office-card-button" (click)="onOpenAddOfficeDialog()">
+        <div class="office-card-buttons" *ngIf="!office">
+          <button mat-raised-button color="primary" class="material-button office-card-button" (click)="onOpenAddOfficeDialog()">
             <mat-icon>add</mat-icon>
             Add office
           </button>
-          <button mat-flat-button color="primary" class="material-button office-card-button" (click)="onOpenJoinOfficeDialog()">
+          <button mat-raised-button color="primary" class="material-button office-card-button" (click)="onOpenJoinOfficeDialog()">
             <mat-icon>add</mat-icon>
             Join an office
           </button>
         </div>
         <div class="office-card-content">
-          <div class="no-offices-message">
+          <div class="no-offices-message" *ngIf="!office; else officeExist">
             <span>
               No office added 
             </span>
           </div>
+          <ng-template #officeExist>
+            <div class="details">
+              <div class="edit-button">
+                <button mat-button class="material-button">
+                  <mat-icon color="primary">edit</mat-icon>
+                </button>
+              </div>
+              <div class="content-container">
+                <div class="office-image">
+                  <!-- <img src="https://cdn.corporatefinanceinstitute.com/assets/home-office1.jpeg" alt=""> -->
+                  <div style="width:100%; height: auto;">
+                    <agm-map [latitude]="lat" [longitude]="lng">
+                      <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+                    </agm-map>
+                  </div>
+                </div>
+              </div>
+              <!-- {{ office | json }} -->
+            </div>
+          </ng-template>
         </div>
       </mat-card>
     </div>

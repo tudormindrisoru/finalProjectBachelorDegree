@@ -19,7 +19,7 @@ export class SidenavItemListComponent implements OnInit {
     this.itemList = [
       { icon: 'event_note', label: 'Appointments' , navigateTo: 'appointments' },
       { icon: 'account_circle', label: 'Profile', navigateTo:  'profile' },
-      { icon: 'people', label: 'Patients', navigateTo: 'patients' }  
+      { icon: 'people', label: 'Patient history', navigateTo: 'patients' }  
     ]
     this.toggleButton = { icon: this.openAction ? 'navigate_next' : 'navigate_before', label:  this.openAction ? 'Extend' : 'Collapse' };
   }

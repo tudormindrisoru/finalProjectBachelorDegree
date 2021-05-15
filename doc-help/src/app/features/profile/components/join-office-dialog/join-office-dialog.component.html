@@ -24,19 +24,20 @@
         <div>
           <button mat-button matStepperPrevious>Back</button>
           <button mat-button matStepperNext>Next</button>
+          <button mat-button>Resend code</button>
         </div>
       </form>
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>Done</ng-template>
-      <p>You are now done.</p>
-      <div>
+      <p>Congrats! You join to the office.</p>
+      <!-- <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button (click)="stepper.reset()">Reset</button>
-      </div>
+      </div> -->
     </mat-step>
   </mat-vertical-stepper>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Close</button>
+    <button mat-button (click)="onNoClick()">Close</button>
 </div>

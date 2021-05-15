@@ -113,9 +113,11 @@
     width: 100%;
     height: auto;
     margin-top: 25px;
+    display: flex;
+    justify-content: center;
     
     &-card {
-        width: auto;
+        width: inherit;
         display: flex;
         flex-direction: column;
         margin-bottom: 25px;
@@ -142,12 +144,46 @@
                 height: 50px;
                 color:rgb(170, 170, 170);
             }
+
+            .details {
+                width: 100%;
+                height: 200px;
+                display: flex;
+                position: relative;
+            }
         }
     }
 }
 
+.content-container {
+    
+    .office-image {
+        height: 100%;
+        width: 250px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        
+        img {
+            height: 175px;
+            width: 225px;
+            object-fit: cover;
+        }
+    }
+
+
+
+}
+
 .material-button {
     color: white;
+}
+
+.edit-button {
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
 
 .left-side, .right-side {
@@ -183,13 +219,22 @@ mat-card {
 
 // MOBILE STYLE
 
-@media screen and (max-width: 1022px) {
-    .profile-info-card {
-        justify-content: center !important;
+@media screen and (max-width: 1200px) {
+    .profile-info-wrapper {
+        flex-direction: column;
+        align-items: center;
     }
     .main-info-card {
         margin-top: 15px;
     }
+}
+
+@media screen and (max-width: 1022px) {
+
+    .profile-info-card {
+        justify-content: center !important;
+    }
+
 }
 
 @media screen and (max-width: 730px) {

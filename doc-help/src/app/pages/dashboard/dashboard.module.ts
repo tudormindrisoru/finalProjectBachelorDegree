@@ -13,16 +13,20 @@ import { SidenavItemListComponent } from 'src/app/shared/components/sidenav-item
 import { AddOfficeDialogComponent } from 'src/app/features/profile/components/add-office-dialog/add-office-dialog.component';
 import { JoinOfficeDialogComponent } from 'src/app/features/profile/components/join-office-dialog/join-office-dialog.component';
 import { CalendarViewComponent } from 'src/app/features/appointments/components/calendar-view/calendar-view.component';
+import { AppointmentDetailDialogComponent } from 'src/app/features/appointments/components/appointment-detail-dialog/appointment-detail-dialog.component';
+import { UpdateScheduleDialogComponent } from 'src/app/features/appointments/components/update-schedule-dialog/update-schedule-dialog.component';
 
 import { FullCalendarModule } from '@fullcalendar/angular'; // the main connector. must go first
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
 import interactionPlugin from '@fullcalendar/interaction'; // a plugin
-import timeGridPlugin from '@fullcalendar/timegrid';
+import timeGridPlugin from '@fullcalendar/timegrid'; // a plugin
+import bootstrapPlugin from '@fullcalendar/bootstrap'; // a plugin
 
 FullCalendarModule.registerPlugins([ // register FullCalendar plugins
   dayGridPlugin,
   interactionPlugin,
-  timeGridPlugin
+  timeGridPlugin,
+  bootstrapPlugin 
 ]);
 
 @NgModule({
@@ -34,15 +38,16 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     SidenavItemListComponent,
     AddOfficeDialogComponent,
     JoinOfficeDialogComponent,
-    CalendarViewComponent
+    CalendarViewComponent,
+    AppointmentDetailDialogComponent,
+    UpdateScheduleDialogComponent
   ],
   imports: [
-    CommonModule,
     DashboardRoutingModule,
     MaterialModule,
     SharedModule,
     ReactiveFormsModule,
-    FullCalendarModule
+    FullCalendarModule,
   ],
 })
 export class DashboardModule { }
