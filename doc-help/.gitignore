@@ -46,4 +46,4 @@ testem.log
 Thumbs.db
 
 #secret
-/src/app/environments/secret-keys.ts
+/src/environments/secret-keys.ts
