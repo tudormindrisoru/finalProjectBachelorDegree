@@ -16,10 +16,12 @@ export interface DialogData {
 })
 export class AddOfficeDialogComponent implements OnInit {
 
-  @ViewChild("placesRef") placesRef : GooglePlaceDirective;
+  // @ViewChild("placesRef") placesRef : GooglePlaceDirective;
   autocompleteOptions = {
     types: [],
-    componentRestrictions: { country: 'RO' }
+    componentRestrictions: { country: 'RO' },
+    fields: [ "geometry", "icon", "name" ],
+    
     }
   constructor(
     public dialogRef: MatDialogRef<AddOfficeDialogComponent>,

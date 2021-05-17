@@ -24,7 +24,7 @@
           <mat-icon matSuffix color="primary">pin_drop</mat-icon>
         </mat-form-field>
         <div style="width:100%; height: auto;">
-          <agm-map [latitude]="lat" [longitude]="lng" style="width:100%;">
+          <agm-map [latitude]="lat" [longitude]="lng" style="width:100%;" [zoom]="16">
             <agm-marker [latitude]="markerLat" [longitude]="markerLng" *ngIf="markerLat && markerLng"></agm-marker>
           </agm-map>
         </div>

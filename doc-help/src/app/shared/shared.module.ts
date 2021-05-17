@@ -6,6 +6,8 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
 import { GooglePlaceModule } from "ngx-google-places-autocomplete";
+import { SecretKeys } from 'src/environments/secret-keys';
+
 
 @NgModule({
   declarations: [
@@ -17,7 +19,7 @@ import { GooglePlaceModule } from "ngx-google-places-autocomplete";
     RouterModule,
     HttpClientModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyB-1hp2yvF47M7VG_TmaJ7GyAt8f99_V8g',
+      apiKey: SecretKeys.prototype.googleMapsKey,
       
     }),
     GooglePlaceModule

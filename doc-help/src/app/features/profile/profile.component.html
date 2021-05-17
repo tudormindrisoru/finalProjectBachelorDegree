@@ -4,8 +4,8 @@
             <input type="file" style="display:none;" #imageInput (change)="selectPhoto($event)">
             <div class="profile-image noselect">
                 <img src={{profileImage}} alt="" >
-                <div class="icon" (click)="onPhotoChange(imageInput)">
-                    <mat-icon>add_photo_alternate</mat-icon>
+                <div class="profile-second-layer" (click)="onPhotoChange(imageInput)">
+                  <span>CHANGE PHOTO</span>
                 </div>
             </div>
             <div class="info">
@@ -112,22 +112,51 @@
           </div>
           <ng-template #officeExist>
             <div class="details">
-              <div class="edit-button">
+              <div class="edit-button" *ngIf="office.you.owner">
                 <button mat-button class="material-button">
                   <mat-icon color="primary">edit</mat-icon>
                 </button>
               </div>
               <div class="content-container">
-                <div class="office-image">
-                  <!-- <img src="https://cdn.corporatefinanceinstitute.com/assets/home-office1.jpeg" alt=""> -->
-                  <div style="width:100%; height: auto;">
-                    <agm-map [latitude]="lat" [longitude]="lng">
-                      <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+                <div class="office-map-location">
+                  <div class="agm-container">
+                    <agm-map [latitude]="officeDataFormGroup.value.latitude" [longitude]="officeDataFormGroup.value.longitude" style="width:100%;" [zoom]="16">
+                      <agm-marker [latitude]="officeDataFormGroup.value.latitude" [longitude]="officeDataFormGroup.value.longitude"></agm-marker>
                     </agm-map>
                   </div>
                 </div>
+
+                <form [formGroup]="officeDataFormGroup" class="form-map-informations">
+                  <mat-form-field>
+                    <mat-label>Office name</mat-label>
+                    <input matInput formControlName="officeName" required>
+                    <mat-icon matSuffix color="primary">business_center</mat-icon>
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Address</mat-label>
+                    <input matInput formControlName="officeAddress" ngx-google-places-autocomplete [options]="autocompleteOptions" #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)"
+                           required>
+                    <mat-icon matSuffix color="primary">pin_drop</mat-icon>
+                  </mat-form-field>
+
+                  <div class="affiliated-doctors">
+                    <h3>Doctors</h3>
+                    <div class="doctors-list noselect" formArrayName="doctors">
+                      <div *ngFor="let doctor of officeDataFormGroup.get('doctors').controls; let i = index" class="doctor-wrapper">
+                        <div [formGroupName]="i" #doctor class="doctor-container">
+                          <img src={{doctor.value.photo}} alt="" [ngClass]="doctor.value.isOfficeOwner ? 'office-owner' : ''" >
+                          <div class="doctors-second-layer">
+                            <span>{{ isYou(doctor.value) ? 'YOU' : 'OPEN' }}</span>
+                          </div>
+                          <div class="office-owner-shield" *ngIf="doctor.value.isOfficeOwner">
+                            <mat-icon color="primary">health_and_safety</mat-icon>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
-              <!-- {{ office | json }} -->
             </div>
           </ng-template>
         </div>
