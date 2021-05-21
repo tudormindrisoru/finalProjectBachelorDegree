@@ -45,8 +45,8 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  protected onScrollPage() {
-
+  protected onOpenSidenavAppointments() {
+    document.getElementById("create-appointment-sidenav").style.width = "400px";
   }
 
 }

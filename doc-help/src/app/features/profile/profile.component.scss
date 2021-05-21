@@ -65,24 +65,6 @@
         .profile-second-layer {
             @include rounded-layer(105px,105px,50%,white,#64b3f4e2);
         }
-
-        // .icon {
-        //     background-color: white;
-        //     border-radius: 50%;
-        //     bottom: 0px;
-        //     right: 30px;
-        //     position: absolute;
-        //     text-align: center;
-        //     cursor: pointer;
-        //     -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
-        //     -moz-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
-        //     box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 5px;
-
-        //     mat-icon {
-        //         color: #64b3f4;                
-        //         font-size: 20px;    
-        //     }
-        // }
     }
 
     .profile-info-card {
@@ -156,7 +138,8 @@
         width: inherit;
         display: flex;
         flex-direction: column;
-        margin-bottom: 25px;
+        // margin-bottom: 25px;
+        margin: 0px 30px 25px 30px;
 
         &-buttons {
             width: 100%;
@@ -197,7 +180,7 @@
 
     .office-map-location {
         height: 100%;
-        width: 300px;
+        width: 250px;
         margin-right: 25px;
         
         .agm-container {
@@ -211,7 +194,7 @@
         }
     }
     .form-map-informations {
-        width: 300px;
+        width: 250px;
         height: auto;
         margin-top: 25px;
         mat-form-field {
@@ -241,6 +224,25 @@
                         object-fit: cover;
                         z-index: 2;
                     }
+                    .add-doctor {
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 50%;
+                        border: 2px #64b3f4 solid;
+                        z-index: 2;
+                        display: flex;
+                        flex-direction: center;
+                        justify-content: center;
+                        align-items: center;
+                        cursor: pointer;
+
+                        &:hover {
+                            background-color: #64b3f4;
+                            mat-icon {
+                                color: white;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -251,35 +253,6 @@
 .doctors-second-layer{
 
     @include rounded-layer(50px,50px,50%,white,#64b3f4e2); 
-    // margin: 0;
-    // z-index: 3;  
-    // top: 0px;
-    // bottom: 0px;
-    // right: 0px;
-    // left: 0px;
-    // width: 50px;
-    // height: 50px;
-    // border-radius: 50%;
-    // position: absolute;
-    // text-align: center;
-    // display: flex;
-    // flex-direction: column;
-    // justify-content: center;
-
-    // span {
-    //     visibility: hidden;
-    //     color: white;
-    //     font-weight: 500;
-    // }
-
-    // &:hover {
-    //     cursor: pointer;
-    //     visibility: visible;
-    //     background-color: #64b3f4e2;
-    //     span {
-    //         visibility: visible;
-    //     }
-    // }
 }
 
 
@@ -364,7 +337,6 @@ mat-card {
 @media screen and (max-width: 850px) {
     .content-container {
         flex-direction: column-reverse;
-        align-items: center;
         margin: 0 auto;
         margin-top: 25px;
     }
@@ -395,5 +367,9 @@ mat-card {
                 flex-direction: column;
             }
         }
+    }
+
+    .office-card {
+        width: 250px !important;
     }
 }

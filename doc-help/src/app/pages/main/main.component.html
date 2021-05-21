@@ -3,26 +3,34 @@
     <div id="header">
         <app-logo id="logo" class="outer-logo noselect"></app-logo>
         <div class="menu">
-            <!-- <ng-template [ngIf]="mobileView" [ngIfElse]="notMobileView"> -->
+            <ng-template [ngIf]="mobileView" [ngIfElse]="notMobileView">
                 <button mat-button [matMenuTriggerFor]="beforeMenu">
                     <mat-icon aria-hidden="false">menu</mat-icon>
                 </button>
                 <mat-menu #beforeMenu="matMenu" xPosition="before">
+                    <button mat-menu-item>
+                        <span class="primary-color font-bold">About us</span>
+                    </button>
+                    <button mat-menu-item  (click)="onOpenSidenavAppointments()">
+                        <span class="primary-color font-bold">Make an appointment</span>
+                    </button>
                     <button mat-menu-item routerLink="/auth">
-                        <mat-icon color="primary">login</mat-icon>
                         <span class="primary-color font-bold">Login</span>
                     </button>
                 </mat-menu>
-            <!-- </ng-template> -->
-            <!-- <ng-template #notMobileView>
-                <nav>
+            </ng-template>
+            <ng-template #notMobileView>
+                <nav class="top-nav-web-view">
                     <ul>
-                        <li>test2</li>
-                        <li>test</li>
-                        <li>Login</li>
+                        <li>About us</li>
+                        <li (click)="onOpenSidenavAppointments()">Make an appointment</li>
+                        <li routerLink="/auth">
+                            <mat-icon>login</mat-icon>
+                            <span class="label">Login</span>
+                        </li>
                     </ul>
                 </nav>
-            </ng-template> -->
+            </ng-template>
         </div>
     </div>
     <div class="wrapper">
@@ -46,6 +54,9 @@
                 <span>Patient</span>
             </div>
         </div> -->
+
+    </div>
+    <div id="create-appointment-sidenav">
 
     </div>
     <div class="doc-image noselect">

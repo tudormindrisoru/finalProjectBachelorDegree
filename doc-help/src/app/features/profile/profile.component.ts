@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ProfileService } from './profile.service';
 import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
+import { IOffice } from 'src/app/shared/shared.model';
 
 @Component({
   selector: 'app-profile',
@@ -29,44 +30,44 @@ export class ProfileComponent implements OnInit {
   profileImage: string | ArrayBuffer = '../../../assets/user.png';
   specialties = ['Alergologie', 'Balneofizioterapie','Cardiologie','Dermatologie','Endocrinologie','Epidemiologie','Gastroenterologie','Genetica medicala','Hematologie','Hepatologie','Nefrologie','Neonatologie','Neurochirurgie','Neurologie','Ginecologie','Oftalmologie','Oncologie','Ortopedie','Patologie','Pediatrie','Psihiatrie','Reumatologie','Stomatologie','Urologie'];
  
-  // _office = {};
-  _office  = {
-    name: 'Office SRL',
-    lng: 27.590000,
-    lat: 47.154380,
-    address: 'Strada Sfântul Lazăr 37, Iași, Romania',
-    you: {
-      name: 'Mindrisoru Tudor',
-      photo: 'https://cdn.impakter.com/wp-content/uploads/2016/03/pexels-photo-5.jpg',
-      specialty: 'Epidemiologie',
-      isOfficeOwner: true,
-      affiliationId: 'd1231dsad1231',
-    },
-    doctors: [
-      {
-        name: 'Mindrisoru Tudor',
-        photo: 'https://cdn.impakter.com/wp-content/uploads/2016/03/pexels-photo-5.jpg',
-        specialty: 'Epidemiologie',
-        isOfficeOwner: true,
-        affiliationId: 'd1231dsad1231'
-      },
-      {
-        name: 'Mindrisoru George',
-        photo: 'https://as2.ftcdn.net/jpg/02/60/04/09/500_F_260040900_oO6YW1sHTnKxby4GcjCvtypUCWjnQRg5.jpg',
-        specialty: 'Genetica medicala',
-        isOfficeOwner: false,
-        affiliationId: 'r1231d1add41'
-      },
-      {
-        name: 'Mindrisoru Roxana',
-        photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSmXOARNvvnSx2Pz2a8d2Mh5d4M87GAHQ0RkA&usqp=CAU',
-        specialty: 'Nefrologie',
-        isOfficeOwner: false,
-        affiliationId: 'q123avca1121'
-      },
+  _office: IOffice | undefined = undefined;
+  // _office : IOffice = {
+  //   name: 'Office SRL',
+  //   lng: 27.590000,
+  //   lat: 47.154380,
+  //   address: 'Strada Sfântul Lazăr 37, Iași, Romania',
+  //   you: {
+  //     name: 'Mindrisoru Tudor',
+  //     photo: 'https://cdn.impakter.com/wp-content/uploads/2016/03/pexels-photo-5.jpg',
+  //     specialty: 'Epidemiologie',
+  //     isOfficeOwner: true,
+  //     affiliationId: 'd1231dsad1231',
+  //   },
+  //   doctors: [
+  //     {
+  //       name: 'Mindrisoru Tudor',
+  //       photo: 'https://cdn.impakter.com/wp-content/uploads/2016/03/pexels-photo-5.jpg',
+  //       specialty: 'Epidemiologie',
+  //       isOfficeOwner: true,
+  //       affiliationId: 'd1231dsad1231'
+  //     },
+  //     {
+  //       name: 'Mindrisoru George',
+  //       photo: 'https://as2.ftcdn.net/jpg/02/60/04/09/500_F_260040900_oO6YW1sHTnKxby4GcjCvtypUCWjnQRg5.jpg',
+  //       specialty: 'Genetica medicala',
+  //       isOfficeOwner: false,
+  //       affiliationId: 'r1231d1add41'
+  //     },
+  //     {
+  //       name: 'Mindrisoru Roxana',
+  //       photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSmXOARNvvnSx2Pz2a8d2Mh5d4M87GAHQ0RkA&usqp=CAU',
+  //       specialty: 'Nefrologie',
+  //       isOfficeOwner: false,
+  //       affiliationId: 'q123avca1121'
+  //     },
       
-    ]
-  };
+  //   ]
+  // };
  
   cities: string[] = ['Bacau','Iasi','Bucuresti'];
   
@@ -95,18 +96,18 @@ export class ProfileComponent implements OnInit {
 
     }
     this.officeDataFormGroup = new FormGroup({
-      officeName: new FormControl(this.office.name, [ Validators.required ]),
-      officeAddress: new FormControl(this.office.address, [ Validators.required ]),
-      longitude: new FormControl(this.office.lng, [ Validators.required ]),
-      latitude: new FormControl(this.office.lat, [ Validators.required ]),
+      officeName: new FormControl((this.office && this.office.name) || '', [ Validators.required ]),
+      officeAddress: new FormControl(this.office.address || '', [ Validators.required ]),
+      longitude: new FormControl(this.office.lng || '', [ Validators.required ]),
+      latitude: new FormControl(this.office.lat || '', [ Validators.required ]),
       doctors: new FormArray([]),
     });
 
     this.initDoctorsFormGroups();
   }
 
-  get office() {
-    return this._office;
+  get office(): IOffice | undefined {
+    return this._office || undefined;
   }
 
   set office(newOffice) {
@@ -124,7 +125,7 @@ export class ProfileComponent implements OnInit {
 
   initDoctorsFormGroups() {
     let doctors = this.officeDataFormGroup.get('doctors') as FormArray;
-    if(this.office && this.office.doctors !== []) {
+    if( this.office !== {} && this.office && this.office.doctors !== []) {
       this.office.doctors.forEach((doctor) => {
         let doctorFormGroup = new FormGroup({
           name: new FormControl(doctor.name),

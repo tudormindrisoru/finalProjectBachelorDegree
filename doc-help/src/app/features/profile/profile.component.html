@@ -33,7 +33,7 @@
               <div class="left-side">
                 <h3 class="info-label">Basic informations 
                   <span>
-                    <mat-icon color="primary">info</mat-icon>
+                    <mat-icon color="primary">info_outline</mat-icon>
                   </span>
                 </h3> 
                 <mat-form-field>
@@ -70,7 +70,7 @@
                 <h3 class="info-label">
                   Doctor informations
                   <span>
-                    <mat-icon color="primary">info</mat-icon>
+                    <mat-icon color="primary">info_outline</mat-icon>
                   </span>
                 </h3>
                 <mat-form-field>
@@ -112,7 +112,7 @@
           </div>
           <ng-template #officeExist>
             <div class="details">
-              <div class="edit-button" *ngIf="office.you.owner">
+              <div class="edit-button" *ngIf="office.you.isOfficeOwner">
                 <button mat-button class="material-button">
                   <mat-icon color="primary">edit</mat-icon>
                 </button>
@@ -150,6 +150,13 @@
                           </div>
                           <div class="office-owner-shield" *ngIf="doctor.value.isOfficeOwner">
                             <mat-icon color="primary">health_and_safety</mat-icon>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="doctor-wrapper" *ngIf="office.you.isOfficeOwner">
+                        <div class="doctor-container">
+                          <div class="add-doctor">
+                            <mat-icon color="primary">add</mat-icon>
                           </div>
                         </div>
                       </div>
