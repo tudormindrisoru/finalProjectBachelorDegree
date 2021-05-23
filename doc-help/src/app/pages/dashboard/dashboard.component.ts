@@ -9,7 +9,6 @@ import { MatDrawer } from '@angular/material/sidenav';
 export class DashboardComponent implements OnInit {
 
   @ViewChild('drawer', { static: false }) drawer: MatDrawer;
-
   constructor() { }
 
   ngOnInit(): void {

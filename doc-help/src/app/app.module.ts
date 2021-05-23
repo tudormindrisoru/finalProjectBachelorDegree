@@ -14,6 +14,7 @@ import { MainComponent } from './pages/main/main.component';
 import { MaterialModule } from './material.module';
 import { AuthGuard } from './pages/auth/auth.guard';
 import { SharedModule } from './shared/shared.module';
+import { SecretKeys } from 'src/environments/secret-keys';
 
 
 @NgModule({
@@ -30,9 +31,9 @@ import { SharedModule } from './shared/shared.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    SharedModule
+    SharedModule,
   ],
-  providers: [ AuthGuard ],
+  providers: [ AuthGuard, SecretKeys ],
   bootstrap: [ AppComponent ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

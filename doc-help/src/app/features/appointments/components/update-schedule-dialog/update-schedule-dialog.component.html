@@ -1,7 +1,55 @@
 <h1 mat-dialog-title>Update schedule</h1>
 <div mat-dialog-content>
-  
-
+  <mat-tab-group dynamicHeight>
+    <mat-tab label="Schedule"> 
+      <div class="schedule-container">
+        <form [formGroup]="scheduleFormGroup">
+          <mat-tab-group formArrayName="days">
+            <mat-tab *ngFor="let day of scheduleFormGroup.get('days')['controls']; let i=index" [label]="day['controls'].dayName?.value" [formGroupName]="i">
+              <div class="intervals-container" formArrayName="intervals">
+                <div class="interval" *ngFor="let interval of day.get('intervals')['controls'];let j=index" [formGroupName]="j">
+                  <mat-card>
+                    <mat-form-field >
+                    <mat-label>Start hour</mat-label>
+                      <input matInput type="time" formControlName="start">
+                    </mat-form-field>
+                  
+                    <mat-icon color="primary">{{ forwardArrow ? 'arrow_forward' : 'arrow_downward'}}</mat-icon>
+            
+                    <mat-form-field >
+                      <mat-label>End hour</mat-label>
+                      <input matInput type="time" formControlName="end">
+                    </mat-form-field>
+                    <div class="remove-interval-button noselect" (click)="onRemoveIntarval(i,j)">
+                      <mat-icon>delete</mat-icon>
+                    </div>
+                  </mat-card>
+                </div>
+              </div>
+              <div class="hours-information">
+                <span>Working hours for {{day['controls'].dayName?.value}} : {{getHoursPerDay(day['controls'].weekDay?.value)}}</span>
+              </div>
+              <div class="action-buttons">
+                <button class="add-interval" mat-raised-button color="primary" (click)="onAddInterval(i)">
+                  <span>Add interval</span>
+                  <mat-icon matSuffix>add</mat-icon>
+                </button>
+                <button class="save-changes-button" mat-raised-button color="primary" (click)="onSaveIntervals(i)">
+                  <span>Save changes</span>
+                  <mat-icon matSuffix>save</mat-icon>
+                </button>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </form>
+      </div>
+    </mat-tab>
+    <mat-tab label="Vacation">
+      <div class="vacation-container">
+        
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Close</button>

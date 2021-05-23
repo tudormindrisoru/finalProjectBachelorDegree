@@ -57,7 +57,8 @@ export class CalendarViewComponent implements OnInit {
   onOpenAppointmentDetailDialog(): void {
     const dialogRef = this.dialog.open(AppointmentDetailDialogComponent, {
       width: '400px',
-      data: {name: 'Add office dialog'}
+      data: {name: 'Add office dialog'},
+      disableClose: true,
     });
   }
 

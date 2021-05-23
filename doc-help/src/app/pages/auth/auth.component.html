@@ -9,7 +9,7 @@
                     <app-logo class="inner-logo noselect" routerLink="/"></app-logo>
                 </div>
                 <div class="message-body">
-                    <h2>Welcome</h2>
+                    <h2>{{sliderLeft=='50%' ? 'Create a doctor account' : 'Log in with doctor account'}}</h2>
 
                     <button mat-button routerLink="/">Go to main page</button>
                     
@@ -18,7 +18,7 @@
             <div class="register" *ngIf="!mobileView || (mobileView && sliderLeft=='50%')">
                 <div class="text">
                     <img src="../../../assets/register-img.png" alt="">
-                    <span>Register</span>
+                    <span>Sign up</span>
                 </div>
                 <div class="content">
                     <form class="auth-form"  [formGroup]="registerForm" (ngSubmit)="onLoginSubmit()">
@@ -49,16 +49,16 @@
                             <mat-error ></mat-error>
                         </mat-form-field>
                         <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Register</span>
+                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Sign up</span>
                         </button>
                     </form>
-                    <div>Have already an account? <span (click)="signSlide()">Log in</span></div>
+                    <div>Have already an account? <span (click)="signSlide()">Sign in</span></div>
                 </div>
             </div>
             <div class="login" *ngIf="!mobileView || (mobileView && sliderLeft=='0%')">
                 <div class="text">
                     <img src="../../../assets/login-img.png" alt="">
-                    <span>Login</span>
+                    <span>Sign in</span>
                 </div>
                 <br>
                 <div class="content">
@@ -79,10 +79,10 @@
                             </mat-error>
                         </mat-form-field>
                         <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Login</span>
+                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Sign in</span>
                         </button>
                     </form>
-                    <div>You don`t have an account? <span (click)="signSlide()">Register now</span></div>
+                    <div>You don`t have an account? <span (click)="signSlide()">Sign up now</span></div>
                 </div>
             </div>
         </div>

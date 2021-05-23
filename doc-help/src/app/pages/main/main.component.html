@@ -11,11 +11,11 @@
                     <button mat-menu-item>
                         <span class="primary-color font-bold">About us</span>
                     </button>
-                    <button mat-menu-item  (click)="onOpenSidenavAppointments()">
-                        <span class="primary-color font-bold">Make an appointment</span>
+                    <button mat-menu-item (click)="openCreateAppointmentDialog()">
+                        <span class="primary-color font-bold">Schedule a consultation</span>
                     </button>
                     <button mat-menu-item routerLink="/auth">
-                        <span class="primary-color font-bold">Login</span>
+                        <span class="primary-color font-bold">Sign in</span>
                     </button>
                 </mat-menu>
             </ng-template>
@@ -23,10 +23,10 @@
                 <nav class="top-nav-web-view">
                     <ul>
                         <li>About us</li>
-                        <li (click)="onOpenSidenavAppointments()">Make an appointment</li>
+                        <li (click)="openCreateAppointmentDialog()">Schedule a consultation</li>
                         <li routerLink="/auth">
                             <mat-icon>login</mat-icon>
-                            <span class="label">Login</span>
+                            <span class="label">Sign in</span>
                         </li>
                     </ul>
                 </nav>
@@ -54,9 +54,6 @@
                 <span>Patient</span>
             </div>
         </div> -->
-
-    </div>
-    <div id="create-appointment-sidenav">
 
     </div>
     <div class="doc-image noselect">

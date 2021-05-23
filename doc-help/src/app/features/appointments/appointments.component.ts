@@ -20,8 +20,9 @@ export class AppointmentsComponent implements OnInit {
 
   onUpdateScheduleDialog() {
     const dialogRef = this.dialog.open(UpdateScheduleDialogComponent, {
-      width: '400px',
-      data: {name: 'open office dialog' }
+      width: '600px',
+      data: {name: 'open office dialog' },
+      disableClose: true,
     });
   }
   

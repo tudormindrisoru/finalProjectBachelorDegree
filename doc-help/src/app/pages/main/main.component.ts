@@ -3,6 +3,8 @@ import {
   HostListener, 
   OnInit, 
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateAppointmentDialogComponent } from 'src/app/shared/components/create-appointment-dialog/create-appointment-dialog.component';
 
 @Component({
   selector: 'app-main',
@@ -40,13 +42,11 @@ export class MainComponent implements OnInit {
     }
   }
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
-
-  protected onOpenSidenavAppointments() {
-    document.getElementById("create-appointment-sidenav").style.width = "400px";
+  public openCreateAppointmentDialog(): void {
+    this.dialog.open(CreateAppointmentDialogComponent, { disableClose: true });
   }
-
 }

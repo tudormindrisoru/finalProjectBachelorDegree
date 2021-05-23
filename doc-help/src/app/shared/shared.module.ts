@@ -7,11 +7,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
 import { GooglePlaceModule } from "ngx-google-places-autocomplete";
 import { SecretKeys } from 'src/environments/secret-keys';
+import { CreateAppointmentDialogComponent } from './components/create-appointment-dialog/create-appointment-dialog.component';
+import { DoctorCardInfoComponent } from './components/doctor-card-info/doctor-card-info.component';
 
-
+let secretKeys = new SecretKeys();
 @NgModule({
   declarations: [
     LogoComponent,
+    CreateAppointmentDialogComponent,
+    DoctorCardInfoComponent,
   ],
   imports: [
     CommonModule,
@@ -19,8 +23,7 @@ import { SecretKeys } from 'src/environments/secret-keys';
     RouterModule,
     HttpClientModule,
     AgmCoreModule.forRoot({
-      apiKey: SecretKeys.prototype.googleMapsKey,
-      
+      apiKey: secretKeys.googleMapsKey,
     }),
     GooglePlaceModule
   ],
@@ -29,6 +32,7 @@ import { SecretKeys } from 'src/environments/secret-keys';
     CommonModule,
     AgmCoreModule,
     GooglePlaceModule
-  ]
+  ],
+  providers: [ SecretKeys ]
 })
 export class SharedModule { }
