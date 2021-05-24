@@ -6,128 +6,153 @@ import { DialogData } from 'src/app/features/profile/components/add-office-dialo
 @Component({
   selector: 'app-update-schedule-dialog',
   templateUrl: './update-schedule-dialog.component.html',
-  styleUrls: ['./update-schedule-dialog.component.scss']
+  styleUrls: ['./update-schedule-dialog.component.scss'],
 })
 export class UpdateScheduleDialogComponent implements OnInit {
-
-
   weekDaysList = [
     {
       weekDay: 0,
       dayName: 'Monday',
       intervals: [
         {
-          start: "08:00",
-          end: "09:00"
+          start: '08:00',
+          end: '09:00',
         },
         {
-          start: "13:00",
-          end: "17:00"
-        }
-      ]
+          start: '13:00',
+          end: '17:00',
+        },
+      ],
     },
     {
       weekDay: 1,
       dayName: 'Tuesday',
       intervals: [
         {
-          start: "08:00",
-          end: "12:00"
+          start: '08:00',
+          end: '12:00',
         },
         {
-          start: "13:00",
-          end: "17:00"
-        }
-      ]
+          start: '13:00',
+          end: '17:00',
+        },
+      ],
     },
     {
       weekDay: 2,
       dayName: 'Wednesday',
       intervals: [
         {
-          start: "08:00",
-          end: "12:00"
+          start: '08:00',
+          end: '12:00',
         },
         {
-          start: "13:00",
-          end: "17:00"
-        }
-      ]
+          start: '13:00',
+          end: '17:00',
+        },
+      ],
     },
     {
       weekDay: 3,
       dayName: 'Thursday',
       intervals: [
         {
-          start: "08:00",
-          end: "12:00"
+          start: '08:00',
+          end: '12:00',
         },
         {
-          start: "13:00",
-          end: "17:00"
-        }
-      ]
+          start: '13:00',
+          end: '17:00',
+        },
+      ],
     },
     {
       weekDay: 4,
       dayName: 'Friday',
       intervals: [
         {
-          start: "08:00",
-          end: "12:00"
+          start: '08:00',
+          end: '12:00',
         },
         {
-          start: "13:00",
-          end: "17:00"
-        }
-      ]
+          start: '13:00',
+          end: '17:00',
+        },
+      ],
     },
     {
       weekDay: 5,
       dayName: 'Saturday',
-      intervals: []
+      intervals: [],
     },
     {
       weekDay: 6,
       dayName: 'Sunday',
-      intervals: []
+      intervals: [],
     },
-  ]
+  ];
+
+  vacationList = [
+    {
+      startDate: '05/24/2021',
+      endDate: '06/30/2021',
+    },
+  ];
 
   scheduleFormGroup: FormGroup;
+  vacationFormGroup: FormGroup;
   forwardArrow: boolean = window.innerWidth > 550 ? true : false;
   constructor(
     public dialogRef: MatDialogRef<UpdateScheduleDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    private fb: FormBuilder
-  ) { }
+    private fb: FormBuilder,
+  ) {}
 
   ngOnInit(): void {
     this.initScheduleFormGroup();
+    this.initVacationFormGroup();
   }
 
-  
   initScheduleFormGroup(): void {
     this.scheduleFormGroup = this.fb.group({
-      days: this.fb.array([])
-    })
-    let days: FormArray = this.scheduleFormGroup.get('days') as FormArray;
-    this.weekDaysList.forEach(element => {
-      let intervalsArray: FormArray = this.fb.array([]);
-      element.intervals.forEach(interval => {
-        intervalsArray.push(this.fb.group({
-          start: this.fb.control(interval.start),
-          end: this.fb.control(interval.end)
-        }))
-      });
-      days.push(this.fb.group({
-        weekDay: this.fb.control(element.weekDay),
-        dayName: this.fb.control(element.dayName),
-        intervals: intervalsArray
-      }))
+      days: this.fb.array([]),
     });
-    
-    console.log(this.scheduleFormGroup.value);
+    let days: FormArray = this.scheduleFormGroup.get('days') as FormArray;
+    this.weekDaysList.forEach((element) => {
+      let intervalsArray: FormArray = this.fb.array([]);
+      element.intervals.forEach((interval) => {
+        intervalsArray.push(
+          this.fb.group({
+            start: this.fb.control(interval.start),
+            end: this.fb.control(interval.end),
+          })
+        );
+      });
+      days.push(
+        this.fb.group({
+          weekDay: this.fb.control(element.weekDay),
+          dayName: this.fb.control(element.dayName),
+          intervals: intervalsArray,
+        })
+      );
+    });
+
+    // console.log(this.scheduleFormGroup.value);
+  }
+
+  initVacationFormGroup(): void {
+   
+    const intervalArray = this.fb.array([]);
+    this.vacationList.forEach((interval) => {
+      intervalArray.push(this.fb.group({
+        startDate: this.fb.control(new Date(interval.startDate)),
+        endDate: this.fb.control(new Date(interval.endDate))
+      }));
+    });
+    this.vacationFormGroup = this.fb.group({
+      intervals: intervalArray
+    });
+    console.log(this.vacationFormGroup.value);
   }
 
   getHoursPerDay(dayNumber: number): number {
@@ -152,21 +177,45 @@ export class UpdateScheduleDialogComponent implements OnInit {
   }
 
   onAddInterval(dayIndex: number): void {
-    let dayList: FormArray = this.scheduleFormGroup.get('days') as FormArray;
-    let intervals: FormArray = dayList.at(dayIndex).get('intervals') as FormArray;
-    intervals.push(this.fb.group({
-      start: this.fb.control(''),
-      end: this.fb.control('')
-    }));
+    const dayList: FormArray = this.scheduleFormGroup.get('days') as FormArray;
+    const intervals: FormArray = dayList
+      .at(dayIndex)
+      .get('intervals') as FormArray;
+    intervals.push(
+      this.fb.group({
+        start: this.fb.control(''),
+        end: this.fb.control(''),
+      })
+    );
   }
 
-  onRemoveIntarval(dayIndex: number, intervalIndex: number): void {
-    let dayList: FormArray = this.scheduleFormGroup.get('days') as FormArray;
-    let intervals: FormArray = dayList.at(dayIndex).get('intervals') as FormArray;
+  onRemoveInterval(dayIndex: number, intervalIndex: number): void {
+    const dayList: FormArray = this.scheduleFormGroup.get('days') as FormArray;
+    const intervals: FormArray = dayList
+      .at(dayIndex)
+      .get('intervals') as FormArray;
     intervals.removeAt(intervalIndex);
   }
 
-  onSaveIntervals(dayIndex): void {
-    console.log('saving intervals',dayIndex);
+  onSaveIntervals(dayIndex: number): void {
+    console.log('saving intervals', dayIndex);
+  }
+
+  onRemoveVacation(vacationIndex: number): void {
+    const intervals: FormArray = this.vacationFormGroup.get('intervals') as FormArray;
+    intervals.removeAt(vacationIndex);
+  }
+
+  onAddVacation(): void {
+    const intervals: FormArray = this.vacationFormGroup.get('intervals') as FormArray;
+    intervals.push(this.fb.group({
+      startDate: this.fb.control(''),
+      endDate: this.fb.control('')
+    }))
+  }
+
+  onSaveVacations(): void {
+    const intervals: FormArray = this.vacationFormGroup.get('intervals') as FormArray;
+    console.log(intervals.value);
   }
 }

@@ -37,7 +37,7 @@ export class CalendarViewComponent implements OnInit {
       { title: 'event 1', date: '2021-05-10' },
       { title: 'event 2', date: '2021-05-11' }
     ],
-    height: 600,
+    height: 525,
     editable: true,
     // allDaySlot: false,
     eventOverlap: false,
