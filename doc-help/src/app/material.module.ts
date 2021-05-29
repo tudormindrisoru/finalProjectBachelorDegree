@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
@@ -18,6 +19,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 const materialModules = [
   MatSliderModule,
@@ -37,19 +40,17 @@ const materialModules = [
   MatBadgeModule,
   MatDialogModule,
   MatStepperModule,
-  MatTabsModule
-]
+  MatTabsModule,
+  MatTableModule,
+  MatPaginatorModule,
+];
 
 @NgModule({
-  declarations: [
-    
-  ],
-  imports: [
-    CommonModule,
-    ...materialModules,
-  ],
-  exports: [
-    ...materialModules,
+  declarations: [],
+  imports: [CommonModule, ...materialModules],
+  exports: [...materialModules],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }
   ]
 })
-export class MaterialModule { }
+export class MaterialModule {}

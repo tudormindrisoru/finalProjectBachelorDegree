@@ -78,32 +78,60 @@
     </mat-tab>
     <mat-tab label="Vacation">
       <div class="vacation-container">
-          <form [formGroup]="vacationFormGroup">
-            <div class="vacation-interval" formArrayName="intervals">
-              <div class="interval-container" *ngFor="let interval of vacationFormGroup.get('intervals')['controls']; let k = index" >
-                <mat-card>
-                  <mat-form-field [formGroupName]="k">
-                    <mat-label>Enter a date range</mat-label>
-                    <mat-date-range-input [rangePicker]="rangePicker" >
-                      <input matStartDate placeholder="Start date" formControlName="startDate">
-                      <input matEndDate placeholder="End date" formControlName="endDate">
-                    </mat-date-range-input>
-                    <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
-                    <mat-date-range-picker #rangePicker>
-                      <mat-date-range-picker-actions>
-                        <button mat-button matDateRangePickerCancel>Cancel</button>
-                        <button mat-raised-button color="primary" matDateRangePickerApply>Apply</button>
-                      </mat-date-range-picker-actions>
-                    </mat-date-range-picker>
-                  </mat-form-field>
-                  <div class="remove-vacation-button noselect" (click)="onRemoveVacation(k)">
-                      <mat-icon>delete</mat-icon>
-                  </div>
-                </mat-card>
-              </div>
+        <form [formGroup]="vacationFormGroup">
+          <div class="vacation-interval" formArrayName="intervals">
+            <div
+              class="interval-container"
+              *ngFor="
+                let interval of vacationFormGroup.get('intervals')['controls'];
+                let k = index
+              "
+            >
+              <mat-card>
+                <mat-form-field [formGroupName]="k">
+                  <mat-label>Enter a date range</mat-label>
+                  <mat-date-range-input [rangePicker]="rangePicker">
+                    <input
+                      matStartDate
+                      placeholder="Start date"
+                      formControlName="startDate"
+                    />
+                    <input
+                      matEndDate
+                      placeholder="End date"
+                      formControlName="endDate"
+                    />
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="rangePicker"
+                  ></mat-datepicker-toggle>
+                  <mat-date-range-picker #rangePicker>
+                    <mat-date-range-picker-actions>
+                      <button mat-button matDateRangePickerCancel>
+                        Cancel
+                      </button>
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        matDateRangePickerApply
+                      >
+                        Apply
+                      </button>
+                    </mat-date-range-picker-actions>
+                  </mat-date-range-picker>
+                </mat-form-field>
+                <div
+                  class="remove-vacation-button noselect"
+                  (click)="onRemoveVacation(k)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </div>
+              </mat-card>
             </div>
-            <div class="vacation-action-buttons noselect">
-              <button
+          </div>
+          <div class="vacation-action-buttons noselect">
+            <button
               class="save-changes-button"
               mat-raised-button
               color="primary"
@@ -121,8 +149,8 @@
               <span>Add vacation</span>
               <mat-icon matSuffix>add</mat-icon>
             </button>
-            </div>
-          </form>
+          </div>
+        </form>
       </div>
     </mat-tab>
   </mat-tab-group>

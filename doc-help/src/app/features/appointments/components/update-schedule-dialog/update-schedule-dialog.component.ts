@@ -1,7 +1,6 @@
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DialogData } from 'src/app/features/profile/components/add-office-dialog/add-office-dialog.component';
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-update-schedule-dialog',
@@ -104,7 +103,6 @@ export class UpdateScheduleDialogComponent implements OnInit {
   forwardArrow: boolean = window.innerWidth > 550 ? true : false;
   constructor(
     public dialogRef: MatDialogRef<UpdateScheduleDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private fb: FormBuilder,
   ) {}
 

@@ -1,0 +1,52 @@
+.patients-page {
+    padding:25px;
+
+    .filters-container {
+        width: 100%;
+        min-height: 50px;
+        padding-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        mat-form-field { 
+            width: 250px;
+        }
+        .date-filter { 
+            margin-left: 10px;
+        }
+        
+    }
+    .table-container {
+        .history-table {
+            width: 100%;
+
+            .mat-row .mat-cell {
+            cursor: pointer;
+            }
+            
+            .mat-row:hover .mat-cell {
+            border-color: #64b3f4ad;
+
+            }
+        }
+    }
+}
+
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+@media screen and (max-width: 600px) {
+    .filters-container {
+        flex-direction: column;
+        justify-content: center;
+        mat-form-field {
+            margin: 0 auto !important;
+        }
+        
+    }
+}

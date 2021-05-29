@@ -25,6 +25,4 @@ export class AppointmentsComponent implements OnInit {
       disableClose: true,
     });
   }
-  
-
 }

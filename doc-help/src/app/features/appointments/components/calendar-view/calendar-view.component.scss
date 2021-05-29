@@ -1,12 +1,12 @@
-.calendar-container { 
-    width: auto;
+.calendar-container {
+  width: auto;
 
-    .fullcalendar {
-        width: auto;
-    }
+  .fullcalendar {
+    width: auto;
+  }
 }
 :host::ng-deep {
-    .fc-day-today {
-        background-color: #c2e59c46 !important;
-    }
+  .fc-day-today {
+    background-color: #c2e59c46 !important;
+  }
 }

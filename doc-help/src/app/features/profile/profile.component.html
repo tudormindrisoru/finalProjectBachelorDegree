@@ -143,10 +143,10 @@
                     <h3>Doctors</h3>
                     <div class="doctors-list noselect" formArrayName="doctors">
                       <div *ngFor="let doctor of officeDataFormGroup.get('doctors').controls; let i = index" class="doctor-wrapper">
-                        <div [formGroupName]="i" #doctor class="doctor-container">
-                          <img src={{doctor.value.photo}} alt="" [ngClass]="doctor.value.isOfficeOwner ? 'office-owner' : ''" >
+                        <div [formGroupName]="i"  class="doctor-container" (click)="onOpenDoctorDetailDialog(i)">
+                          <img src={{doctor.value.photo}} [ngClass]="doctor.value.isOfficeOwner ? 'office-owner' : ''" >
                           <div class="doctors-second-layer">
-                            <span>{{ isYou(doctor.value) ? 'YOU' : 'OPEN' }}</span>
+                            <span>{{ isYou(i) ? 'YOU' : 'OPEN' }}</span>
                           </div>
                           <div class="office-owner-shield" *ngIf="doctor.value.isOfficeOwner">
                             <mat-icon color="primary">health_and_safety</mat-icon>
@@ -154,7 +154,7 @@
                         </div>
                       </div>
                       <div class="doctor-wrapper" *ngIf="office.you.isOfficeOwner">
-                        <div class="doctor-container">
+                        <div class="doctor-container" (click)="onOpenDoctorDetailDialog()">
                           <div class="add-doctor">
                             <mat-icon color="primary">add</mat-icon>
                           </div>

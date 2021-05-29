@@ -5,7 +5,7 @@ import { MaterialModule } from '../material.module';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
-import { GooglePlaceModule } from "ngx-google-places-autocomplete";
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { SecretKeys } from 'src/environments/secret-keys';
 import { CreateAppointmentDialogComponent } from './components/create-appointment-dialog/create-appointment-dialog.component';
 import { DoctorCardInfoComponent } from './components/doctor-card-info/doctor-card-info.component';
@@ -25,14 +25,9 @@ let secretKeys = new SecretKeys();
     AgmCoreModule.forRoot({
       apiKey: secretKeys.googleMapsKey,
     }),
-    GooglePlaceModule
+    GooglePlaceModule,
   ],
-  exports: [
-    LogoComponent,
-    CommonModule,
-    AgmCoreModule,
-    GooglePlaceModule
-  ],
-  providers: [ SecretKeys ]
+  exports: [LogoComponent, CommonModule, AgmCoreModule, GooglePlaceModule],
+  providers: [SecretKeys],
 })
-export class SharedModule { }
+export class SharedModule {}

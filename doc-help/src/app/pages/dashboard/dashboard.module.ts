@@ -1,3 +1,4 @@
+import { PatientsService } from './../../features/patients/patients.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -13,34 +14,41 @@ import { SidenavItemListComponent } from 'src/app/shared/components/sidenav-item
 import { AddOfficeDialogComponent } from 'src/app/features/profile/components/add-office-dialog/add-office-dialog.component';
 import { JoinOfficeDialogComponent } from 'src/app/features/profile/components/join-office-dialog/join-office-dialog.component';
 import { CalendarViewComponent } from 'src/app/features/appointments/components/calendar-view/calendar-view.component';
-import { AppointmentDetailDialogComponent } from 'src/app/features/appointments/components/appointment-detail-dialog/appointment-detail-dialog.component';
 import { UpdateScheduleDialogComponent } from 'src/app/features/appointments/components/update-schedule-dialog/update-schedule-dialog.component';
+import { DoctorDetailDialogComponent } from '../../features/profile/components/doctor-detail-dialog/doctor-detail-dialog.component';
 
 import { FullCalendarModule } from '@fullcalendar/angular'; // the main connector. must go first
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
 import interactionPlugin from '@fullcalendar/interaction'; // a plugin
 import timeGridPlugin from '@fullcalendar/timegrid'; // a plugin
 import bootstrapPlugin from '@fullcalendar/bootstrap'; // a plugin
+import { AppointmentsService } from 'src/app/features/appointments/appointments.service';
+import { ProfileService } from 'src/app/features/profile/profile.service';
+import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointments/components/calendar-event-details-dialog/calendar-event-details-dialog.component';
 
-FullCalendarModule.registerPlugins([ // register FullCalendar plugins
+FullCalendarModule.registerPlugins([
+  // register FullCalendar plugins
   dayGridPlugin,
   interactionPlugin,
   timeGridPlugin,
-  bootstrapPlugin 
+  bootstrapPlugin,
 ]);
 
 @NgModule({
-  declarations: [ 
+  declarations: [
     DashboardComponent,
     AppointmentsComponent,
     ProfileComponent,
     PatientsComponent,
     SidenavItemListComponent,
+    CalendarViewComponent,
+
+    //DIALOGS
     AddOfficeDialogComponent,
     JoinOfficeDialogComponent,
-    CalendarViewComponent,
-    AppointmentDetailDialogComponent,
-    UpdateScheduleDialogComponent
+    UpdateScheduleDialogComponent,
+    DoctorDetailDialogComponent,
+    CalendarEventDetailsDialogComponent
   ],
   imports: [
     DashboardRoutingModule,
@@ -49,5 +57,10 @@ FullCalendarModule.registerPlugins([ // register FullCalendar plugins
     ReactiveFormsModule,
     FullCalendarModule,
   ],
+  providers: [
+    PatientsService,
+    AppointmentsService,
+    ProfileService
+  ]
 })
-export class DashboardModule { }
+export class DashboardModule {}

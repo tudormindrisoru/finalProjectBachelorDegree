@@ -1,23 +1,29 @@
 <div class="page">
-    <div class="wrapper">
-        <mat-drawer-container class="drawer-container" [hasBackdrop]="false" >
-            <mat-drawer #drawer mode="over" class="drawer">           
-                <app-logo class="outer-logo noselect"></app-logo>
-                <div class="sidenav-wrapper" (click)="drawer.toggle()">
-                    <app-sidenav-item-list [useLabels]="true" [openAction]="false"></app-sidenav-item-list>
-                </div>
-            </mat-drawer>
-            <mat-drawer-content class="content">
-                <div class="always-visible-sidenav">
-                    <div class="sidenav-wrapper">
-                        <app-sidenav-item-list [useLabels]="false" [openAction]="true" (toggleEvent)="onToggleClick()"></app-sidenav-item-list>
-                    </div>
-                </div>
-                <div class="feature-container">
-                    <router-outlet></router-outlet>
-                </div>
-            </mat-drawer-content>
-        </mat-drawer-container>
-
-    </div>
+  <div class="wrapper">
+    <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
+      <mat-drawer #drawer mode="over" class="drawer">
+        <app-logo class="outer-logo noselect"></app-logo>
+        <div class="sidenav-wrapper" (click)="drawer.toggle()">
+          <app-sidenav-item-list
+            [useLabels]="true"
+            [openAction]="false"
+          ></app-sidenav-item-list>
+        </div>
+      </mat-drawer>
+      <mat-drawer-content class="content">
+        <div class="always-visible-sidenav">
+          <div class="sidenav-wrapper">
+            <app-sidenav-item-list
+              [useLabels]="false"
+              [openAction]="true"
+              (toggleEvent)="onToggleClick()"
+            ></app-sidenav-item-list>
+          </div>
+        </div>
+        <div class="feature-container">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-drawer-content>
+    </mat-drawer-container>
+  </div>
 </div>

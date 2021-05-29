@@ -16,6 +16,10 @@ export class CreateAppointmentDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  get currentDate(): Date { 
+    return new Date();
+  }
+
   onNextStep(): void {
     if(this.step < 4) {
       this.step++;
@@ -27,5 +31,6 @@ export class CreateAppointmentDialogComponent implements OnInit {
       this.step--;
     }
   }
+
 
 }

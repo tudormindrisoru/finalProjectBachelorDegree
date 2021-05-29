@@ -60,4 +60,8 @@ export class AddOfficeDialogComponent implements OnInit {
       this.lng = this.markerLng;
       console.log(address);
   }
+
+  onSaveOffice() {
+    console.log('TO BE CONTINUE');
+  }
 }

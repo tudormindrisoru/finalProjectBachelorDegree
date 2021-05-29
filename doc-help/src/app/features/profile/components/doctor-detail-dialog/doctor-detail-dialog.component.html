@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>{{dialogData ? (dialogData.doctorInfo.name + "'s informations") : "Generate invite code"}}</h1>
+<div mat-dialog-content>
+  <ng-template [ngIf]="dialogData" [ngIfElse]="generateInviteCode">
+    <div class="doctor-container">
+      <div class="image-container">
+        <img [src]="dialogData.doctorInfo.photo">
+      </div>
+      <div class="info-container">
+        <ul>
+          <li>Age: <span> {{doctorAge ? (doctorAge + ' years') : ''}}</span></li>
+          <li>Specialty: <span>{{ dialogData && dialogData.doctorInfo && dialogData.doctorInfo.specialty }}</span></li>
+          <li>Phone number: <span>{{ dialogData && dialogData.doctorInfo && dialogData.doctorInfo.phone }}</span></li>
+        </ul>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #generateInviteCode>
+    <div class="code-container">
+      <span>dasdsadasd123</span>
+    </div>
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()" class="close-dialog-button">Close</button>
+  <button mat-raised-button color="primary" class="remove-doctor" *ngIf="dialogData && dialogData.canModify">
+    <span>Remove from office</span> 
+    <mat-icon matSuffix>delete</mat-icon>
+  </button>
+</div>
