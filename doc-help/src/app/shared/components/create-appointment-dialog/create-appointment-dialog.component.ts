@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-appointment-dialog',
@@ -11,7 +12,10 @@ export class CreateAppointmentDialogComponent implements OnInit {
   cities: string[] = ['Bacau','Iasi','Bucuresti'];
   availableHours: string[] = ['8:00','8:30','9:00','9:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30'];
   step: number = 1; 
-  constructor() { }
+  _consentChecked: boolean = false;
+  constructor(
+    public dialogRef: MatDialogRef<CreateAppointmentDialogComponent>,
+  ) { }
 
   ngOnInit(): void {
   }
@@ -20,8 +24,16 @@ export class CreateAppointmentDialogComponent implements OnInit {
     return new Date();
   }
 
+  get consentChecked(): boolean {
+    return this._consentChecked;
+  }
+
+  consentCheckboxToggle(event: any) {
+    this._consentChecked = event.checked;
+  }
+
   onNextStep(): void {
-    if(this.step < 4) {
+    if(this.step < 5) {
       this.step++;
     }
   }
@@ -32,5 +44,7 @@ export class CreateAppointmentDialogComponent implements OnInit {
     }
   }
 
-
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }

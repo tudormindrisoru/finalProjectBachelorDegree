@@ -9,6 +9,7 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { SecretKeys } from 'src/environments/secret-keys';
 import { CreateAppointmentDialogComponent } from './components/create-appointment-dialog/create-appointment-dialog.component';
 import { DoctorCardInfoComponent } from './components/doctor-card-info/doctor-card-info.component';
+import { GdprRegisterConsentDialogComponent } from './components/gdpr-register-consent-dialog/gdpr-register-consent-dialog.component';
 
 let secretKeys = new SecretKeys();
 @NgModule({
@@ -16,6 +17,7 @@ let secretKeys = new SecretKeys();
     LogoComponent,
     CreateAppointmentDialogComponent,
     DoctorCardInfoComponent,
+    GdprRegisterConsentDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -53,8 +53,8 @@ export class CalendarViewComponent implements OnInit {
     dateClick: this.handleDateClick.bind(this), // bind is important!
     eventClick: this.handleEventClick.bind(this),
     events: [
-      { title: 'Mindrisoru Tudor-Gabriel', date: '2021-05-28T14:30' },
-      { title: 'event 2', date: '2021-05-29T13:30' }
+      { title: 'Mindrisoru Tudor-Gabriel', start: '2021-05-28T10:30', end: '2021-05-28T12:00' },
+      { title: 'Another patient', start: '2021-05-29T11:00', end: '2021-05-29T12:00' }
     ],
     height: 525,
     editable: false,
@@ -63,7 +63,8 @@ export class CalendarViewComponent implements OnInit {
     },
     allDaySlot: false,
     eventOverlap: false,
-    defaultTimedEventDuration: '00:30'
+    defaultTimedEventDuration: '00:30',
+    nowIndicator: true,
   };
 
   handleDateClick(arg) {

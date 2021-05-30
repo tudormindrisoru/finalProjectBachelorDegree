@@ -1,0 +1,35 @@
+<h1 mat-dialog-title class="dialog-title">GDPR policy consent</h1>
+<div mat-dialog-content>
+  <div class="terms-text">
+    Here at Dr.Help we take your privacy seriously and will only use your
+    personal information to administer your account and to provide the products
+    and services you have requested from us.
+  </div>
+  <div class="terms-text">
+    However, we would like to contact you with details about your schedules and
+    patients via SMS or emails. If you consent to us contacting you for this
+    purpose please tick the checkbox below.
+  </div>
+  <div class="terms-text">
+    <span>
+        <mat-checkbox color="primary" (change)="consentCheckboxToggle($event)">
+            I agree with these terms and conditions.</mat-checkbox>
+    </span
+    >
+  </div>
+</div>
+<div mat-dialog-actions class="dialog-actions">
+  <button mat-button [mat-dialog-close]="false" color="primary" (click)="onNoClick()">
+    Close
+  </button>
+  <button
+    mat-raised-button
+    [mat-dialog-close]="true"
+    color="primary"
+    style="color: white"
+    (click)="onConsentSubmit()"
+    [disabled]="!consentChecked"
+  >
+    Done
+  </button>
+</div>

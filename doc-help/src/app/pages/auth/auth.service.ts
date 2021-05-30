@@ -21,6 +21,10 @@ export class AuthService {
     }
   }
 
+  public onRegister(data: any): void {
+    console.log(data);
+  }
+
   get isLoggedIn(): boolean {
     return this.loggedIn; 
   }

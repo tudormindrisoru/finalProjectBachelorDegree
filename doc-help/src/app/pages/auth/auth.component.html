@@ -21,35 +21,37 @@
                     <span>Sign up</span>
                 </div>
                 <div class="content">
-                    <form class="auth-form"  [formGroup]="registerForm" (ngSubmit)="onLoginSubmit()">
+                    <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onGDPRConsentDialog()">
                         <mat-form-field appearance="legacy" class="email-input">
-                            <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control">
+                            <input matInput placeholder="E-mail" formControlName="email" type="email" class="form-control" required>
                             <mat-icon matSuffix color="primary">email</mat-icon>
-                            <mat-error *ngIf="registerForm.controls['email'].errors?.required && registerForm.controls['email'].touched">
+                            <mat-error *ngIf="registerForm.hasError('required', 'password') && registerForm.controls.password">
                                 Please enter a valid email address
                             </mat-error>
                         </mat-form-field>
   
                         <mat-form-field appearance="legacy" class="password-input">
-                            <input matInput placeholder="Password" formControlName="password" type="password" class="form-control">
+                            <input matInput placeholder="Password" formControlName="password" type="password" class="form-control" required>
                             <mat-icon matSuffix color="primary">lock</mat-icon>
-                            <mat-error *ngIf="registerForm.controls['password'].errors?.required">
+                            <mat-error *ngIf="registerForm.hasError('required', 'password'); else lengthError">
                                 Password is required
                             </mat-error>
+                            <ng-template #lengthError>
+                                <mat-error>Minimum 6 characters required.</mat-error>
+                            </ng-template>
                         </mat-form-field>
                         <mat-form-field appearance="legacy" class="password-input">
-                            <input matInput placeholder="Rewrite password above" formControlName="secondPassword" type="password" class="form-control">
+                            <input matInput placeholder="Confirm password" formControlName="confirmPassword" type="password" class="form-control"  [errorStateMatcher]="matcher" required>
                             <mat-icon matSuffix color="primary">security</mat-icon>
-                            <mat-error *ngIf="registerForm.controls['password'] != registerForm.controls['secondPassword']; else passwordRequired">
-                                Password should be the same as above.
-                            </mat-error>
-                            <ng-template #passwordRequired>
-                                <mat-error *ngIf="registerForm.controls['password'].errors?.required">Password is required.</mat-error>
+                            <mat-error *ngIf="registerForm.hasError('required', 'confirmPassword') && regF.confirmPassword.touched; else mismatchError">Password confirmation is required.</mat-error>
+                            <ng-template #mismatchError>
+                                <mat-error *ngIf="registerForm.hasError('notSame') && regF.confirmPassword.touched">
+                                    Password should be the same as above.
+                                </mat-error>
                             </ng-template>
-                            <mat-error ></mat-error>
                         </mat-form-field>
-                        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-                            <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Sign up</span>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="registerForm.invalid">
+                            <span [ngClass]="registerForm.invalid == true ? 'disabled-login' : 'enabled-login'">Sign up</span>
                         </button>
                     </form>
                     <div>Have already an account? <span (click)="signSlide()">Sign in</span></div>
@@ -74,9 +76,12 @@
                         <mat-form-field appearance="legacy" class="password-input">
                             <input matInput placeholder="Password" formControlName="password" type="password" class="form-control">
                             <mat-icon matSuffix color="primary">lock</mat-icon>
-                            <mat-error *ngIf="loginForm.controls['password'].errors?.required">
+                            <mat-error *ngIf="loginForm.hasError('required', 'password'); else lengthError">
                                 Password is required
                             </mat-error>
+                            <ng-template #lengthError>
+                                <mat-error>Minimum 6 characters required.</mat-error>
+                            </ng-template>
                         </mat-form-field>
                         <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
                             <span [ngClass]="loginForm.invalid == true ? 'disabled-login' : 'enabled-login'">Sign in</span>
