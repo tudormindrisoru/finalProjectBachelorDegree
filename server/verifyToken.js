@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const jwt_decode = require('jwt-decode');
 
-module.export = function (req,res,next) {
+function verifyToken(req,res,next) {
     const token = req.header('auth-token');
     if(!token) {
         return res.status(401).send("Acces denied!");
@@ -15,4 +16,8 @@ module.export = function (req,res,next) {
     }
 }
 
+function decryptID(token) {
+    return jwt_decode(token);
+}
 
+module.exports = { verifyToken, decryptID }

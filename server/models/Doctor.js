@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const doctorSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: false,
     },
     lastName: {
+        type: String,
+        required: false,
+    },
+    photo: {
         type: String,
         required: false
     },
@@ -34,7 +38,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: false
     },
-    speicalty: {
+    specialty: {
         type: String,
         required: false
     },
@@ -42,6 +46,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-});
+}, { versionKey: false });
 
-module.exports = mongoose.model('Doctor', userSchema); 
+
+module.exports = mongoose.model('Doctor', doctorSchema); 
