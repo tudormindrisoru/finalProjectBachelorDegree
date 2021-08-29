@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const vacationIntervalSchema = new mongoose.Schema({
-    scheduleID: {
+    doctorID: {
         type: String,
         required: true
     },

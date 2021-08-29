@@ -59,7 +59,6 @@ const workingHoursIntervalValidation = (request) => {
 
 const vacationIntervalValidation = (request) => {
     const schema = Joi.object({
-        affiliationID: Joi.string().required(),
         startDate: Joi.string().required(),
         endDate: Joi.string().required()
     });
