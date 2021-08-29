@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthComponent } from './pages/auth/auth.component';
-import { AuthGuard } from './pages/auth/auth.guard';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { MainComponent } from './pages/main/main.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';

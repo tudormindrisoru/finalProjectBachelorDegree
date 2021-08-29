@@ -12,9 +12,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { MainComponent } from './pages/main/main.component';
 import { MaterialModule } from './material.module';
-import { AuthGuard } from './pages/auth/auth.guard';
 import { SharedModule } from './shared/shared.module';
-import { SecretKeys } from 'src/environments/secret-keys';
+import { AuthGuard } from './shared/services/guard/auth.guard';
 
 
 @NgModule({
@@ -33,7 +32,7 @@ import { SecretKeys } from 'src/environments/secret-keys';
     MaterialModule,
     SharedModule,
   ],
-  providers: [ AuthGuard, SecretKeys ],
+  providers: [ AuthGuard ],
   bootstrap: [ AppComponent ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

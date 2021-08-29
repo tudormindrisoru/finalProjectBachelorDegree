@@ -1,5 +1,5 @@
+import { environment } from './../environments/environment.prod';
 import { AfterViewInit, Component } from '@angular/core';
-import { SecretKeys } from 'src/environments/secret-keys';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +8,13 @@ import { SecretKeys } from 'src/environments/secret-keys';
 })
 export class AppComponent implements AfterViewInit {
   title = 'doc-help';
-  constructor(private secretKeys: SecretKeys) {
+  constructor() {
     
   }
 
   ngAfterViewInit(): void {
     const googleMapsScript = document.createElement('script');
-    googleMapsScript.src = "https://maps.googleapis.com/maps/api/js?key=" + this.secretKeys.googleMapsKey + "&libraries=places&language=en"; // replace by your API key
+    googleMapsScript.src = "https://maps.googleapis.com/maps/api/js?key=" + environment.googleMapKey + "&libraries=places&language=en"; // replace by your API key
     googleMapsScript.type = 'text/javascript';
     document.body.appendChild(googleMapsScript);
   }

@@ -23,8 +23,8 @@ import interactionPlugin from '@fullcalendar/interaction'; // a plugin
 import timeGridPlugin from '@fullcalendar/timegrid'; // a plugin
 import bootstrapPlugin from '@fullcalendar/bootstrap'; // a plugin
 import { AppointmentsService } from 'src/app/features/appointments/appointments.service';
-import { ProfileService } from 'src/app/features/profile/profile.service';
 import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointments/components/calendar-event-details-dialog/calendar-event-details-dialog.component';
+import { ProfileService } from 'src/app/shared/services/profile/profile.service';
 
 FullCalendarModule.registerPlugins([
   // register FullCalendar plugins

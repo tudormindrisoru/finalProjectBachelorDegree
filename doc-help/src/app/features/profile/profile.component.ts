@@ -4,11 +4,11 @@ import { AddOfficeDialogComponent } from './components/add-office-dialog/add-off
 import { JoinOfficeDialogComponent } from './components/join-office-dialog/join-office-dialog.component';
 
 import { MatDialog } from '@angular/material/dialog';
-import { ProfileService } from './profile.service';
 import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
 import { IOffice } from 'src/app/shared/shared.model';
 import { DoctorDetailDialogComponent } from './components/doctor-detail-dialog/doctor-detail-dialog.component';
+import { ProfileService } from 'src/app/shared/services/profile/profile.service';
 
 @Component({
   selector: 'app-profile',
