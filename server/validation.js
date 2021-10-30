@@ -1,12 +1,27 @@
 const Joi = require("@hapi/joi");
 
-const authValidation = (request) => {
+const passwordAuthValidation = (request) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
   });
   return schema.validate(request);
 };
+
+const phoneAuthStep1Validation = (request) => {
+  const schema = Joi.object({
+    phone: Joi.string().required(),
+  });
+  return schema.validate(request);
+}
+
+const phoneAuthStep2Validation = (request) => {
+  const schema = Joi.object({
+    code: Joi.string().required().length(6),
+    phone: Joi.string().required()
+  });
+  return schema.validate(request);
+}
 
 const doctorDetailValidation = (request) => {
   const schema = Joi.object({
@@ -66,11 +81,7 @@ const vacationIntervalValidation = (request) => {
 }
 
 module.exports = {
-  authValidation,
-  doctorDetailValidation,
-  officeValidation,
-  doctorSearchValidation,
-  scheduleSearchValidation,
-  workingHoursIntervalValidation,
-  vacationIntervalValidation
+  passwordAuthValidation,
+  phoneAuthStep1Validation,
+  phoneAuthStep2Validation
 };
