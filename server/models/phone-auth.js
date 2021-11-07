@@ -46,7 +46,7 @@ class PhoneAuth {
                     return new Response(201, {
                         "userId": this._userId,
                         "phone": this._phone
-                    });
+                    }).getResponse();
                 }
                 renewExpirationDate();
             }

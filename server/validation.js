@@ -1,6 +1,6 @@
 const Joi = require("@hapi/joi");
 
-const passwordAuthValidation = (request) => {
+const passwordLogInValidation = (request) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
@@ -8,14 +8,33 @@ const passwordAuthValidation = (request) => {
   return schema.validate(request);
 };
 
-const phoneAuthStep1Validation = (request) => {
+const phoneLogInStep1Validation = (request) => {
   const schema = Joi.object({
     phone: Joi.string().required(),
   });
   return schema.validate(request);
 }
 
-const phoneAuthStep2Validation = (request) => {
+const phoneLogInStep2Validation = (request) => {
+  const schema = Joi.object({
+    code: Joi.string().required().length(6),
+    phone: Joi.string().required()
+  });
+  return schema.validate(request);
+}
+
+const registerStep1Validation = (request) => {
+  const schema = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    phone: Joi.string().required().length(10)
+  });
+  return schema.validate(request);
+}
+
+const registerStep2Validation = (request) => {
   const schema = Joi.object({
     code: Joi.string().required().length(6),
     phone: Joi.string().required()
@@ -81,7 +100,9 @@ const vacationIntervalValidation = (request) => {
 }
 
 module.exports = {
-  passwordAuthValidation,
-  phoneAuthStep1Validation,
-  phoneAuthStep2Validation
+  passwordLogInValidation,
+  phoneLogInStep1Validation,
+  phoneLogInStep2Validation,
+  registerStep1Validation,
+  registerStep2Validation
 };
