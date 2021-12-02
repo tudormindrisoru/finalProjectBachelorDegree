@@ -1,13 +1,9 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
-<<<<<<< Updated upstream
 import { MatDialog } from '@angular/material/dialog';
 import { GdprRegisterConsentDialogComponent } from 'src/app/shared/components/gdpr-register-consent-dialog/gdpr-register-consent-dialog.component';
 import { AuthService } from './auth.service';
-=======
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
->>>>>>> Stashed changes
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {

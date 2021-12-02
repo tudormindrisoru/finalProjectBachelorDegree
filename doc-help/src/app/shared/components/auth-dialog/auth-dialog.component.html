@@ -1,0 +1,71 @@
+<h1 mat-dialog-title class="dialog-title">{{ title }}</h1>
+<div mat-dialog-content style="overflow:unset;">
+  <div id="forms-container">
+    <ng-container *ngIf="title == 'Sign in'; else signUp">
+      <mat-radio-group 
+        class="sign-in-type" 
+        aria-label="SignInType" 
+        color="primary"
+        (change)="onSigninTypeChange($event)"
+      >
+        <mat-radio-button value="Normal" checked>Normal</mat-radio-button>
+        <mat-radio-button value="ViaSMS">Via SMS</mat-radio-button>
+      </mat-radio-group>
+      <ng-template [ngIf]="signInType=='Normal'" [ngIfElse]="signInViaSMS">
+        <form class="form">
+          <mat-form-field class="example-full-width" appearance="standard">
+            <input matInput placeholder="Email" type="email">
+            <mat-icon matSuffix color="primary">email</mat-icon>
+          </mat-form-field>
+          <mat-form-field class="example-full-width" appearance="standard">
+            <input matInput placeholder="Password" type="password">
+            <mat-icon matSuffix color="primary">lock</mat-icon>
+          </mat-form-field>
+        </form>
+      </ng-template>
+      <ng-template #signInViaSMS>
+        <div class="sms-sign-in-step1" *ngIf="smsStep==1; else smsSecondStep">
+          <form [formGroup]="smsFirstFormGroup">
+            <mat-form-field appearance="standard">
+              <mat-label>Phone number</mat-label>
+              <input matInput placeholder="Ex. 0712 345 678" formControlName="phone">
+            </mat-form-field>
+            <!-- <button mat-raised-button color="primary" (click)="sendPhone($event)">Next</button> -->
+          </form>
+        </div>
+        <ng-template #smsSecondStep>
+          <div class="sms-sign-in-step2">
+            <div class="code-form-label">Enter the code received via SMS </div>
+            <form [formGroup]="smsSecondFormGroup" class="code-form">
+              <mat-form-field appearance="standard" class="code-mat-form">
+                <input matInput formControlName="first" maxlength="1" minlength="1" id="first" (keyup)="codeChangeFocus($event)" onfocus="this.value = ''">
+              </mat-form-field>
+              <mat-form-field appearance="standard" class="code-mat-form">
+                <input matInput formControlName="second" maxlength="1" minlength="1" id="second"  (keyup)="codeChangeFocus($event)" onfocus="this.value = ''">
+              </mat-form-field>
+              <mat-form-field appearance="standard" class="code-mat-form">
+                <input matInput formControlName="third" maxlength="1" minlength="1" id="third"  (keyup)="codeChangeFocus($event)" onfocus="this.value = ''">
+              </mat-form-field>
+              <mat-form-field appearance="standard" class="code-mat-form">
+                <input matInput formControlName="fourth" maxlength="1" minlength="1" id="fourth"  (keyup)="codeChangeFocus($event)" onfocus="this.value = ''"> 
+              </mat-form-field>
+              <mat-form-field appearance="standard" class="code-mat-form">
+                <input matInput formControlName="fifth" maxlength="1" minlength="1" id="fifth" (keyup)="codeChangeFocus($event)" onfocus="this.value = ''">
+              </mat-form-field>
+              <mat-form-field appearance="standard" class="code-mat-form">
+                <input matInput formControlName="sixth" maxlength="1" minlength="1" id="sixth"  (keyup)="codeChangeFocus($event)" onfocus="this.value = ''"> 
+              </mat-form-field>
+            </form>
+            <button mat-raised-button color="primary"></button>
+          </div>
+        </ng-template>
+      </ng-template>
+    </ng-container>
+    <ng-template #signUp>dsadas </ng-template>
+  </div>
+</div>
+<div mat-card-actions>
+  <button mat-button>Cancel</button>
+  <button *ngIf="signInType === 'Normal'" mat-raised-button color="primary" class="right-button" >Submit</button>
+  <button *ngIf="signInType === 'ViaSMS'" mat-raised-button color="primary" class="right-button" (click)="smsStep == 1 ? sendPhone($event) : onSmsSubmit($event)"> {{ smsStep == 1 ? 'Next' : 'Submit' }}</button>
+</div>

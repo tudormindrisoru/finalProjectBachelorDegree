@@ -21,6 +21,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
 
 const materialModules = [
   MatSliderModule,
@@ -43,11 +44,12 @@ const materialModules = [
   MatTabsModule,
   MatTableModule,
   MatPaginatorModule,
+  MatRadioModule
 ];
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, ...materialModules],
+  imports: [...materialModules],
   exports: [...materialModules],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }

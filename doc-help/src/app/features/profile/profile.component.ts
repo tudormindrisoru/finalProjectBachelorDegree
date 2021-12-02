@@ -4,8 +4,8 @@ import { AddOfficeDialogComponent } from './components/add-office-dialog/add-off
 import { JoinOfficeDialogComponent } from './components/join-office-dialog/join-office-dialog.component';
 
 import { MatDialog } from '@angular/material/dialog';
-import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
+// import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
+// import { Address } from 'ngx-google-places-autocomplete/objects/address';
 import { IOffice } from 'src/app/shared/shared.model';
 import { DoctorDetailDialogComponent } from './components/doctor-detail-dialog/doctor-detail-dialog.component';
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
@@ -20,7 +20,7 @@ import { ProfileService } from 'src/app/shared/services/profile/profile.service'
 })
 export class ProfileComponent implements OnInit {
 
-  @ViewChild("placesRef") placesRef : GooglePlaceDirective;
+  // @ViewChild("placesRef") placesRef : GooglePlaceDirective;
   autocompleteOptions = {
     types: [ "address" ],
     componentRestrictions: { country: 'RO' },
@@ -218,13 +218,13 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  handleAddressChange(address: Address) {
-    // console.log(address);
-    this.officeDataFormGroup.controls['officeAddress'].setValue(address.formatted_address);
-    this.officeDataFormGroup.controls['longitude'].setValue(address.geometry.location.lng());
-    this.officeDataFormGroup.controls['latitude'].setValue(address.geometry.location.lat());
-    // console.log(this.officeDataFormGroup.value)
-}
+//   handleAddressChange() {
+//     // console.log(address);
+//     this.officeDataFormGroup.controls['officeAddress'].setValue(address.formatted_address);
+//     this.officeDataFormGroup.controls['longitude'].setValue(address.geometry.location.lng());
+//     this.officeDataFormGroup.controls['latitude'].setValue(address.geometry.location.lat());
+//     // console.log(this.officeDataFormGroup.value)
+// }
 
 isYou(doctorIndex: number): boolean {
   return JSON.stringify(this.office.you) === JSON.stringify(this.office.doctors[doctorIndex]);

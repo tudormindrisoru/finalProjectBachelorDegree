@@ -5,7 +5,6 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './pages/auth/auth.component';
-import { LogoComponent } from './shared/components/logo/logo.component';
 import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -29,7 +28,7 @@ import { AuthGuard } from './shared/services/guard/auth.guard';
     CommonModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule,
+    // MaterialModule,
     SharedModule,
   ],
   providers: [ AuthGuard ],

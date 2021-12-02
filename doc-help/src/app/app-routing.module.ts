@@ -7,15 +7,14 @@ import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.com
 
 const routes: Routes = [
   { path: '', component: MainComponent },
-  { path: 'auth', component: AuthComponent },
   {
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),
     // canActivate: [AuthGuard],
     // canLoad: [ AuthGuard ]
   },
-  { path: '404-error', component: PageNotFoundComponent },
-  { path: '**', redirectTo: '/404-error', pathMatch: 'full' }
+  { path: 'not-found', component: PageNotFoundComponent },
+  { path: '**', redirectTo: '/not-found', pathMatch: 'full' }
 ];
 
 @NgModule({

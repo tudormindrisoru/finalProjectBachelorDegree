@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
+// import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
+// import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 export interface DialogData {
   name: string;
@@ -53,13 +53,13 @@ export class AddOfficeDialogComponent implements OnInit {
       this.dialogRef.close();
     }
 
-    public handleAddressChange(address: Address) {
-      this.markerLat = address.geometry.location.lat();
-      this.markerLng = address.geometry.location.lng();
-      this.lat = this.markerLat;
-      this.lng = this.markerLng;
-      console.log(address);
-  }
+  //   public handleAddressChange(address: Address) {
+  //     this.markerLat = address.geometry.location.lat();
+  //     this.markerLng = address.geometry.location.lng();
+  //     this.lat = this.markerLat;
+  //     this.lng = this.markerLng;
+  //     console.log(address);
+  // }
 
   onSaveOffice() {
     console.log('TO BE CONTINUE');

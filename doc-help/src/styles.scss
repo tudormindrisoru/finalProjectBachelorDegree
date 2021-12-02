@@ -12,19 +12,19 @@
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$doc-help-primary: mat-palette($mat-blue, 300);
-$doc-help-accent: mat-palette($mat-green, A200, A100, A400);
+$primary-color: mat-palette($mat-blue, 300);
+$accent-color: mat-palette($mat-green, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$doc-help-warn: mat-palette($mat-red);
+$warn-color: mat-palette($mat-red);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
 $doc-help-theme: mat-light-theme((
   color: (
-    primary: $doc-help-primary,
-    accent: $doc-help-accent,
-    warn: $doc-help-warn,
+    primary: $primary-color,
+    accent: $accent-color,
+    warn: $warn-color,
   )
 ));
 
@@ -47,10 +47,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
   
   ::-webkit-scrollbar-thumb {
-  background: linear-gradient(0deg, #c2e59c 10%, #64b3f4 73%);
+  background: #64b3f4;
   border-radius: 0px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-  background: #64b3f4; 
+  background: #64b3f4;
   }
