@@ -1,92 +1,81 @@
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { first, catchError, tap } from 'rxjs/operators';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ErrorHandlerService } from '../error-handler.service';
+import { User, Response } from '../../models/models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  private headerDict = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
 
-  private _loggedIn: boolean;
-
-  private readonly SERVER_URL = "http://localhost:4200/api";
+  private readonly SERVER_URL = 'http://localhost:3000/api';
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-  ) { }
+    private errorHandlerService: ErrorHandlerService
+  ) {}
 
-  // public onLogin(data): void {
-  //   console.log(data);
-  //   if(data.email === 'test@test.com' && data.password ==='pass') {
-  //     this.loggedIn = true;
-  //     this.router.navigate(['/dashboard']);
-  //   }
-  // }
-
-  public async createCode(phone) {
-    try {
-      const CREATE_CODE_URL = this.SERVER_URL + "/auth/login-with-phone-step1";
-      let result = await this.http.post<any>(CREATE_CODE_URL, phone);
-      return result;
-    } catch(err) {
-      console.error(err);
-      return err;
-    }
+  public smsSingInFirstStep(data: any): Observable<any> { 
+    const CREATE_CODE_URL = this.SERVER_URL + '/auth/login-with-phone-step1';
+    return this.http
+      .post<any>(CREATE_CODE_URL, data, { observe: 'response' , headers: new HttpHeaders(this.headerDict)})
+      .pipe(
+        first(),
+        catchError(
+          this.errorHandlerService.handleError('SMS_SIGN_IN_FIRST_STEP')
+        )
+      );
   }
 
-  public async validateCode(code) {
-    try {
-      const VALIDATE_CODE_URL = this.SERVER_URL + "/auth/login-with-phone-step2";
-      let result = await this.http.post<any>(VALIDATE_CODE_URL, code); 
-      return result;
-    } catch(err) {
-      console.error(err);
-      return err;
-    }
+  public smsSingInSecondStep(data: any): Observable<any> {
+    const VALIDATE_CODE_URL = this.SERVER_URL + '/auth/login-with-phone-step2';
+    return this.http
+      .post<any>(VALIDATE_CODE_URL, data, { observe: 'response' , headers: new HttpHeaders(this.headerDict)})
+      .pipe(
+        first(),
+        catchError(
+          this.errorHandlerService.handleError('SMS_SIGN_IN_SECOND_STEP')
+        )
+      );
   }
 
-  public async authWithEmailAndPassword(user) {
-    try {
-      const LOGIN_URL = this.SERVER_URL + "/auth/login-with-password";
-      let result = await this.http.post<any>(LOGIN_URL,user);
-      return result;
-    } catch(err) {
-      console.error(err);
-      return err;
-    }
+  public authWithEmailAndPassword(user): Observable<Response<User>> {
+    const LOGIN_URL = this.SERVER_URL + '/auth/login-with-password';
+    return this.http
+      .post(LOGIN_URL, user, { observe: 'response' , headers: new HttpHeaders(this.headerDict)})
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('NORMAL_SIGN_IN'))
+      );
   }
 
-  public async register(data) {
-    try {
-      const REGISTER_URL_1 = this.SERVER_URL + "/auth/register-step1";
-      let result = await this.http.post<any>(REGISTER_URL_1, data);
-      return result;
-    } catch(err) {
-      console.error(err);
-      return err;
-    }
+  public register(data): Observable<any> {
+    const REGISTER_URL_1 = this.SERVER_URL + '/auth/register-step1';
+    return this.http
+      .post<any>(REGISTER_URL_1, data, { observe: 'response' , headers: new HttpHeaders(this.headerDict)})
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('REGISTER_FIRST_STEP'))
+      );
   }
 
-  public async validateRegistration(code) {
-    try {
-      const REGISTER_URL_2 = this.SERVER_URL + "/auth/register-step2";
-      let result = await this.http.post<any>(REGISTER_URL_2, code);
-      return result;
-    } catch(err) {
-      console.error(err);
-      return err;
-    }
-  }
-
-  login(): void {
-    this._loggedIn = true;
-    this.router.navigate(['/dashboard']);
-  }
-
-  get isLoggedIn(): boolean {
-    return this._loggedIn; 
+  public validateRegistration(code): Observable<any> {
+    const REGISTER_URL_2 = this.SERVER_URL + '/auth/register-step2';
+    return this.http
+      .post<any>(REGISTER_URL_2, code, { observe: 'response' , headers: new HttpHeaders(this.headerDict)})
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('REGISTER_SECOND_STEP'))
+      );
   }
 
 }

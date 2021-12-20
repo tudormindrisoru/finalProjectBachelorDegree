@@ -1,0 +1,65 @@
+<ng-template [ngIf]="registerStep === 1" [ngIfElse]="secondStep">
+    <form [formGroup]="signUpFormGroup" class="form">
+        <mat-form-field appearance="standard">
+            <mat-label>First name</mat-label>
+            <input matInput formControlName="firstName"/>
+            <mat-error *ngIf="rControls.firstName.invalid">
+                {{ rControls.firstName.errors.required ? "*First name number is required." : ""}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="standard">
+            <mat-label>Last name</mat-label>
+            <input matInput formControlName="lastName"/>
+            <mat-error *ngIf="rControls.firstName.invalid">
+                {{ rControls.lastName.errors.required ? "*Last name number is required." : ""}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="standard">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email"/>
+            <mat-error *ngIf="rControls.email.invalid">
+                {{ rControls.email.errors.required ? "*Email is required." : (rControls.email.errors.email ? "*Email must be a valid email address." : "" )}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="standard">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password"/>
+            <mat-error *ngIf="rControls.password.invalid">
+                {{ rControls.password.errors.required ? "*Password number is required." : (rControls.password.errors.minlength ? "*Password must have 8 characters minimum." : "")}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="standard">
+            <mat-label>Phone number</mat-label>
+            <input matInput formControlName="phone"/>
+            <mat-error *ngIf="rControls.phone.invalid">
+                {{ rControls.phone.errors.required ? "*Phone number is required." : ""}}
+            </mat-error>
+        </mat-form-field>
+        <mat-checkbox color="primary" formControlName="gdpr">
+            <span class="gdpr-consent">
+                I accept the Privacy Policy in order to create an account (GDPR consent).
+            </span>
+        </mat-checkbox>
+    </form>
+</ng-template>
+
+<ng-template #secondStep>
+    <div class="sms-sign-step2">
+        <div class="code-form-label">Enter the code received via SMS</div>
+        <form [formGroup]="signUpSecondFormGroup" class="form">
+            <mat-form-field appearance="standard" class="code-mat-form">
+            <mat-label>SMS Code</mat-label>
+            <input
+                matInput
+                formControlName="code"
+                maxlength="6"
+                oninput="this.value = this.value.toUpperCase()"
+            />
+            <mat-error *ngIf="r2Controls.code.invalid">
+                {{ r2Controls.code.errors.required ? "*SMS Code is required." : (r2Controls.code.errors.minlength ? "*SMS Code should have 6 characters." : "")}}
+            </mat-error>
+            </mat-form-field>
+        </form>
+        <button mat-raised-button color="primary"></button>
+        </div>
+</ng-template>

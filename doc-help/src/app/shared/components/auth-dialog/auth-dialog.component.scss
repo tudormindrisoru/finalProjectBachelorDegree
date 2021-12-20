@@ -1,28 +1,8 @@
 
-
 #forms-container {
     display: flex;
     flex-direction: column;
     
-}
-
-#stepper {
-    margin-top: 5px;
-   
-}
-
-.form {
-    display: flex;
-    flex-direction: column;
-}
-
-.sign-in-type {
-    display: flex; 
-    justify-content: space-around;
-}
-
-.dialog-title {
-    color:#64b3f4;
 }
 
 .right-button {
@@ -31,24 +11,13 @@
     float: right;
 }
 
-.code-form-label {
-    margin-top:10px;
+.switch-sign {
+    margin-bottom: 12px;
+    color:#64b3f4;
+    font-style: italic;
+    cursor: pointer;
 }
 
-.code-mat-form {
-    width: 25px;
-    margin: 0px 2px;
-}
-
-.code-form {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-#first, #second, #third, #fourth, #fifth, #sixth {
-    text-transform: uppercase;
-    text-align: center;
-    color: #64b3f4;
-    font-weight: bold;
+.mat-dialog-content {
+    width: 300px;
 }

@@ -2,7 +2,7 @@
   <div class="wrapper">
     <mat-drawer-container class="drawer-container" [hasBackdrop]="false">
       <mat-drawer #drawer mode="over" class="drawer">
-        <app-logo class="outer-logo noselect"></app-logo>
+        <app-logo class="outer-logo noselect" (click)="goToMainPage()"></app-logo>
         <div class="sidenav-wrapper" (click)="drawer.toggle()">
           <app-sidenav-item-list
             [useLabels]="true"

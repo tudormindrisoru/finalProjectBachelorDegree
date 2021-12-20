@@ -22,6 +22,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 const materialModules = [
   MatSliderModule,
@@ -44,7 +45,8 @@ const materialModules = [
   MatTabsModule,
   MatTableModule,
   MatPaginatorModule,
-  MatRadioModule
+  MatRadioModule,
+  MatTooltipModule
 ];
 
 @NgModule({

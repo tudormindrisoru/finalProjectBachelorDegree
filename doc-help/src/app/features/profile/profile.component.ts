@@ -1,3 +1,5 @@
+import { HttpResponse } from '@angular/common/http';
+import { Store } from '@ngxs/store';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { AddOfficeDialogComponent } from './components/add-office-dialog/add-office-dialog.component';
@@ -9,14 +11,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { IOffice } from 'src/app/shared/shared.model';
 import { DoctorDetailDialogComponent } from './components/doctor-detail-dialog/doctor-detail-dialog.component';
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
+import { Doctor, User, Response } from 'src/app/shared/models/models';
+import { first, take } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
-  providers: [
-    ProfileService
-  ]
+  styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
 
@@ -80,34 +82,46 @@ export class ProfileComponent implements OnInit {
   // };
  
  
-  
-  importantInfoFormGroup: FormGroup;
-  mainInfoFormGroup: FormGroup;
+  user: User;
+  doctor: Doctor;
+  userFormGroup: FormGroup;
+  doctorFormGroup: FormGroup;
   officeDataFormGroup: FormGroup;
-
+  
   constructor(
     public dialog: MatDialog,
-    public profileService: ProfileService
-    ) { }
+    public profileService: ProfileService,
+    private store: Store,
+    private router: Router
+    ) {
+      this.store.select(state => state.user).pipe(first()).subscribe( user => this.user = user);
+      if (!this.user) {
+        this.router.navigate(['/']);
+      }
+      if(!!this.user.docId) {
+        this.store.select( state => state.doctor).pipe(first()).subscribe( doc => this.doctor = doc);
+        if(!this.doctor) {
+          this.profileService.getDoctorInfo().subscribe(
+            (response: HttpResponse<Response<Doctor>>) => this.doctor = response.body.message
+          );
+        }
+      }
+    }
 
   ngOnInit(): void {
-    this.importantInfoFormGroup = new FormGroup({
-      firstName: new FormControl(''),
-      lastName: new FormControl(''),
+    this.userFormGroup = new FormGroup({
+      firstName: new FormControl(this.user ? this.user.firstName : '', [ Validators.required ]),
+      lastName: new FormControl(this.user ? this.user.lastName : '', [ Validators.required ]),
+      phone: new FormControl(this.user ? this.user.phone : '', [ Validators.required, Validators.minLength(10)])
     });
-    this.mainInfoFormGroup = new FormGroup({
-      cellPhone: new FormControl('', [ Validators.required ]),
-      city: new FormControl('', [ Validators.required]),
-      birthDate: new FormControl(new Date()),
+
+    this.doctorFormGroup = new FormGroup({
       cuim: new FormControl(''),
       specialty: new FormControl('', [ Validators.required ])
     });
-    if(this.office) {
 
-    }
     this.officeDataFormGroup = new FormGroup({
-      officeName: new FormControl((this.office && this.office.name) || '', [ Validators.required ]),
-      officeAddress: new FormControl((this.office && this.office.address) || '', [ Validators.required ]),
+      name: new FormControl((this.office && this.office.name) || '', [ Validators.required ]),
       longitude: new FormControl((this.office && this.office.lng) || '', [ Validators.required ]),
       latitude: new FormControl((this.office && this.office.lat) || '', [ Validators.required ]),
       doctors: new FormArray([]),
@@ -124,8 +138,12 @@ export class ProfileComponent implements OnInit {
     this._office = newOffice;
   }
 
-  test() {
-    console.log(this.mainInfoFormGroup.value);
+  get userInfo(): User {
+    return this.user || null; 
+  }
+
+  get isDoctorInfoValid(): boolean {
+    return this.doctorFormGroup.valid || false;
   }
 
   onPhotoChange(imageInput) {
@@ -162,7 +180,6 @@ export class ProfileComponent implements OnInit {
   }
 
   onOpenAddOfficeDialog(): void {
-    // const dialogRef = 
     this.dialog.open(AddOfficeDialogComponent, {
       width: '400px',
       data: {name: 'Add office dialog'},

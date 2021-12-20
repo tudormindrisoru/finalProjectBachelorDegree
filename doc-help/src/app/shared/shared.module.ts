@@ -9,6 +9,9 @@ import { AgmCoreModule } from '@agm/core';
 import { DoctorCardInfoComponent } from './components/doctor-card-info/doctor-card-info.component';
 import { GdprRegisterConsentDialogComponent } from './components/gdpr-register-consent-dialog/gdpr-register-consent-dialog.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
+import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,14 +19,18 @@ import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.compon
     DoctorCardInfoComponent,
     GdprRegisterConsentDialogComponent,
     AuthDialogComponent,
+    SignInComponent,
+    SignUpComponent,
   ],
   imports: [
     CommonModule,
     MaterialModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
-  exports: [LogoComponent, CommonModule, AgmCoreModule, AuthDialogComponent, MaterialModule],
+  exports: [ LogoComponent, CommonModule, AgmCoreModule, AuthDialogComponent, MaterialModule ],
+  entryComponents: [ SignInComponent, SignUpComponent ],
   providers: [],
 })
 export class SharedModule {}

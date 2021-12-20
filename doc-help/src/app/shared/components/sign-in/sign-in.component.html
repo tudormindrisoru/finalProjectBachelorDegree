@@ -1,0 +1,70 @@
+<mat-radio-group
+  class="sign-in-type"
+  aria-label="SignInType"
+  color="primary"
+  (change)="onSignTypeChange($event)"
+>
+  <mat-radio-button value="Normal" checked>Normal</mat-radio-button>
+  <mat-radio-button value="ViaSMS">Via SMS</mat-radio-button>
+</mat-radio-group>
+
+<ng-template [ngIf]="signInType == 'Normal'" [ngIfElse]="signInViaSMS">
+  <form [formGroup]="nFormGroup" class="form">
+    <mat-form-field appearance="standard">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email"/>
+      <mat-icon matSuffix color="primary">email</mat-icon>
+      <mat-error *ngIf="normalControls.email.invalid">
+        {{ normalControls.email.errors.required ? "*Email is required." : (normalControls.email.errors.email ? "*Email must be a valid email address." : "")}}
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Password</mat-label>
+      <input matInput type="password" formControlName="password"/>
+      <mat-icon matSuffix color="primary">lock</mat-icon>
+      <mat-error *ngIf="normalControls.password.invalid">
+        {{ normalControls.password.errors.required ? "*Password is required." : (normalControls.password.errors.minlength ? "*Password must have 8 characters minimum." : "")}}
+      </mat-error>
+    </mat-form-field>
+  </form>
+</ng-template>
+
+<ng-template #signInViaSMS>
+  <div class="sms-sign-in-step1" *ngIf="smsStep == 1; else smsSecondStep">
+    <form [formGroup]="smsFirstFormGroup" class="form">
+      <mat-form-field appearance="standard">
+        <mat-label>Phone number</mat-label>
+        <input
+          matInput
+          placeholder="Ex. 0712 345 678"
+          formControlName="phone"
+        />
+        <mat-icon matSuffix color="primary">phone</mat-icon>
+        <mat-error *ngIf="firstControls.phone.invalid">
+          {{ firstControls.phone.errors.required ? "*Phone number is required." : ""}}
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </div>
+
+  <ng-template #smsSecondStep>
+    <div class="sms-sign-in-step2">
+      <div class="code-form-label">Enter the code received via SMS</div>
+      <form [formGroup]="smsSecondFormGroup" class="code-form">
+        <mat-form-field appearance="standard" class="code-mat-form">
+          <mat-label>SMS Code</mat-label>
+          <input
+            matInput
+            formControlName="code"
+            maxlength="6"
+            oninput="this.value = this.value.toUpperCase()"
+          />
+          <mat-error *ngIf="secondControls.code.invalid">
+            {{ secondControls.code.errors.required ? "*SMS Code is required." : (secondControls.code.errors.minlength ? "*SMS Code should have 6 characters." : "")}}
+          </mat-error>
+        </mat-form-field>
+      </form>
+      <button mat-raised-button color="primary"></button>
+    </div>
+  </ng-template>
+</ng-template>

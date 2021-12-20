@@ -1,0 +1,41 @@
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.sign-in-type {
+    display: flex; 
+    justify-content: space-around;
+}
+
+.dialog-title {
+    color:#64b3f4;
+}
+
+
+
+.code-form-label {
+    margin-top:10px;
+}
+
+.code-mat-form {
+    width: 100px;
+    margin: 0px 2px;
+
+    input {
+        letter-spacing: 8px;
+    }
+}
+
+.code-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#first, #second, #third, #fourth, #fifth, #sixth {
+    text-transform: uppercase;
+    text-align: center;
+    color: #64b3f4;
+    font-weight: bold;
+}

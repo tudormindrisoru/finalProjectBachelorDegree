@@ -1,0 +1,22 @@
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.gdpr-consent {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.code-form-label {
+    margin-top:10px;
+}
+
+.code-mat-form {
+    width: 100px;
+    margin: 0px 2px;
+
+    input {
+        letter-spacing: 8px;
+    }
+}

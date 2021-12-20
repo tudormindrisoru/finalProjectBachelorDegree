@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,7 +9,9 @@ import { MatDrawer } from '@angular/material/sidenav';
 })
 export class DashboardComponent implements OnInit {
   @ViewChild('drawer', { static: false }) drawer: MatDrawer;
-  constructor() {}
+  constructor(
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     console.log('dashboard here');
@@ -18,5 +21,9 @@ export class DashboardComponent implements OnInit {
     if (this.drawer) {
       this.drawer.toggle();
     }
+  }
+
+  goToMainPage(): void {
+    this.router.navigate(['/']);
   }
 }
