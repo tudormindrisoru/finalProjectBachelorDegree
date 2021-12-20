@@ -42,15 +42,19 @@ const registerStep2Validation = (request) => {
   return schema.validate(request);
 }
 
-const doctorDetailValidation = (request) => {
+const postDoctorValidation = (request) => {
+  const schema = Joi.object({
+    cuim: Joi.string().required().length(10),
+    specialty: Joi.string().required(),
+  });
+  return schema.validate(request);
+};
+
+const updateUserValidation = (request) => {
   const schema = Joi.object({
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    phone: Joi.string().min(10).max(10).required(),
-    city: Joi.string().required(),
-    specialty: Joi.string().required(),
-    cuim: Joi.string().required(),
-    birthDate: Joi.string().required(),
+    phone: Joi.string().length(10).required()
   });
   return schema.validate(request);
 };
@@ -104,5 +108,7 @@ module.exports = {
   phoneLogInStep1Validation,
   phoneLogInStep2Validation,
   registerStep1Validation,
-  registerStep2Validation
+  registerStep2Validation,
+  postDoctorValidation,
+  updateUserValidation
 };

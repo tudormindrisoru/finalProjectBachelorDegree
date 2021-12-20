@@ -3,8 +3,7 @@ const Response = require('./response');
 
 class PhoneAuth {
 
-    constructor(userId,phone,expirationDate) { 
-        this._userId = userId;
+    constructor(phone,expirationDate) { 
         this._phone = phone;
         this._expirationDate = expirationDate;
     }
@@ -15,7 +14,7 @@ class PhoneAuth {
             const result = await db.execute(SQL_SELECT);
             if(result) {
                 return {
-                    "phoneAuth": new PhoneAuth(result[0][0].userId,result[0][0].phone, result[0][0].expirationDate),
+                    "phoneAuth": new PhoneAuth(phone, result[0][0].expirationDate),
                     "code": result[0][0].code
                 }
             }
@@ -40,35 +39,35 @@ class PhoneAuth {
                     minute: 'numeric',
                     second: 'numeric'
                   });
-                const SQL_ADD_PHONE_AUTH = `INSERT INTO phone_auths(userId,phone,code,expirationDate) VALUES(${this._userId},'${this._phone}','${code}','${EXP_DATE}')`;
+                const SQL_ADD_PHONE_AUTH = `INSERT INTO phone_auths(phone,code,expirationDate) VALUES('${this._phone}','${code}','${EXP_DATE}')`;
                 const result = await db.execute(SQL_ADD_PHONE_AUTH);
                 if(result) {
-                    return new Response(201, {
-                        "userId": this._userId,
-                        "phone": this._phone
+                    return new Response(201, true,{
+                        "phone": this._phone,
+                        "code": code
                     }).getResponse();
                 }
                 renewExpirationDate();
             }
-            return new Response(500, "Something went wrong!");
+            return new Response(500, false, "Something went wrong!");
 
         } catch(err) {
             console.error(err);
-            return new Response(500, err);
+            return new Response(500, false, err);
         }
     }
 
     async removeFromDB() {
         try {
-            const SQL_REMOVE_PHONE_AUTH = `DELETE FROM phone_auths WHERE userId=${this._userId};`   
+            const SQL_REMOVE_PHONE_AUTH = `DELETE FROM phone_auths WHERE phone=${this._phone};`   
             const result = await db.execute(SQL_REMOVE_PHONE_AUTH);
             if(result) {
-                return new Response(200, "Entity removed.");
+                return new Response(200, true, "Entity removed.");
             }
-            return new Response(204,"Entity already removed!");
+            return new Response(204, false, "Entity already removed!");
         } catch(err) {
             console.error(err);
-            return new Response(500, err);
+            return new Response(500, false, err);
         }
     }
 
