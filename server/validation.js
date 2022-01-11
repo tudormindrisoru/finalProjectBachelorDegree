@@ -59,11 +59,20 @@ const updateUserValidation = (request) => {
   return schema.validate(request);
 };
 
+const updateDoctorValidation = (request) => { 
+  const schema = Joi.object({
+    cuim: Joi.string().required(),
+    specialty: Joi.string().required()
+  });
+  return schema.validate(request);
+}
+
 const officeValidation = (request) => {
   const schema = Joi.object({
+    address: Joi.string().required(),
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
-    name: Joi.string().required(),
+    oName: Joi.string().required()
   });
   return schema.validate(request);
 };
@@ -110,5 +119,7 @@ module.exports = {
   registerStep1Validation,
   registerStep2Validation,
   postDoctorValidation,
-  updateUserValidation
+  updateUserValidation,
+  updateDoctorValidation,
+  officeValidation
 };

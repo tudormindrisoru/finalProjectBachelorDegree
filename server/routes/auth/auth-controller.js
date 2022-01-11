@@ -78,7 +78,7 @@ router.post('/login-with-phone-step2', async(req, res) => {
                     if(user.status === 200) {
                         res.set({
                             'Content-Type': 'application/json',
-                            'Authorization': 'Barrer ' + generateAccessToken(response.message.id),
+                            'Authorization': 'Barrer ' + generateAccessToken(user.message.id),
                             'Access-Control-Allow-Origin': '*',
                             'Access-Control-Expose-Headers': '*'
                         })
@@ -132,7 +132,6 @@ router.post('/register-step2', async(req, res) => {
         res.status(400).send(new Response(400, false, error.details[0].message).getResponse());
     } else {
         const result = await PhoneAuth.findOneByPhoneInDB(req.body.phone);
-        console.log("auth-controler register-step2 phoneauth findOneByPhone = ",result);
         if(!result) {
             res.status(404).send(new Response(404, false, "Code expired!").getResponse());
         } else {

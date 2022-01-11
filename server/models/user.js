@@ -114,7 +114,7 @@ class User {
       return new Response(500, false, "Something bad happened.").getResponse();
     }
   }
-
+  
   static async updatePhotoById(id, path) {
     const SQL_UPDATE_PHOTO = `UPDATE users SET photo = "${path}" WHERE id = ${id}`;
     const result = db.execute(SQL_UPDATE_PHOTO);
@@ -136,7 +136,8 @@ class User {
           ` WHERE id=${id};`;
         const updatedUser = await db.execute(SQL_UDDATE_USER);
         if(updatedUser[0].affectedRows === 1) {
-            return new Response(200, true, "Entity updated.").getResponse();
+            console.log('updated USER = ',updatedUser);
+            return new Response(200, true, updatedUser[0][0]).getResponse();
         } else {
             return new Response(404, false, "User not found.").getResponse();   
         }

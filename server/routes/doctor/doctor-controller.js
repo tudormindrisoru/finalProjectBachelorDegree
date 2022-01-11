@@ -2,7 +2,8 @@ const router = require('express').Router();
 const multer = require('multer');
 const { verifyToken, decodeAccessToken } = require('../../middlewares/auth');
 const {
-    postDoctorValidation
+    postDoctorValidation,
+    updateDoctorValidation
 } = require('../../validation');
 // const { getReturnableDoctorInfos } = require('../../helpers/shared-methods');
 // const { verify } = require('jsonwebtoken');
@@ -13,19 +14,21 @@ const {
 
 const Doctor = require('../../models/doctor');
 const Response = require('../../models/response');
+const User = require('../../models/user');
+const { update } = require('../../models/doctor');
 
 router.get('/', verifyToken , async (req, res) => {
     try {
-        if (req.user.id) {
-            const doctor = await Doctor.findOneById(req.user.id);
-            if(doctor.success) {
-                res.set({
-                    'Content-Type': 'application/json',
-                    'Authorization': req.headers.authorization,
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Expose-Headers': '*'
-                  })
-            }
+        res.set({
+            'Content-Type': 'application/json',
+            'Authorization': req.headers.authorization,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': '*'
+        });
+          
+        const doctor = await Doctor.findOneByUserId(req.user.id);
+        console.log(doctor);
+        if(doctor.success) {
             res.status(doctor.status).send(doctor);
         }
         
@@ -41,25 +44,52 @@ router.post('/', verifyToken, async (req, res) => {
             const { error } = postDoctorValidation(req.body);
             if(error) {
                 res.status(400).send(new Response(400, false, error).getResponse());
-            }
-            const doctor = new Doctor(null, req.body.cuim, req.body.specialty, null);
-            const dbResponse = await doctor.save();
-            if(dbResponse.success) {
-                if(dbResponse.insertId) {
-                    console.log(dbResponse.insertId);
-                }
-                res.set({
-                    'Content-Type': 'application/json',
-                    'Authorization': req.headers.authorization,
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Expose-Headers': '*'
-                  });
+            } else {
+                const doctor = new Doctor(null, req.body.cuim, req.body.specialty, null);
+                const dbResponse = await doctor.save();
+                if(dbResponse.success) {
+                    if(dbResponse.insertId) {
+                        console.log(dbResponse.insertId);
+                    }
+                    res.set({
+                        'Content-Type': 'application/json',
+                        'Authorization': req.headers.authorization,
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Expose-Headers': '*'
+                      });
+                    }
+                res.status(dbResponse.status).send(dbResponse);
             }
         }
-        res.status(200).send(true);
     } catch(error) {
         console.error(new Error(error));
         res.status(500).send(new Response(500, false, error).getResponse());
+    }
+});
+
+router.put('/', verifyToken, async (req, res) => {
+    try {
+        const { error } = updateDoctorValidation(req.body);
+        res.set({
+            'Content-Type': 'application/json',
+            'Authorization': req.headers.authorization,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': '*'
+        });
+        if(error) {
+            res.status(400).send(new Response(400, false, error).getResponse());
+        } else {
+            const doctor = await Doctor.findOneByUserId(req.user.id);
+            if(doctor.success) {
+                const updatedDoctor = await Doctor.update(doctor.message.id, req.body);
+                res.status(updatedDoctor.status).send(updatedDoctor);
+            } else {
+                res.status(doctor.status).send(doctor);
+            }
+        }
+    } catch(err) {
+        console.error(err);
+        res.status(500).send(new Response(500, false, err).getResponse());
     }
 });
 
