@@ -18,16 +18,14 @@ export class DoctorState {
 
     @Action(UpdateDoctorInfo)
     // tslint:disable-next-line: typedef
-    getDoctorInfo({getState, patchState}: StateContext<Doctor>, { payload }: UpdateDoctorInfo) {
+    updateDoctorInfo({getState, patchState}: StateContext<Doctor>, { payload }: UpdateDoctorInfo) {
         const state = getState();
-        if (!state) {
-            patchState({ ...payload });
-        }
+        patchState(payload);
     }
 
     @Action(RemoveDoctorInfo)
     // tslint:disable-next-line: typedef
-    removeDoctorInfo({getState, patchState}: StateContext<Doctor>) {
+    removeDoctorInfo({patchState}: StateContext<Doctor>) {
         patchState(null);
     }
 }

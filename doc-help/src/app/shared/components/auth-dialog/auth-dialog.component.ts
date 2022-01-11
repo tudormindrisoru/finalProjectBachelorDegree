@@ -6,7 +6,7 @@ import { Store } from '@ngxs/store';
 import { SignInComponent } from './../sign-in/sign-in.component';
 import { SignUpComponent } from '../sign-up/sign-up.component';
 import { AuthService } from '../../services/auth/auth.service';
-import { SignInUser } from 'src/app/store/actions/user.actions';
+import { UpdateUser } from 'src/app/store/actions/user.actions';
 import { User, Response } from '../../models/models';
 import { Router } from '@angular/router';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
@@ -212,7 +212,7 @@ export class AuthDialogComponent implements OnInit {
   }
 
   login(data: User): void {
-    this.store.dispatch(new SignInUser(data));
+    this.store.dispatch(new UpdateUser(data));
   }
 
   cancelDialog(isLogged): void {

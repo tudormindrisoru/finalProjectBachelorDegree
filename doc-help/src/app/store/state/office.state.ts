@@ -18,11 +18,8 @@ export class OfficeState {
 
     @Action(UpdateOfficeInfo)
     // tslint:disable-next-line: typedef
-    updateOffice({getState, patchState}: StateContext<Office>, { payload }: UpdateOfficeInfo) {
-        const state = getState();
-        if (!state) {
-            patchState({ ...payload });
-        }
+    updateOffice({ patchState}: StateContext<Office>, { payload }: UpdateOfficeInfo) {
+        patchState(payload);
     }
 
     @Action(RemoveOfficeInfo)

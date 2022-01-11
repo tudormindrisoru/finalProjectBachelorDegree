@@ -1,6 +1,6 @@
 import { User } from '../../shared/models/models';
 
-export class SignInUser {
+export class UpdateUser {
     static readonly type = '[DOC-HELP] Sign in user';
 
     constructor(public payload: User) {}

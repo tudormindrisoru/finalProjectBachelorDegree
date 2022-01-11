@@ -6,21 +6,19 @@ import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { AgmCoreModule } from '@agm/core';
 // import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
-import { DoctorCardInfoComponent } from './components/doctor-card-info/doctor-card-info.component';
-import { GdprRegisterConsentDialogComponent } from './components/gdpr-register-consent-dialog/gdpr-register-consent-dialog.component';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ProfileDialogComponent } from './components/profile-dialog/profile-dialog.component';
 
 @NgModule({
   declarations: [
     LogoComponent,
-    DoctorCardInfoComponent,
-    GdprRegisterConsentDialogComponent,
     AuthDialogComponent,
     SignInComponent,
     SignUpComponent,
+    ProfileDialogComponent,
   ],
   imports: [
     CommonModule,

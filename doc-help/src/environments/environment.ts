@@ -4,6 +4,9 @@
 
 export const environment = {
   production: false,
+  apiUrl: 'http://localhost:3000/api',
+  agmAutocomplete: 'AIzaSyBAlAs24Yp5YSegQVPPi0Nk2U5G2Ryhlds',
+
 };
 
 /*

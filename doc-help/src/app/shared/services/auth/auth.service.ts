@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorHandlerService } from '../error-handler.service';
 import { User, Response } from '../../models/models';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +17,7 @@ export class AuthService {
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
-  private readonly SERVER_URL = 'http://localhost:3000/api';
+  private readonly SERVER_URL = environment.apiUrl;
   constructor(
     private route: ActivatedRoute,
     private router: Router,

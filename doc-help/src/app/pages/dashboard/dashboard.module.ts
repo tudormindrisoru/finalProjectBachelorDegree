@@ -15,7 +15,6 @@ import { AddOfficeDialogComponent } from 'src/app/features/profile/components/ad
 import { JoinOfficeDialogComponent } from 'src/app/features/profile/components/join-office-dialog/join-office-dialog.component';
 import { CalendarViewComponent } from 'src/app/features/appointments/components/calendar-view/calendar-view.component';
 import { UpdateScheduleDialogComponent } from 'src/app/features/appointments/components/update-schedule-dialog/update-schedule-dialog.component';
-import { DoctorDetailDialogComponent } from '../../features/profile/components/doctor-detail-dialog/doctor-detail-dialog.component';
 
 import { FullCalendarModule } from '@fullcalendar/angular'; // the main connector. must go first
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
@@ -25,6 +24,7 @@ import bootstrapPlugin from '@fullcalendar/bootstrap'; // a plugin
 import { AppointmentsService } from 'src/app/features/appointments/appointments.service';
 import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointments/components/calendar-event-details-dialog/calendar-event-details-dialog.component';
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 FullCalendarModule.registerPlugins([
   // register FullCalendar plugins
@@ -47,7 +47,6 @@ FullCalendarModule.registerPlugins([
     AddOfficeDialogComponent,
     JoinOfficeDialogComponent,
     UpdateScheduleDialogComponent,
-    DoctorDetailDialogComponent,
     CalendarEventDetailsDialogComponent
   ],
   imports: [
@@ -56,6 +55,7 @@ FullCalendarModule.registerPlugins([
     SharedModule,
     ReactiveFormsModule,
     FullCalendarModule,
+    GooglePlaceModule
   ],
   providers: [
     PatientsService,

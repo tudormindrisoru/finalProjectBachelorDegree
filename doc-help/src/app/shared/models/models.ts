@@ -5,6 +5,7 @@ export interface User {
   email?: string;
   phone?: string;
   docId?: number;
+  doctor?: Doctor;
   photo?: string;
   isVerified?: boolean;
   createdAt?: string;
@@ -15,15 +16,17 @@ export interface Doctor {
   cuim?: string;
   specialty?: string;
   officeId?: number;
+  user?: User;
 }
 
 export interface Office {
   id?: number;
-  name?: string;
+  oName?: string;
   address?: string;
   longitude?:  number;
   latitude?: number;
-  idAdministrator?: number;
+  administratorId?: number;
+  doctors?: Doctor[];
 }
 
 export interface Response<T> {

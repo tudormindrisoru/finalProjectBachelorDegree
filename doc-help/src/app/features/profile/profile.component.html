@@ -8,13 +8,13 @@
         (change)="selectPhoto($event)"
       />
       <div class="profile-image noselect">
-        <img src="{{ profileImage }}" alt="" />
+        <img src="{{ getProfileImg(user.photo) }}" alt="" />
         <div class="profile-second-layer" (click)="onPhotoChange(imageInput)">
           <span>CHANGE PHOTO</span>
         </div>
       </div>
       <div class="info">
-        <form class="user-info-form" [formGroup]="userFormGroup">
+        <form class="column-form" [formGroup]="userFormGroup">
           <div class="fields">
             <mat-form-field>
               <mat-label>First name</mat-label>
@@ -25,7 +25,7 @@
               <input matInput formControlName="lastName" required />
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Cell phone</mat-label>
+              <mat-label>Phone number</mat-label>
               <input
                 type="tel"
                 matInput
@@ -36,20 +36,27 @@
               <mat-icon matSuffix color="primary">smartphone</mat-icon>
             </mat-form-field>
           </div>
-          <button mat-flat-button color="primary" class="material-button">
-            Save changes
+          <button
+            [disabled]="isUserSaveButtonDisabled"
+            mat-flat-button
+            color="primary"
+            class="material-button"
+            (click)="openDialog('Save user')"
+          >
+            Save
+            <mat-icon>save</mat-icon>
           </button>
         </form>
       </div>
     </div>
     <div class="right-side">
       <h3 class="info-label">
-        Doctor informations
+        Doctor's informations
         <span>
           <mat-icon
             color="primary"
             matTooltipPosition="above"
-            matTooltip="Pentru a deveni doctor completati informatiile urmatoare."
+            matTooltip="To become a doctor, fill in the information below."
             >info_outline</mat-icon
           >
         </span>
@@ -57,7 +64,7 @@
       <form class="doctor-info-form" [formGroup]="doctorFormGroup">
         <mat-form-field>
           <mat-label>Specialty</mat-label>
-          <mat-select formControlName="specialty" required>
+          <mat-select formControlName="specialty" value="specialty" required>
             <mat-option
               *ngFor="let specialty of specialties"
               [value]="specialty"
@@ -66,21 +73,33 @@
             </mat-option>
           </mat-select>
           <mat-icon matSuffix color="primary">task_alt</mat-icon>
+          <mat-error *ngIf="doctorControls.specialty.invalid">
+            {{
+              doctorControls.specialty.errors.required
+                ? "*Specialty is required."
+                : ""
+            }}
+          </mat-error>
         </mat-form-field>
         <mat-form-field>
-          <mat-label>Cod unic de indentificare a medicului</mat-label>
+          <mat-label>Unique doctor identification code</mat-label>
           <input matInput formControlName="cuim" required />
+          <mat-error *ngIf="doctorControls.cuim.invalid">
+            {{
+              doctorControls.cuim.errors.required ? "*CUIM is required." : ""
+            }}
+          </mat-error>
         </mat-form-field>
       </form>
       <button
         mat-flat-button
         color="primary"
         class="save-doctor-info-button"
-        [disabled]="!isDoctorInfoValid"
+        [disabled]="isDoctorInfoSaveButtonDisabled"
+        (click)="openDialog('Save doctor')"
       >
         Save<mat-icon>save</mat-icon>
       </button>
-      <!-- *ngIf="userInfo && userInfo.docId" -->
       <div>
         <h3 class="info-label">
           Office informations
@@ -88,11 +107,133 @@
             <mat-icon
               color="primary"
               matTooltipPosition="above"
-              matTooltip="Pentru a fi afiliat unui cabinet trebuie sa adaugati unul sau sa acceptati o invitatie de afiliere."
+              matTooltip="To join an office you must add one or accept an invitation to join."
               >info_outline</mat-icon
             >
           </span>
         </h3>
+
+        <div class="office-information-container">
+          <div class="office-left-side">
+            <form [formGroup]="officeFormGroup" class="column-form">
+              <mat-form-field>
+                <mat-label>Address</mat-label>
+                <input
+                  matInput
+                  formControlName="address"
+                  [disabled]="!ownerCheck"
+                  required
+                  ngx-google-places-autocomplete
+                  [options]="options"
+                  #autocompleteRef
+                  (onAddressChange)="handleAddressChange($event)"
+                />
+                <mat-error *ngIf="officeControls.address.invalid">
+                  {{
+                    officeControls.address.errors.required
+                      ? "*Addreess is required."
+                      : ""
+                  }}
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Name</mat-label>
+                <input
+                  matInput
+                  formControlName="name"
+                  [disabled]="!ownerCheck"
+                  required
+                />
+                <mat-error *ngIf="officeControls.name.invalid">
+                  {{
+                    officeControls.name.errors.required
+                      ? "*Office name is required."
+                      : ""
+                  }}
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Longitude</mat-label>
+                <input matInput formControlName="longitude" readonly required />
+                <mat-error *ngIf="officeControls.longitude.invalid">
+                  {{
+                    officeControls.longitude.errors.required
+                      ? "*Longitude is required."
+                      : ""
+                  }}
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field>
+                <mat-label>Latitude</mat-label>
+                <input matInput formControlName="latitude" readonly required />
+                <mat-error *ngIf="officeControls.latitude.invalid">
+                  {{
+                    officeControls.latitude.errors.required
+                      ? "*Latitude is required."
+                      : ""
+                  }}
+                </mat-error>
+              </mat-form-field>
+            </form>
+          </div>
+          <div class="office-right-side">
+            <div class="agm-container">
+              <agm-map
+                [latitude]="officeFormGroup.value.latitude"
+                [longitude]="officeFormGroup.value.longitude"
+                [zoom]="16"
+                #placesRef
+              >
+                <agm-marker
+                  [latitude]="officeFormGroup.value.latitude"
+                  [longitude]="officeFormGroup.value.longitude"
+                ></agm-marker>
+              </agm-map>
+            </div>
+          </div>
+        </div>
+        <div class="buttons-container">
+          <button
+            *ngIf="isOfficeAdded"
+            mat-flat-button
+            color="primary"
+            class="material-button"
+            (click)="openDialog('Remove office')"
+          >
+            Remove
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+          <button
+            [disabled]="isSaveOfficeButtonDisabled"
+            mat-flat-button
+            color="primary"
+            class="material-button"
+            (click)="addOffice()"
+          >
+            Save
+            <mat-icon>save</mat-icon>
+          </button>
+        </div>
+        <div class="affiliated-doctors">
+          <h3 class="info-label">Doctors</h3>
+          <div class="doctors-list noselect" *ngIf="office && office.doctors">
+            <div *ngFor="let d of office.doctors" class="doctor-wrapper" >
+              <div class="doctor-container" >
+                <img src={{getProfileImg(d.user.photo)}} [ngClass]="d.id === office.administratorId ? 'office-owner' : ''" >
+                <div class="office-owner-shield" *ngIf="doctor.id === office.administratorId">
+                  <mat-icon color="primary">health_and_safety</mat-icon>
+                </div>
+              </div>
+            </div>
+            <div class="doctor-wrapper" *ngIf="doctor.id === office.administratorId">
+              <div class="doctor-container">
+                <div class="add-doctor">
+                  <mat-icon color="primary">add</mat-icon>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </mat-card>
@@ -207,29 +348,7 @@
                     <mat-icon matSuffix color="primary">pin_drop</mat-icon>
                   </mat-form-field>
 
-                  <div class="affiliated-doctors">
-                    <h3>Doctors</h3>
-                    <div class="doctors-list noselect" formArrayName="doctors">
-                      <div *ngFor="let doctor of officeDataFormGroup.get('doctors').controls; let i = index" class="doctor-wrapper">
-                        <div [formGroupName]="i"  class="doctor-container" (click)="onOpenDoctorDetailDialog(i)">
-                          <img src={{doctor.value.photo}} [ngClass]="doctor.value.isOfficeOwner ? 'office-owner' : ''" >
-                          <div class="doctors-second-layer">
-                            <span>{{ isYou(i) ? 'YOU' : 'OPEN' }}</span>
-                          </div>
-                          <div class="office-owner-shield" *ngIf="doctor.value.isOfficeOwner">
-                            <mat-icon color="primary">health_and_safety</mat-icon>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="doctor-wrapper" *ngIf="office.you.isOfficeOwner">
-                        <div class="doctor-container" (click)="onOpenDoctorDetailDialog()">
-                          <div class="add-doctor">
-                            <mat-icon color="primary">add</mat-icon>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
                 </form>
               </div>
             </div>

@@ -24,6 +24,7 @@
         cursor: pointer;
         visibility: visible;
         background-color: $background-color;
+        border: 4px #54b1fde2 solid;
         span {
             visibility: visible;
         }
@@ -38,6 +39,22 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+.column-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px;
+    padding: 0px;
+
+    .fields {
+        display: flex;
+        flex-direction: column;
+        mat-form-field.mat-form-field {
+            width:auto;
+        }
+    }
 }
 
 .profile-card {
@@ -64,6 +81,7 @@
                 height: 105px;
                 border-radius: 50%;  
                 object-fit: cover;
+                border: 4px transparent solid;
             }
 
             .profile-second-layer {
@@ -72,38 +90,23 @@
             }
         }
 
-       
         
         .info {
             margin-top: 10px;
             align-self: center;
-            .user-info-form {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                width: 200px;
-                padding: 0px;
-
-                .fields {
-                    display: flex;
-                    flex-direction: column;
-                    mat-form-field.mat-form-field {
-                        width:auto;
-                    }
-                }
-            }
 
             button {
                 align-content: center;
-                color: white;
             }
         }
     }
     
+    
     .right-side {
         flex: 1;
         padding: 25px;
-
+        overflow-y: scroll;
+        
         .info-label {
             span {
                 text-indent: 5px;
@@ -116,9 +119,47 @@
         }
 
         .save-doctor-info-button {
-            width: 100px;
-            color: white;
+            width: 125px;
             align-self: end;
+
+            mat-icon {
+                margin-left: 5px;
+            }
+        }
+
+        .office-information-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            height: 250px;
+            .office-left-side, .office-right-side{
+                flex: 1;
+            }      
+            .office-left-side { 
+                display: flex;
+                flex-direction: column;
+
+            }
+            .office-right-side {
+                .agm-container {
+                    width: 100%; 
+                    height: 240px !important;
+        
+                    agm-map {
+                        height: 240px;
+                    }
+                }
+            }
+        }
+
+        .buttons-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            
+            button {
+                margin: 0px 5px;
+            }
         }
     }
 }
@@ -266,85 +307,54 @@
     }
 }
 
-.content-container {
-    
-    display: flex;
 
-    .office-map-location {
-        height: 100%;
-        width: 250px;
-        margin-right: 25px;
-        
-        .agm-container {
-            width:100%; 
-            height: auto;
-
-            agm-map {
-                width:100%;
-                height: 250px;
-            }
-        }
+.affiliated-doctors {
+    margin-bottom: 20px;
+    h3 {
+        color: #64b3f4;   
     }
-    .form-map-informations {
-        width: 250px;
+    .doctors-list {
+        display: flex;
         height: auto;
-        margin-top: 25px;
-        mat-form-field {
-            width: 100%;
-        }
-    }
+        flex-wrap: wrap;
+        .doctor-wrapper {
+            .doctor-container{
+                position: relative;
+                width: 50px;
+                height: 50px;
+                margin: 0px 5px;
 
-    .affiliated-doctors {
-        margin-bottom: 20px;
-        h3 {
-            color: #64b3f4;   
-        }
-        .doctors-list {
-            display: flex;
-            height: auto;
-            flex-wrap: wrap;
-            .doctor-wrapper {
-                .doctor-container{
-                    position: relative;
+                img {
                     width: 50px;
                     height: 50px;
-                    margin: 0px 5px;
-                    img {
-                        width: 50px;
-                        height: 50px;
-                        border-radius: 50%;
-                        object-fit: cover;
-                        z-index: 2;
-                    }
-                    .add-doctor {
-                        width: 50px;
-                        height: 50px;
-                        border-radius: 50%;
-                        border: 2px #64b3f4 solid;
-                        z-index: 2;
-                        display: flex;
-                        flex-direction: center;
-                        justify-content: center;
-                        align-items: center;
-                        cursor: pointer;
+                    border-radius: 50%;
+                    object-fit: cover;
+                    z-index: 2;
+                }
 
-                        &:hover {
-                            background-color: #64b3f4;
-                            mat-icon {
-                                color: white;
-                            }
+                .add-doctor {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    border: 2px #64b3f4 solid;
+                    z-index: 2;
+                    display: flex;
+                    flex-direction: center;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: #64b3f4;
+                        mat-icon {
+                            color: white;
                         }
                     }
                 }
             }
         }
-
     }
-}
 
-.doctors-second-layer{
-
-    @include rounded-layer(50px,50px,50%,white,#64b3f4e2); 
 }
 
 
@@ -391,6 +401,8 @@
     mat-form-field {
         width: 250px;
     }
+
+
 }
 
 .noselect {
