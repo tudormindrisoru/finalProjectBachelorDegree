@@ -8,43 +8,38 @@ import roLocale from '@fullcalendar/core/locales/es';
 // import 'bootstrap/dist/css/bootstrap.css';
 // import '@fortawesome/fontawesome-free/css/all.css';
 
-import { MatDialog } from '@angular/material/dialog'
+import { MatDialog } from '@angular/material/dialog';
 import { CalendarEventDetailsDialogComponent } from '../calendar-event-details-dialog/calendar-event-details-dialog.component';
-
-
 
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
-  styleUrls: ['./calendar-view.component.scss']
+  styleUrls: ['./calendar-view.component.scss'],
 })
 export class CalendarViewComponent implements OnInit {
-  @Output() updateSchedule = new EventEmitter<Function>();
-  
-  constructor(
-    public dialog: MatDialog,
-  ) {
-    const name = Calendar.name;
-   }
 
-  ngOnInit(): void {
+  
+  constructor(public dialog: MatDialog) {
+    const name = Calendar.name;
   }
+  
+  @Output() updateSchedule = new EventEmitter<Function>();
 
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
     // themeSystem: 'bootstrap',
     locale: 'en',
-    plugins: [ timeGridPlugin, interactionPlugin, bootstrapPlugin ],
+    plugins: [timeGridPlugin, interactionPlugin, bootstrapPlugin],
     customButtons: {
-      myCustomButton: {
+      updateScheduleButton: {
         text: 'Update schedule',
-        click: this.onUpdateSchedule.bind(this)
-      }
+        click: this.onUpdateSchedule.bind(this),
+      },
     },
     headerToolbar: {
       start: 'title', // will normally be on the left. if RTL, will be on the right
       center: '',
-      end: 'myCustomButton today prev,next' // will normally be on the right. if RTL, will be on the left
+      end: 'updateScheduleButton today prev,next', // will normally be on the right. if RTL, will be on the left
     },
     buttonText: {
       today: 'today',
@@ -53,12 +48,20 @@ export class CalendarViewComponent implements OnInit {
     dateClick: this.handleDateClick.bind(this), // bind is important!
     eventClick: this.handleEventClick.bind(this),
     events: [
-      { title: 'Mindrisoru Tudor-Gabriel', start: '2021-05-28T10:30', end: '2021-05-28T12:00' },
-      { title: 'Another patient', start: '2021-05-29T11:00', end: '2021-05-29T12:00' }
+      {
+        title: 'Mindrisoru Tudor-Gabriel',
+        start: '2021-05-28T10:30',
+        end: '2021-05-28T12:00',
+      },
+      {
+        title: 'Another patient',
+        start: '2021-05-29T11:00',
+        end: '2021-05-29T12:00',
+      },
     ],
     height: 525,
     editable: false,
-    eventDrop: function(eventDropInfo) {
+    eventDrop: function (eventDropInfo) {
       console.log(eventDropInfo);
     },
     allDaySlot: false,
@@ -67,10 +70,14 @@ export class CalendarViewComponent implements OnInit {
     nowIndicator: true,
   };
 
-  handleDateClick(arg) {
-    alert('date click! ' + arg.dateStr)
+  ngOnInit(): void {
+
   }
-  
+
+  handleDateClick(arg) {
+    alert('date click! ' + arg.dateStr);
+  }
+
   handleEventClick(arg) {
     console.log(arg);
     this.onOpenEventDetailsDialog();
@@ -79,7 +86,7 @@ export class CalendarViewComponent implements OnInit {
   onOpenEventDetailsDialog(): void {
     const dialogRef = this.dialog.open(CalendarEventDetailsDialogComponent, {
       width: '400px',
-      data: {name: 'Add office dialog'},
+      data: { name: 'Add office dialog' },
       disableClose: true,
     });
   }

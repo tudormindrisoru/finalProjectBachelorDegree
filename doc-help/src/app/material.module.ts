@@ -23,6 +23,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSnackBarModule } from '@angular/material/snack-bar'; 
 
 const materialModules = [
   MatSliderModule,
@@ -46,7 +48,9 @@ const materialModules = [
   MatTableModule,
   MatPaginatorModule,
   MatRadioModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatAutocompleteModule,
+  MatSnackBarModule
 ];
 
 @NgModule({

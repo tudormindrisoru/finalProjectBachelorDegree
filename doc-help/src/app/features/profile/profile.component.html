@@ -221,13 +221,17 @@
               <div class="doctor-container" >
                 <img src={{getProfileImg(d.user.photo)}} [ngClass]="d.id === office.administratorId ? 'office-owner' : ''" >
                 <div class="office-owner-shield" *ngIf="doctor.id === office.administratorId">
-                  <mat-icon color="primary">health_and_safety</mat-icon>
+                  <mat-icon 
+                  matTooltipPosition="below"
+                  matTooltip="Administrator of the office." 
+                  color="primary">health_and_safety</mat-icon>
+                  
                 </div>
               </div>
             </div>
             <div class="doctor-wrapper" *ngIf="doctor.id === office.administratorId">
               <div class="doctor-container">
-                <div class="add-doctor">
+                <div class="add-doctor" (click)="openDialog('Invite doctor')">
                   <mat-icon color="primary">add</mat-icon>
                 </div>
               </div>

@@ -15,6 +15,8 @@ import { Address } from 'ngx-google-places-autocomplete/objects/address';
 import { UpdateOfficeInfo, RemoveOfficeInfo } from 'src/app/store/actions/office.actions';
 import { UpdateUser } from 'src/app/store/actions/user.actions';
 import { ProfileDialogComponent } from 'src/app/shared/components/profile-dialog/profile-dialog.component';
+import { ThirdPartyDraggable } from '@fullcalendar/interaction';
+import { report } from 'process';
 
 @Component({
   selector: 'app-profile',
@@ -272,6 +274,11 @@ export class ProfileComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e) => (this.profileImage = reader.result);
       reader.readAsDataURL(file);
+      this.profileService.updatePhoto(file).subscribe( (response: HttpResponse<Response<any>>) => {
+        if (response.body.success) {
+          this.user.photo = response.body.message.photo;
+        }
+      });
     }
   }
 
@@ -371,6 +378,18 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  inviteDoctor(doctor): void {
+    if(doctor.id && this.office.id) {
+      const data = { 'doctorId': doctor.id, 'officeId': this.office.id };
+      console.log(data);
+      this.profileService.inviteDoctor(data).subscribe((response: HttpResponse<Response<any>>) => {
+        if(!!response.body && response.body.success) {
+          console.log(response.body);
+        }
+      });
+    }
+  }
+
   updateOffice(): void {
 
   }
@@ -396,9 +415,11 @@ export class ProfileComponent implements OnInit {
       data: { title },
     });
 
-    dialogRef.afterClosed().subscribe(success => {
-      console.log('The dialog was closed', success, typeof success);
-      if (success === 'true') {
+    dialogRef.afterClosed().subscribe(data => {
+      console.log('The dialog was closed', JSON.parse(data));
+      data = JSON.parse(data);
+      console.log(data);
+      if (data.success) {
         console.log(title);
         if (title === 'Save user') {
           this.saveUser();
@@ -408,7 +429,9 @@ export class ProfileComponent implements OnInit {
         }
 
         if(title === 'Invite doctor') {
-          
+          if(!!data.doctor) {
+            this.inviteDoctor(data.doctor);
+          }
         }
 
         if(title === 'Remove doctor') {
