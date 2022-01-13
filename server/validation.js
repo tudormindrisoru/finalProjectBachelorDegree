@@ -77,6 +77,14 @@ const officeValidation = (request) => {
   return schema.validate(request);
 };
 
+const officeInvitationValidation = (request) => {
+  const schema = Joi.object({
+    doctorId: Joi.number().required(),
+    officeId: Joi.number().required()
+  });
+  return schema.validate(request);
+};
+
 const doctorSearchValidation = (request) => {
   const schema = Joi.object({
     city: Joi.string(),
@@ -121,5 +129,6 @@ module.exports = {
   postDoctorValidation,
   updateUserValidation,
   updateDoctorValidation,
-  officeValidation
+  officeValidation,
+  officeInvitationValidation
 };

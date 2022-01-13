@@ -116,6 +116,43 @@ class Office {
       return new Response(500, false, err).getResponse();
     }
   }
+
+  static async getDoctorInvitations(doctorId) {
+    try {
+      const GET_DOCTOR_INVITATIONS = `SELECT * FROM office_invitations WHERE doctorId=${doctorId};`;
+      const invitations = await db.execute(GET_DOCTOR_INVITATIONS);
+      return new Response(200, true, invitations[0] && invitations[0][0] ? invitations[0][0] : []).getResponse();
+    } catch(err) {
+      console.error(err);
+      return new Response(500, false, err).getResponse();
+    }
+  }
+
+  static async inviteDoctor(doctorId, officeId) {
+    try {
+      const result = await Office.getDoctorInvitations(doctorId);
+      console.log(result.message);
+      if(result.success && result.message) {
+        if(result.message.officeId === officeId) {
+          return new Response(400, false, "There is already an invitation to this office for this doctor.").getResponse();
+        }
+      }
+      const INVITE_DOCTOR_SQL = `INSERT INTO office_invitations(officeId, doctorId) VALUES(${officeId}, ${doctorId});`;
+      const invitation = await db.execute(INVITE_DOCTOR_SQL);
+      if(!!invitation[0] && invitation[0].affectedRows === 1) {
+        return new Response(201, true, "Invitation created successfully!").getResponse(); 
+      } else {
+        return new Response(400, false, "Invitation could not be created.").getResponse();
+      }
+    } catch(err) {
+      console.error(err);
+      return new Response(500, false, err).getResponse();
+    }
+  }
+
+  // static async getInvitations(id) {
+    
+  // }
 }
 
 module.exports = Office;

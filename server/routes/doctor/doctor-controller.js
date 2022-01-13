@@ -93,6 +93,27 @@ router.put('/', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/search-to-invite/:name', verifyToken, async (req, res) => {
+    try {
+        const name = req.params.name;
+        res.set({
+            'Content-Type': 'application/json',
+            'Authorization': req.headers.authorization,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': '*'
+        });
+        if(!!name) {
+            const doctors = await Doctor.findAllWithoutAffiliation(name);
+            res.status(doctors.status).send(doctors);
+        } else {
+            res.status(400).send(new Response(400, false, "Please provide name for searching.").getResponse());
+        }
+    } catch(err) {
+        console.error(err);
+        res.status(500).send(new Response(500, false, err).getResponse());
+    }
+});
+
 
 
 

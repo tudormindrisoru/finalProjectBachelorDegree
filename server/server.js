@@ -16,9 +16,12 @@
  const userController = require('./routes/user/user-controller');
  const doctorController = require('./routes/doctor/doctor-controller');
  const officeController = require('./routes/office/office-controller');
+ const appointmentController = require('./routes/appointment/appointment-controller');
  
  // middlewares 
  app.use(express.json());
+ app.use(express.json({limit: '50mb'}));
+ app.use(express.urlencoded({limit: '50mb'}));
 
  app.use((err, req, res, next) => {
     console.log(err.stack);
@@ -35,6 +38,7 @@
  app.use('/api/doctor', doctorController);
  app.use('/api/user', userController);
  app.use('/api/office', officeController);
+ app.use('/api/appointment', appointmentController);
 //  app.use('/api/patient', patientController);
 const PORT = process.env.PORT || 3000;
  app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));

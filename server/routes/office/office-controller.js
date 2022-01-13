@@ -6,7 +6,7 @@ const Office = require('../../models/office');
 // const GeneratedAffiliationCode = require('../../models/GeneratedAffiliationCodes');
 
 const { verifyToken } = require('../../middlewares/auth');
-const { officeValidation } = require('../../validation');
+const { officeValidation, officeInvitationValidation } = require('../../validation');
 // const { getReturnableDoctorInfos } = require('../../helpers/shared-methods');
 // const { query } = require('express');
 const Response = require('../../models/response');
@@ -63,7 +63,50 @@ router.post('/', verifyToken, async(req, res) => {
                 } 
             }
         } else {
-            res.status(401).send("Unauthorized");
+            res.status(401).send(new Response(401, false, "Unauthorized").getResponse());
+        }
+    } catch(err) {
+        console.error(err);
+        res.status(500).send(new Response(500,false, err).getResponse());
+    }
+   
+});
+
+router.post('/invite', verifyToken, async(req, res) => {
+    try {
+        const id = req.user.id;
+        const { error } = officeInvitationValidation(req.body);
+        res.set({
+            'Content-Type': 'application/json',
+            'Authorization': req.headers.authorization,
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': '*'
+        });
+        if(id) {
+            if(error) {
+                res.status(400).send(new Response(400,false, error).getResponse());
+            } else {
+                const doctor = await Doctor.findOneByUserId(id);
+                if(doctor.success && doctor.message.officeId) {
+                    const office = await Office.getOneById(doctor.message.officeId);
+                    if(office.success) {
+                        if(office.message.administratorId === doctor.message.id) {
+                            const invitation = await Office.inviteDoctor(req.body.doctorId, req.body.officeId);
+                            res.status(invitation.status).send(invitation);
+                        } else {
+                            res.status(401).send(new Response(401, false, "You are not authorized to send invitations.").getResponse());
+                        }
+                    } else {
+                        res.status(400).send(new Response(400, false, "You are not affiliated to any office.").getResponse());
+                    }
+                } else {
+                    const office = await Office.save(doctor.message.id, req.body);
+                    res.status(office.status).send(office);
+                } 
+            }
+        } else {
+            console.log("TEEEEEEST");
+            res.status(401).send(new Response(401, false, "Unauthorized").getResponse());
         }
     } catch(err) {
         console.error(err);

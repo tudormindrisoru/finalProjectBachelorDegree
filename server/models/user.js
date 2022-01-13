@@ -116,13 +116,17 @@ class User {
   }
   
   static async updatePhotoById(id, path) {
-    const SQL_UPDATE_PHOTO = `UPDATE users SET photo = "${path}" WHERE id = ${id}`;
-    const result = db.execute(SQL_UPDATE_PHOTO);
-    console.log(result);
-    if (result) {
-      return new Response(200, true, { path: path }).getResponse();
-    } else {
-      return new Response(400, false, result.sqlMessage);
+    try {
+      const SQL_UPDATE_PHOTO = `UPDATE users SET photo = "${path}" WHERE id = ${id}`;
+      const result = await db.execute(SQL_UPDATE_PHOTO);
+      console.log(result);
+      if (!!result[0] && result[0].affectedRows === 1) {
+        return new Response(200, true, { photo: path }).getResponse();
+      }
+      return new Response(400, false, "The image could not be updated.").getResponse();
+    } catch(err) {
+      console.error(err);
+      return new Response(500, false, err).getResponse();
     }
   }
 
