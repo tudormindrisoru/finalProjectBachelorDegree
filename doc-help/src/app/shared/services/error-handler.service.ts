@@ -12,11 +12,14 @@ export class ErrorHandlerService {
   ) {
 
   }
-  handleError<T>(operation="operation", result?:T) {
+  handleError<T>(operation='operation', result?:T) {
     return (error: any): Observable<T> => {
       console.log(`${operation} failed: ${error.message}`);
       console.log(error);
-      this.snackBar.open(error.status + ' ' + error.statusText, 'Ok');
+      this.snackBar.open(error.status + ' ' + error.statusText, 'Ok', {
+        duration: 2000,
+        panelClass: ['red-snackbar']
+      });
       return of(result as T);
     }
   }

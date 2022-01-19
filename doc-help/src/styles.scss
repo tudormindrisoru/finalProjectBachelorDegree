@@ -14,7 +14,7 @@
 // hue. Available color palettes: https://material.io/design/color/
 $primary-color: mat-palette($mat-blue, 300);
 $accent-color: mat-palette($mat-green, A200, A100, A400);
-
+$danger-color: mat-palette($mat-red, A200, A100, A400);
 // The warn palette is optional (defaults to red).
 $warn-color: mat-palette($mat-red);
 
@@ -53,4 +53,20 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   
   ::-webkit-scrollbar-thumb:hover {
   background: #64b3f4;
+  }
+
+  .red-snackbar {
+    background-color:#ff5252; 
+    color: white;
+    button {
+      color: white;
+    }
+  }
+
+  .blue-snackbar {
+    background-color:#64b3f4;; 
+    color: white;
+    button {
+      color: white;
+    }
   }

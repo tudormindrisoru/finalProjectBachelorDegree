@@ -1,6 +1,18 @@
-<h1 mat-dialog-title>Join an office</h1>
+<h1 mat-dialog-title>Appointment details</h1>
 <div mat-dialog-content>
-  HELLO!
+
+  <form id="appointment-form" formGroup="appointmentForm">
+    <!-- <ng-template [ngIf]="id"> -->
+        <mat-form-field>
+          <input matInput type="datetime-local" placeholder="Start date" (change)="onEventChange($event)" formControlName="startDate">
+          <mat-icon matSuffix color="primary" >event</mat-icon>
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput type="datetime-local" placeholder="End date" formControlName="endDate">
+          <mat-icon matSuffix color="primary">event</mat-icon>
+        </mat-form-field>
+    <!-- </ng-template> -->
+  </form>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Close</button>

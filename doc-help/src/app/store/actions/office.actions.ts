@@ -1,4 +1,4 @@
-import { Office } from '../../shared/models/models';
+import { Office } from 'src/app/shared/models/models';
 
 export class UpdateOfficeInfo {
     static readonly type = '[DOC-HELP] Get office informations';

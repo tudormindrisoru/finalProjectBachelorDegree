@@ -29,6 +29,17 @@ export interface Office {
   doctors?: Doctor[];
 }
 
+export interface Appointment {
+  id?: number;
+  doctorId?: number;
+  officeId?: number;
+  startDate?: string;
+  endDate?: string;
+  notes?: string;
+  isApproved?: boolean;
+  patient?: User;
+}
+
 export interface Response<T> {
   success?: boolean;
   status?: number;

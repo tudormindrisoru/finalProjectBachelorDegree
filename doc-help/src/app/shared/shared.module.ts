@@ -11,6 +11,7 @@ import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProfileDialogComponent } from './components/profile-dialog/profile-dialog.component';
+import { AppointmentDialogComponent } from './components/appointment-dialog/appointment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ProfileDialogComponent } from './components/profile-dialog/profile-dial
     SignInComponent,
     SignUpComponent,
     ProfileDialogComponent,
+    AppointmentDialogComponent,
   ],
   imports: [
     CommonModule,

@@ -21,7 +21,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
 import interactionPlugin from '@fullcalendar/interaction'; // a plugin
 import timeGridPlugin from '@fullcalendar/timegrid'; // a plugin
 import bootstrapPlugin from '@fullcalendar/bootstrap'; // a plugin
-import { AppointmentsService } from 'src/app/features/appointments/appointments.service';
+import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
 import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointments/components/calendar-event-details-dialog/calendar-event-details-dialog.component';
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';

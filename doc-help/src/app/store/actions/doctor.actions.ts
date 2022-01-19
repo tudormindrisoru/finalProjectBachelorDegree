@@ -1,4 +1,4 @@
-import { Doctor } from '../../shared/models/models';
+import { Doctor } from 'src/app/shared/models/models';
 
 export class UpdateDoctorInfo {
     static readonly type = '[DOC-HELP] Get doctor informations';
