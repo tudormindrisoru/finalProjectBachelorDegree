@@ -54,6 +54,29 @@ class User {
     }
   }
 
+  static async findAllByName(name, id) {
+    try {
+      const GET_USERS_SQL = `SELECT * FROM users WHERE (firstName LIKE '${name}%' OR lastName LIKE '${name}%') AND isVerified = 1 AND id != ${id}`;
+      const users = await db.execute(GET_USERS_SQL);
+      let res = [];
+      if(!!users[0] && users[0].length > 0) {
+          res = users[0].map(element => {
+            return {
+              'id': element.id,
+              'firstName': element.firstName,
+              'lastName': element.lastName,
+              'photo': element.photo,
+              'phone': element.phone
+            }
+          });
+      }
+      return new Response(200, true, res).getResponse();
+    } catch(err) {
+        console.error(err);
+        return new Response(500, false, err).getResponse();
+    }
+  }
+
   static async findOneByEmailAndPass(email, password) {
     try {
       const SQL_USER_QUERY = `SELECT * FROM users WHERE email='${email}'`;
@@ -148,6 +171,32 @@ class User {
     } catch(error) {
         console.error(error);
         return new Response(500, false, error).getResponse();
+    }
+  }
+
+  static async filterUsersByName(name) {
+    try {
+      const GET_DOCTORS_SQL = `SELECT * FROM users WHERE (firstName LIKE '${name}%' OR lastName LIKE '${name}%') AND isVerified=1;`;
+      const users = await db.execute(GET_DOCTORS_SQL);
+      let res = [];
+      if(!!doctors[0] && doctors[0].length > 0) {
+          res = doctors[0].map(element => {
+            return {
+              'id': element.id,
+              'specialty': element.specialty,
+              'user': {
+                'firstName': element.firstName,
+                'lastName': element.lastName,
+                'photo': element.photo,
+                'phone': element.phone
+              }
+            }
+          });
+      }
+      return new Response(200, true, res).getResponse();
+    } catch(err) {
+      console.error(err);
+      return new Response(500, false, err).getResponse();
     }
   }
 

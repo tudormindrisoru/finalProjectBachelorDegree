@@ -1,10 +1,11 @@
-const router = require('express').Router();
-const multer = require('multer');
-const { verifyToken, decodeAccessToken } = require('../../middlewares/auth');
+const router = require("express").Router();
+const multer = require("multer");
+const { verifyToken } = require("../../middlewares/auth");
+const scheduleController = require("./schedule/schedule-controller");
 const {
-    postDoctorValidation,
-    updateDoctorValidation
-} = require('../../validation');
+  postDoctorValidation,
+  updateDoctorValidation,
+} = require("../../validation");
 // const { getReturnableDoctorInfos } = require('../../helpers/shared-methods');
 // const { verify } = require('jsonwebtoken');
 
@@ -12,117 +13,121 @@ const {
 // const vacationController = require('./vacation/vacation');
 // router.use('/schedule', scheduleController)
 
-const Doctor = require('../../models/doctor');
-const Response = require('../../models/response');
-const User = require('../../models/user');
-const { update } = require('../../models/doctor');
+const Doctor = require("../../models/doctor");
+const Response = require("../../models/response");
+const User = require("../../models/user");
+const { update } = require("../../models/doctor");
 
-router.get('/', verifyToken , async (req, res) => {
-    try {
-        res.set({
-            'Content-Type': 'application/json',
-            'Authorization': req.headers.authorization,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': '*'
-        });
-          
-        const doctor = await Doctor.findOneByUserId(req.user.id);
-        console.log(doctor);
-        if(doctor.success) {
-            res.status(doctor.status).send(doctor);
-        }
-        
-    } catch(error) {
-        console.error(new Error(error));
-        res.status(500).send(new Response(500, false, error).getResponse());
+router.use("/schedule", scheduleController);
+
+router.get("/", verifyToken, async (req, res) => {
+  try {
+    res.set({
+      "Content-Type": "application/json",
+      Authorization: req.headers.authorization,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Expose-Headers": "*",
+    });
+
+    const doctor = await Doctor.findOneByUserId(req.user.id);
+    console.log(doctor);
+    if (doctor.success) {
+      res.status(doctor.status).send(doctor);
     }
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(500).send(new Response(500, false, error).getResponse());
+  }
 });
 
-router.post('/', verifyToken, async (req, res) => {
-    try {
-        if (req.user.id) {
-            const { error } = postDoctorValidation(req.body);
-            if(error) {
-                res.status(400).send(new Response(400, false, error).getResponse());
-            } else {
-                const doctor = new Doctor(null, req.body.cuim, req.body.specialty, null);
-                const dbResponse = await doctor.save();
-                if(dbResponse.success) {
-                    if(dbResponse.insertId) {
-                        console.log(dbResponse.insertId);
-                    }
-                    res.set({
-                        'Content-Type': 'application/json',
-                        'Authorization': req.headers.authorization,
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Expose-Headers': '*'
-                      });
-                    }
-                res.status(dbResponse.status).send(dbResponse);
-            }
+router.post("/", verifyToken, async (req, res) => {
+  try {
+    if (req.user.id) {
+      const { error } = postDoctorValidation(req.body);
+      if (error) {
+        res.status(400).send(new Response(400, false, error).getResponse());
+      } else {
+        const doctor = new Doctor(
+          null,
+          req.body.cuim,
+          req.body.specialty,
+          null
+        );
+        const dbResponse = await doctor.save();
+        if (dbResponse.success) {
+          if (dbResponse.insertId) {
+            console.log(dbResponse.insertId);
+          }
+          res.set({
+            "Content-Type": "application/json",
+            Authorization: req.headers.authorization,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Expose-Headers": "*",
+          });
         }
-    } catch(error) {
-        console.error(new Error(error));
-        res.status(500).send(new Response(500, false, error).getResponse());
+        res.status(dbResponse.status).send(dbResponse);
+      }
     }
+  } catch (error) {
+    console.error(new Error(error));
+    res.status(500).send(new Response(500, false, error).getResponse());
+  }
 });
 
-router.put('/', verifyToken, async (req, res) => {
-    try {
-        const { error } = updateDoctorValidation(req.body);
-        res.set({
-            'Content-Type': 'application/json',
-            'Authorization': req.headers.authorization,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': '*'
-        });
-        if(error) {
-            res.status(400).send(new Response(400, false, error).getResponse());
-        } else {
-            const doctor = await Doctor.findOneByUserId(req.user.id);
-            if(doctor.success) {
-                const updatedDoctor = await Doctor.update(doctor.message.id, req.body);
-                res.status(updatedDoctor.status).send(updatedDoctor);
-            } else {
-                res.status(doctor.status).send(doctor);
-            }
-        }
-    } catch(err) {
-        console.error(err);
-        res.status(500).send(new Response(500, false, err).getResponse());
+router.put("/", verifyToken, async (req, res) => {
+  try {
+    const { error } = updateDoctorValidation(req.body);
+    res.set({
+      "Content-Type": "application/json",
+      Authorization: req.headers.authorization,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Expose-Headers": "*",
+    });
+    if (error) {
+      res.status(400).send(new Response(400, false, error).getResponse());
+    } else {
+      const doctor = await Doctor.findOneByUserId(req.user.id);
+      if (doctor.success) {
+        const updatedDoctor = await Doctor.update(doctor.message.id, req.body);
+        res.status(updatedDoctor.status).send(updatedDoctor);
+      } else {
+        res.status(doctor.status).send(doctor);
+      }
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(new Response(500, false, err).getResponse());
+  }
 });
 
-router.get('/search-to-invite/:name', verifyToken, async (req, res) => {
-    try {
-        const name = req.params.name;
-        res.set({
-            'Content-Type': 'application/json',
-            'Authorization': req.headers.authorization,
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': '*'
-        });
-        if(!!name) {
-            const doctors = await Doctor.findAllWithoutAffiliation(name);
-            res.status(doctors.status).send(doctors);
-        } else {
-            res.status(400).send(new Response(400, false, "Please provide name for searching.").getResponse());
-        }
-    } catch(err) {
-        console.error(err);
-        res.status(500).send(new Response(500, false, err).getResponse());
+router.get("/search-to-invite/:name", verifyToken, async (req, res) => {
+  try {
+    const name = req.params.name;
+    res.set({
+      "Content-Type": "application/json",
+      Authorization: req.headers.authorization,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Expose-Headers": "*",
+    });
+    if (!!name) {
+      const doctors = await Doctor.findAllWithoutAffiliation(name);
+      res.status(doctors.status).send(doctors);
+    } else {
+      res
+        .status(400)
+        .send(
+          new Response(
+            400,
+            false,
+            "Please provide name for searching."
+          ).getResponse()
+        );
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(new Response(500, false, err).getResponse());
+  }
 });
-
-
-
-
-
-
-
-
-
-
 
 // const storage = multer.diskStorage({
 //     destination: function(req, file, cb) {
@@ -153,22 +158,18 @@ router.get('/search-to-invite/:name', verifyToken, async (req, res) => {
 //         const decryptedToken = decodeAccessToken(req.header('auth-token'));
 //         const updatedDoctor = Object.assign({}, req.body, isActivated);
 //         updatedDoctor.photo = req.file.path.replace('\\','/');
-        
+
 //         const result = await Doctor.findOneAndUpdate({ _id: decryptedToken._id}, updatedDoctor,  {
 //             new: true,
 //             useFindAndModify: false
 //           });
 //         res.status(200).send(result);
-        
+
 //     } catch(error) {
 //         console.error(new Error(error));
 //         res.status(403).send(error);
 //     }
 // });
-
-
-
-
 
 // router.post('/vacation-interval', verifyToken, async (req, res) => {
 //     try {

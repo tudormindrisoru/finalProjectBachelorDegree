@@ -28,6 +28,32 @@ const fileFilter = (req, file, cb) => {
 };
 const upload = multer({ storage: storage , limits: { fileSize: 1024 * 1024 * 5 }, fileFilter: fileFilter});
 
+router.get('/', verifyToken, async (req,res) => {
+    try {
+        const name = req.query.name;
+        console.log("NAMEE = ", name);
+        if(!!name) {
+            const result = await User.findAllByName(name, req.user.id);
+            if(result.success) {
+                res.set({
+                    'Content-Type': 'application/json',
+                    'Authorization': req.headers.authorization,
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Expose-Headers': '*'
+                    });
+            }
+            res.status(result.status).send(result);
+        } else {
+            res.status(404).send(new Response(404,false, "User name is missing. Add a name in query request.").getResponse());
+        }
+    }
+    catch(error) {
+        console.error(new Error(error));
+        res.status(500).send(new Response(500, false, error).getResponse());
+    }
+        
+});
+
 router.put('/update-photo', verifyToken, upload.single('photo'), async (req,res) => {
     try {
         const photoPath = req.file.path.replace('\\','/');

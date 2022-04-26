@@ -35,10 +35,10 @@
   
  app.use(process.env.PHOTOS_DIR, express.static('photos'));
  app.use('/api/auth', authController);
- app.use('/api/doctor', doctorController);
- app.use('/api/user', userController);
- app.use('/api/office', officeController);
- app.use('/api/appointment', appointmentController);
+ app.use('/api/doctors', doctorController);
+ app.use('/api/users', userController);
+ app.use('/api/offices', officeController);
+ app.use('/api/appointments', appointmentController);
 //  app.use('/api/patient', patientController);
 const PORT = process.env.PORT || 3000;
  app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));
