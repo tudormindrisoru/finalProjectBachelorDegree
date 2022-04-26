@@ -8,6 +8,12 @@ export class UpdateAppointments {
     }
 }
 
+export class UpdateAppointment {
+    static readonly type = '[DOC-HELP] Update appointment';
+    
+    constructor(public payload: Appointment) {}
+}
+
 export class AddAppointment {
     static readonly type = '[DOC-HELP] Add appointment to appointment list';
 

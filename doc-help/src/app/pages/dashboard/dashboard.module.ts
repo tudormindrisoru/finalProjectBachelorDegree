@@ -25,6 +25,7 @@ import { AppointmentsService } from 'src/app/shared/services/appointments/appoin
 import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointments/components/calendar-event-details-dialog/calendar-event-details-dialog.component';
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { ScheduleService } from 'src/app/shared/services/schedule/schedule.service';
 
 FullCalendarModule.registerPlugins([
   // register FullCalendar plugins
@@ -47,7 +48,7 @@ FullCalendarModule.registerPlugins([
     AddOfficeDialogComponent,
     JoinOfficeDialogComponent,
     UpdateScheduleDialogComponent,
-    CalendarEventDetailsDialogComponent
+    CalendarEventDetailsDialogComponent,
   ],
   imports: [
     DashboardRoutingModule,
@@ -55,12 +56,13 @@ FullCalendarModule.registerPlugins([
     SharedModule,
     ReactiveFormsModule,
     FullCalendarModule,
-    GooglePlaceModule
+    GooglePlaceModule,
   ],
   providers: [
     PatientsService,
     AppointmentsService,
-    ProfileService
-  ]
+    ProfileService,
+    ScheduleService,
+  ],
 })
 export class DashboardModule {}

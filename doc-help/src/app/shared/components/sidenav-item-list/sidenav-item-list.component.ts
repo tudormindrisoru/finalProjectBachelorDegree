@@ -17,6 +17,7 @@ export class SidenavItemListComponent implements OnInit {
   toggleButton = {};
   ngOnInit(): void {
     this.itemList = [
+      { icon: 'notifications', label: 'Notifications' , navigateTo: ''},
       { icon: 'event_note', label: 'Appointments' , navigateTo: 'appointments' },
       { icon: 'settings', label: 'Profile', navigateTo:  'profile' },
       { icon: 'people', label: 'Patient history', navigateTo: 'patients' }  

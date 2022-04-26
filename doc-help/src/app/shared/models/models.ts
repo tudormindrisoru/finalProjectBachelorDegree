@@ -23,7 +23,7 @@ export interface Office {
   id?: number;
   oName?: string;
   address?: string;
-  longitude?:  number;
+  longitude?: number;
   latitude?: number;
   administratorId?: number;
   doctors?: Doctor[];
@@ -46,3 +46,10 @@ export interface Response<T> {
   message?: T;
 }
 
+export interface Schedule {
+  id: number;
+  startTime: number;
+  endTime: number;
+  weekDay: number;
+  doctorId?: number;
+}

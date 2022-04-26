@@ -1,19 +1,104 @@
 <h1 mat-dialog-title>Appointment details</h1>
 <div mat-dialog-content>
-
-  <form id="appointment-form" formGroup="appointmentForm">
+  <form id="appointment-form" [formGroup]="appointmentForm">
+    <div class="patient-section">
+      <img src="{{ image }}" alt="" />
+      <div class="patient-informations">
+        <mat-form-field appearance="standard" class="patient-filter">
+          <mat-label>Search</mat-label>
+          <input
+            type="text"
+            matInput
+            [matAutocomplete]="auto"
+            (keyup)="onSearchPatients($event)"
+            formControlName="title"
+          />
+          <mat-icon matSuffix color="primary">search</mat-icon>
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
+            <mat-option
+              *ngFor="let option of filteredOptions$ | async"
+              [value]="option"
+              (click)="onSelectUser(option)"
+            >
+              <img
+                src="{{ getProfileImg(option.photo) }}"
+                class="patient-filter-photo"
+              />
+              <span>{{ option.firstName + " " + option.lastName }}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+        <div
+          class="phone-number"
+          [ngStyle]="{ visibility: !patientPhone ? 'hidden' : 'visible' }"
+        >
+          <mat-icon color="primary">phone</mat-icon>
+          <p>{{ patientPhone }}</p>
+        </div>
+      </div>
+    </div>
     <!-- <ng-template [ngIf]="id"> -->
-        <mat-form-field>
-          <input matInput type="datetime-local" placeholder="Start date" (change)="onEventChange($event)" formControlName="startDate">
-          <mat-icon matSuffix color="primary" >event</mat-icon>
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="datetime-local" placeholder="End date" formControlName="endDate">
-          <mat-icon matSuffix color="primary">event</mat-icon>
-        </mat-form-field>
+    <div class="date-section">
+      <mat-form-field>
+        <input
+          matInput
+          type="datetime-local"
+          placeholder="Start date"
+          formControlName="startDate"
+          [disabled]="areFieldsDisabled"
+        />
+        <mat-icon matSuffix color="primary">event</mat-icon>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          type="datetime-local"
+          placeholder="End date"
+          formControlName="endDate"
+          [disabled]="areFieldsDisabled"
+        />
+        <mat-icon matSuffix color="primary">event</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="notes-section">
+      <mat-form-field>
+        <mat-label>Leave a note</mat-label>
+        <textarea
+          class="notes-textarea"
+          matInput
+          placeholder="Write down somthing about the case here."
+          formControlName="notes"
+        ></textarea>
+      </mat-form-field>
+    </div>
     <!-- </ng-template> -->
   </form>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Close</button>
+  <div class="right-side-action-buttons">
+    <button
+      mat-button
+      (click)="onDeleteAppointment()"
+      mat-flat-button
+      class="delete-button"
+      [disabled]="areFieldsDisabled"
+      *ngIf="data.id"
+    >
+      Delete
+      <mat-icon matSuffix>delete_forever</mat-icon>
+    </button>
+    <button
+      mat-button
+      (click)="onSaveAppointment()"
+      mat-flat-button
+      color="primary"
+      class="save-button"
+      [disabled]="areFieldsDisabled || isSaveButtonDisabled"
+    >
+      Save
+      <mat-icon matSuffix>save</mat-icon>
+    </button>
+  </div>
 </div>

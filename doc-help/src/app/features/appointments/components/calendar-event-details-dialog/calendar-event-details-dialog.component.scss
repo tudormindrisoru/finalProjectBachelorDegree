@@ -1,6 +1,57 @@
 #appointment-form {
     display: flex;
     flex-direction: column;
+
+    .patient-section {
+        display: flex;
+        flex-direction: row;
+
+        img { 
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            align-self: center;
+        }
+
+        .patient-informations {
+            margin-left: 15px;
+
+            .patient-filter {
+                width: 300px;
+           
+              
+            }
+
+            
+            .phone-number {
+                display: flex;
+                p {
+                    margin-left: 5px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+
+    .date-section {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .notes-section {
+        
+        mat-form-field {
+            width: 100%;
+        }
+    }
+}
+
+.patient-filter-photo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    
 }
 
 mat-form-field {
@@ -9,6 +60,17 @@ mat-form-field {
 .form-section {
     display: flex;
     justify-content: space-between;
+}
+
+.mat-dialog-actions {
+    display: flex;
+    justify-content: space-between;
     
-  
+    .delete-button:enabled {
+        background-color: rgb(250, 66, 66);
+    }
+
+    .delete-button, .save-button {
+        color: white;
+    }
 }

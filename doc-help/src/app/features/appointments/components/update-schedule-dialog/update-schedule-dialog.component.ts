@@ -1,6 +1,9 @@
+import { Schedule, Response } from './../../../../shared/models/models';
+import { HttpResponse } from '@angular/common/http';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { ScheduleService } from 'src/app/shared/services/schedule/schedule.service';
 
 @Component({
   selector: 'app-update-schedule-dialog',
@@ -104,11 +107,37 @@ export class UpdateScheduleDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<UpdateScheduleDialogComponent>,
     private fb: FormBuilder,
+    private scheduleService: ScheduleService
   ) {}
 
-  ngOnInit(): void {
+  // tslint:disable-next-line: typedef
+  async ngOnInit() {
+    await this.getAllScheduleIntervals();
     this.initScheduleFormGroup();
     this.initVacationFormGroup();
+  }
+
+  async getAllScheduleIntervals() {
+    const response = this.scheduleService
+      .getMySchedule()
+      .subscribe((response: HttpResponse<Response<Schedule[]>>) => {
+        var days = [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+          'Sunday',
+        ];
+        this.weekDaysList = response.body.message.map((element) => {
+          {
+            weekDay: element.weekDay,
+            dayName: days[element.weekDay],
+            intervals: 
+          }
+        });
+      });
   }
 
   initScheduleFormGroup(): void {
@@ -139,16 +168,17 @@ export class UpdateScheduleDialogComponent implements OnInit {
   }
 
   initVacationFormGroup(): void {
-   
     const intervalArray = this.fb.array([]);
     this.vacationList.forEach((interval) => {
-      intervalArray.push(this.fb.group({
-        startDate: this.fb.control(new Date(interval.startDate)),
-        endDate: this.fb.control(new Date(interval.endDate))
-      }));
+      intervalArray.push(
+        this.fb.group({
+          startDate: this.fb.control(new Date(interval.startDate)),
+          endDate: this.fb.control(new Date(interval.endDate)),
+        })
+      );
     });
     this.vacationFormGroup = this.fb.group({
-      intervals: intervalArray
+      intervals: intervalArray,
     });
     console.log(this.vacationFormGroup.value);
   }
@@ -200,20 +230,28 @@ export class UpdateScheduleDialogComponent implements OnInit {
   }
 
   onRemoveVacation(vacationIndex: number): void {
-    const intervals: FormArray = this.vacationFormGroup.get('intervals') as FormArray;
+    const intervals: FormArray = this.vacationFormGroup.get(
+      'intervals'
+    ) as FormArray;
     intervals.removeAt(vacationIndex);
   }
 
   onAddVacation(): void {
-    const intervals: FormArray = this.vacationFormGroup.get('intervals') as FormArray;
-    intervals.push(this.fb.group({
-      startDate: this.fb.control(''),
-      endDate: this.fb.control('')
-    }))
+    const intervals: FormArray = this.vacationFormGroup.get(
+      'intervals'
+    ) as FormArray;
+    intervals.push(
+      this.fb.group({
+        startDate: this.fb.control(''),
+        endDate: this.fb.control(''),
+      })
+    );
   }
 
   onSaveVacations(): void {
-    const intervals: FormArray = this.vacationFormGroup.get('intervals') as FormArray;
+    const intervals: FormArray = this.vacationFormGroup.get(
+      'intervals'
+    ) as FormArray;
     console.log(intervals.value);
   }
 }

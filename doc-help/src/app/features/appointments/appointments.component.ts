@@ -9,24 +9,21 @@ import { Select } from '@ngxs/store';
 @Component({
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
-  styleUrls: ['./appointments.component.scss']
+  styleUrls: ['./appointments.component.scss'],
 })
 export class AppointmentsComponent implements OnInit {
-
   appointments: Appointment[];
-  // @Select(ZooState) animals$: Observable<string[]>;
   constructor(
     public appointmentsService: AppointmentsService,
-    public dialog: MatDialog,
-    ) { }
-
+    public dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {}
 
   onUpdateScheduleDialog() {
     const dialogRef = this.dialog.open(UpdateScheduleDialogComponent, {
       width: '600px',
-      data: {name: 'open office dialog' },
+      data: { name: 'open office dialog' },
       disableClose: true,
     });
   }

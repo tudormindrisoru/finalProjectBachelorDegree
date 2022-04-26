@@ -1,5 +1,12 @@
+import { Patient } from './../../../patients/patients.service';
 import { Calendar, ElementScrollController } from '@fullcalendar/core';
-import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { CalendarOptions, FullCalendarComponent } from '@fullcalendar/angular'; // useful for typechecking
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -21,12 +28,10 @@ import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_c
   styleUrls: ['./calendar-view.component.scss'],
 })
 export class CalendarViewComponent implements OnInit {
-
-
   constructor(
     public appointmentsService: AppointmentsService,
     public dialog: MatDialog
-    ) {
+  ) {
     const name = Calendar.name;
   }
   @ViewChild('calendarComponent') calendarComponent: FullCalendarComponent;
@@ -34,7 +39,7 @@ export class CalendarViewComponent implements OnInit {
   eventList = [];
   calendarOptions: CalendarOptions = {
     initialView: 'timeGridWeek',
-    
+
     // themeSystem: 'bootstrap',
     locale: 'en',
     plugins: [timeGridPlugin, interactionPlugin, bootstrapPlugin],
@@ -56,36 +61,40 @@ export class CalendarViewComponent implements OnInit {
     dateClick: this.handleDateClick.bind(this), // bind is important!
     eventClick: this.handleEventClick.bind(this),
 
-    events: ( fetchInfo, successCallback, failureCallback ) => {
+    events: (fetchInfo, successCallback, failureCallback) => {
       const interval = {
-        'startDate': new Date(fetchInfo.startStr),
-        'endDate': new Date(fetchInfo.endStr)
+        startDate: new Date(fetchInfo.startStr),
+        endDate: new Date(fetchInfo.endStr),
       };
-      this.appointmentsService.getApprovedAppointments(interval).subscribe( (response: HttpResponse<Response<Appointment[]>>) => {
-        if (response.body.success && response.body.message.length > 0) {
-          const eventList = response.body.message.map((element: Appointment) => {
-            // tslint:disable-next-line: no-unused-expression
-            console.log(element.startDate.split('.')[0]);
-            return {
-              id: element.id.toString(),
-              title: element.patient.firstName + ' ' + element.patient.lastName,
-              start: element.startDate.split('.')[0],
-              end: element.endDate.split('.')[0],
-              notes: element.notes,
-              photo: element.patient.phone,
-              phone: element.patient.phone
-            };
-          });
-          console.log(eventList);
-          successCallback(eventList);
-          // this.eventList = eventList;
-          // this.calendarComponent.getApi().render();
-        } else {
-          // failureCallback();
-          this.eventList = [];
-          
-        }
-      });
+      this.appointmentsService
+        .getApprovedAppointments(interval)
+        .subscribe((response: HttpResponse<Response<Appointment[]>>) => {
+          if (response.body.success && response.body.message.length > 0) {
+            const eventList = response.body.message.map(
+              (element: Appointment) => {
+                // tslint:disable-next-line: no-unused-expression
+                console.log(element);
+
+                return {
+                  id: element.id.toString(),
+                  title:
+                    element.patient.firstName + ' ' + element.patient.lastName,
+                  start: element.startDate,
+                  end: element.endDate,
+                  notes: element.notes,
+                  photo: element.patient.photo,
+                  phone: element.patient.phone,
+                };
+              }
+            );
+            successCallback(eventList);
+            // this.eventList = eventList;
+            // this.calendarComponent.getApi().render();
+          } else {
+            // failureCallback();
+            this.eventList = [];
+          }
+        });
     },
 
     height: 525,
@@ -99,38 +108,69 @@ export class CalendarViewComponent implements OnInit {
     nowIndicator: true,
   };
 
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   handleDateClick(arg) {
-    alert('date click! ' + arg.dateStr);
+    const data = {
+      start: arg.dateStr,
+      end: new Date(
+        new Date(arg.date).getTime() +
+          1800000 -
+          new Date(arg.date).getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .split('.')[0],
+      id: null,
+      title: '',
+      notes: '',
+      photo: null,
+      phone: null,
+    };
+    this.onOpenEventDetailsDialog(data);
   }
 
   handleEventClick(arg) {
     console.log(arg.event.startStr);
     const data = {
-      'start': arg.event.startStr,
-      'end': arg.event.endStr,
-      'id': arg.event.id,
-      'title': arg.event.title,
-      'notes': arg.event.notes,
-      'photo': arg.event.photo,
-      'phone': arg.event.phone
-    }
+      start: arg.event.startStr,
+      end: arg.event.endStr,
+      id: arg.event.id,
+      title: arg.event.title,
+      notes: arg.event.extendedProps.notes,
+      photo: arg.event.extendedProps.photo,
+      phone: arg.event.extendedProps.phone,
+    };
     this.onOpenEventDetailsDialog(data);
   }
 
-
-
   onOpenEventDetailsDialog(arg): void {
     const dialogRef = this.dialog.open(CalendarEventDetailsDialogComponent, {
-      width: '400px',
-      data: { ...arg },
+      width: '450px',
+      data: arg,
       disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.onAddAppointment(result);
+      }
     });
   }
 
+  onAddAppointment(appointmnet): void {
+    console.log('onAddAppointment =', appointmnet);
+    const data = {
+      start: appointmnet.startDate,
+      end: appointmnet.endDate,
+      id: appointmnet.id,
+      title: appointmnet.patient.firstName + ' ' + appointmnet.patient.lastName,
+      notes: appointmnet.notes,
+      photo: appointmnet.patient.photo,
+      phone: appointmnet.patient.phone,
+    };
+    this.eventList.push(data);
+    this.calendarComponent.getApi().refetchEvents();
+  }
   onUpdateSchedule(): void {
     this.updateSchedule.emit();
   }

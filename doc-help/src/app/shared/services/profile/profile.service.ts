@@ -12,7 +12,7 @@ export class ProfileService {
   private headerDict = {
     'Content-Type': 'application/json',
     // tslint:disable-next-line: object-literal-key-quotes
-    'Accept': 'application/json',
+    Accept: 'application/json',
   };
 
   constructor(
@@ -20,7 +20,7 @@ export class ProfileService {
     private errorHandlerService: ErrorHandlerService
   ) {}
 
-  jsonAuthHeader(): any  {
+  jsonAuthHeader(): any {
     const jwt = localStorage.getItem('Authorization');
     let headerReq = JSON.parse(JSON.stringify(this.headerDict));
     if (!!jwt) {
@@ -32,16 +32,17 @@ export class ProfileService {
   formDataAuthHeader(): any {
     const jwt = localStorage.getItem('Authorization');
     const header: any = {
-      'Content-Type': 'multipart/form-data'
-    }
-    if(!!jwt) {
+      'Content-Type': 'multipart/form-data',
+    };
+    if (!!jwt) {
       return {
         Authorization: jwt,
-        ...header
+        ...header,
       };
     }
     return header;
   }
+
   getDoctorInfo(): Observable<Response<Doctor>> {
     const GET_DOCTOR_INFO_URL = this.SERVER_URL + '/doctors';
     return this.http
@@ -64,112 +65,121 @@ export class ProfileService {
 
   getOffice(id): Observable<Response<Office>> {
     const GET_OFFICE_INFO_URL = this.SERVER_URL + '/offices/' + id;
-    return this.http.get<HttpResponse<Response<Office>>>(GET_OFFICE_INFO_URL, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('GET_OFFICE_INFO'))
-    );
+    return this.http
+      .get<HttpResponse<Response<Office>>>(GET_OFFICE_INFO_URL, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('GET_OFFICE_INFO'))
+      );
   }
 
   saveUser(user): Observable<Response<User>> {
     const UPDATE_USER_INFO_URL = this.SERVER_URL + '/users';
-    return this.http.put<HttpResponse<Response<User>>>(UPDATE_USER_INFO_URL, user , {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('UPDATE_USER_INFO'))
-    );
+    return this.http
+      .put<HttpResponse<Response<User>>>(UPDATE_USER_INFO_URL, user, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('UPDATE_USER_INFO'))
+      );
   }
 
   updatePhoto(file): Observable<Response<any>> {
     const UPDATE_PHOTO_URL = this.SERVER_URL + '/users/update-photo';
     const formData = new FormData();
     formData.append('photo', file, file.name);
-    return this.http.put<HttpResponse<ArrayBuffer>>(UPDATE_PHOTO_URL, formData, {
-      observe: 'response',
-      headers: new HttpHeaders(this.formDataAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('UPDATE_PHOTO'))
-    )
+    return this.http
+      .put<HttpResponse<ArrayBuffer>>(UPDATE_PHOTO_URL, formData, {
+        observe: 'response',
+        headers: new HttpHeaders(this.formDataAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('UPDATE_PHOTO'))
+      );
   }
 
   saveDoctor(data): Observable<Response<Doctor>> {
     const UPDATE_DOCTOR_INFO_URL = this.SERVER_URL + '/doctors';
-    return this.http.put<HttpResponse<Response<Doctor>>>(UPDATE_DOCTOR_INFO_URL, data, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('UPDATE_DOCTOR_INFO'))
-    );
+    return this.http
+      .put<HttpResponse<Response<Doctor>>>(UPDATE_DOCTOR_INFO_URL, data, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('UPDATE_DOCTOR_INFO'))
+      );
   }
 
   addOffice(data): Observable<Response<Office>> {
     const UPDATE_OFFICE_INFO_URL = this.SERVER_URL + '/offices';
-    return this.http.post<HttpResponse<Response<Office>>>(UPDATE_OFFICE_INFO_URL, data, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('UPDATE_OFFICE_INFO'))
-    );
+    return this.http
+      .post<HttpResponse<Response<Office>>>(UPDATE_OFFICE_INFO_URL, data, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('UPDATE_OFFICE_INFO'))
+      );
   }
 
   updateOffice(data): Observable<Response<any>> {
     const UPDATE_OFFICE_INFO_URL = this.SERVER_URL + '/offices';
-    return this.http.put<HttpResponse<Response<any>>>(UPDATE_OFFICE_INFO_URL, data, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('UPDATE_OFFICE_INFO'))
-    );
+    return this.http
+      .put<HttpResponse<Response<any>>>(UPDATE_OFFICE_INFO_URL, data, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('UPDATE_OFFICE_INFO'))
+      );
   }
 
   removeOffice(): Observable<Response<any>> {
     const OFFICE_URL = this.SERVER_URL + '/office';
-    return this.http.delete<HttpResponse<Response<any>>>(OFFICE_URL, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('REMOVE_OFFICE_INFO'))
-    );
+    return this.http
+      .delete<HttpResponse<Response<any>>>(OFFICE_URL, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('REMOVE_OFFICE_INFO'))
+      );
   }
 
   getDoctorsWithoutOffice(name): Observable<Response<Doctor[]>> {
-    const DOCTOR_URL = this. SERVER_URL + `/doctors/search-to-invite/${name}`;
-    return this.http.get<HttpResponse<Response<Doctor[]>>>(DOCTOR_URL, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      debounce(() => timer(2000)),
-      catchError(this.errorHandlerService.handleError('SEARCH_DOCTORS_INFO'))
-    );
+    const DOCTOR_URL = this.SERVER_URL + `/doctors/search-to-invite/${name}`;
+    return this.http
+      .get<HttpResponse<Response<Doctor[]>>>(DOCTOR_URL, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        debounce(() => timer(2000)),
+        catchError(this.errorHandlerService.handleError('SEARCH_DOCTORS_INFO'))
+      );
   }
 
   inviteDoctor(data): Observable<Response<any>> {
     const INVITE_DOCTOR_URL = this.SERVER_URL + `/offices/invite`;
-    return this.http.post<HttpResponse<Response<any>>>(INVITE_DOCTOR_URL, data, {
-      observe: 'response',
-      headers: new HttpHeaders(this.jsonAuthHeader())
-    })
-    .pipe(
-      first(),
-      catchError(this.errorHandlerService.handleError('INVITE_DOCTOR_INFO'))
-    );
+    return this.http
+      .post<HttpResponse<Response<any>>>(INVITE_DOCTOR_URL, data, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.errorHandlerService.handleError('INVITE_DOCTOR_INFO'))
+      );
   }
 }
