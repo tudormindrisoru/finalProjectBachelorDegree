@@ -39,8 +39,8 @@ import { AgmCoreModule } from '@agm/core';
     NgxsModule.forRoot([UserState, DoctorState, OfficeState]),
     AgmCoreModule.forRoot({
       apiKey: environment.agmAutocomplete,
-      libraries: ['places']
-    })
+      libraries: ['places'],
+    }),
   ],
   providers: [AuthGuard, AuthService],
   bootstrap: [AppComponent],

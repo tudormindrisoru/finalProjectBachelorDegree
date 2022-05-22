@@ -24,7 +24,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatSnackBarModule } from '@angular/material/snack-bar'; 
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 const materialModules = [
   MatSliderModule,
@@ -50,15 +50,13 @@ const materialModules = [
   MatRadioModule,
   MatTooltipModule,
   MatAutocompleteModule,
-  MatSnackBarModule
+  MatSnackBarModule,
 ];
 
 @NgModule({
   declarations: [],
   imports: [...materialModules],
   exports: [...materialModules],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }
-  ]
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'ro-RO' }],
 })
 export class MaterialModule {}

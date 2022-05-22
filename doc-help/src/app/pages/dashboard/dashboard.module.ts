@@ -15,6 +15,7 @@ import { AddOfficeDialogComponent } from 'src/app/features/profile/components/ad
 import { JoinOfficeDialogComponent } from 'src/app/features/profile/components/join-office-dialog/join-office-dialog.component';
 import { CalendarViewComponent } from 'src/app/features/appointments/components/calendar-view/calendar-view.component';
 import { UpdateScheduleDialogComponent } from 'src/app/features/appointments/components/update-schedule-dialog/update-schedule-dialog.component';
+import { NotificationsPopupComponent } from 'src/app/shared/components/notifications-popup/notifications-popup.component';
 
 import { FullCalendarModule } from '@fullcalendar/angular'; // the main connector. must go first
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
@@ -26,6 +27,8 @@ import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointmen
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { ScheduleService } from 'src/app/shared/services/schedule/schedule.service';
+import { MatTimepickerModule } from 'mat-timepicker';
+import { NotificationService } from 'src/app/shared/services/notification/notification.service';
 
 FullCalendarModule.registerPlugins([
   // register FullCalendar plugins
@@ -43,6 +46,7 @@ FullCalendarModule.registerPlugins([
     PatientsComponent,
     SidenavItemListComponent,
     CalendarViewComponent,
+    NotificationsPopupComponent,
 
     //DIALOGS
     AddOfficeDialogComponent,
@@ -57,12 +61,14 @@ FullCalendarModule.registerPlugins([
     ReactiveFormsModule,
     FullCalendarModule,
     GooglePlaceModule,
+    MatTimepickerModule,
   ],
   providers: [
     PatientsService,
     AppointmentsService,
     ProfileService,
     ScheduleService,
+    NotificationService,
   ],
 })
 export class DashboardModule {}

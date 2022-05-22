@@ -19,24 +19,49 @@
         position: relative;
         border-radius: 0px;
 
+        .schedule-arrow-icon-container {
+          position: relative;
+          
+          .schedule-warning {
+            position: absolute;
+            bottom: 2rem;
+            left: 0;
+            right: 0;
+          }
+        }
+
         .remove-interval-button {
           position: absolute;
           width: 35px;
-          bottom: 0px;
-          right: 0px;
+          bottom: 5px;
+          right: 15px;
           height: 20px;
           background-color: #64b3f4;
           display: flex;
           justify-content: center;
           cursor: pointer;
+          border-radius: 4px;
+        }
 
-          mat-icon {
-            font-size: 16px;
-            color: white;
-            width: 15px;
-            height: 15px;
-            align-self: center;
-          }
+        .save-interval-button {
+          position: absolute;
+          width: 35px;
+          bottom: 5px;
+          right: 55px;
+          height: 20px;
+          background-color: #64b3f4;
+          display: flex;
+          justify-content: center;
+          cursor: pointer;
+          border-radius: 4px;
+        }
+        
+        .button mat-icon {
+          font-size: 16px;
+          color: white;
+          width: 15px;
+          height: 15px;
+          align-self: center;
         }
       }
       mat-form-field {
@@ -71,6 +96,39 @@
     margin: 10px 0px;
     border-radius: 0px;
     position: relative;
+    height: auto;
+
+    .vacation-card-wrapper {
+      display: flex;
+      flex-basis: 50%;
+
+      .vacation-warning {
+        align-self: center;
+        margin-left: 20px;
+      }
+    }
+
+    .save-vacation-button {
+      position: absolute;
+      height: 100%;
+      background-color: #64b3f4;
+      right: 30px;
+      top: 0px;
+      bottom: 0px;
+      width: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+
+      mat-icon {
+        color: white;
+        font-size: 20px;
+        height: 24px;
+        width: 24px;
+        text-align: center;
+      }
+    }
 
     .remove-vacation-button {
       position: absolute;
@@ -116,19 +174,61 @@
 }
 
 @media screen and (max-width: 550px) {
-  .interval {
-    mat-card {
-      flex-direction: column;
+  .schedule-container {
+   .intervals-container {
+      .interval {
+        mat-card {
+          flex-direction: column;
+          .schedule-arrow-icon-container {  
+            .arrow-icon {
+              transform: rotate(90deg);
+              margin-bottom: 1rem;
+            }
+            
+            .schedule-warning {
+              top: unset;
+              bottom: unset;
+              left: unset;
+              right: 4rem;
+            }
+          }
+    
+        }
+    
+      }
     }
   }
+  
 }
 
 @media screen and (max-width: 450px) {
   .vacation-container {
     mat-card {
+      min-height: 150px;
+
+      .vacation-card-wrapper {
+        flex-direction: column;
+        
+        .vacation-warning {
+          margin-left: 0px;
+        }
+      }
+
+
       .remove-vacation-button {
         height: 24px;
         bottom: 0px;
+        top: auto;
+        right: 0px;
+        left: 0px;
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .save-vacation-button {
+        height: 24px;
+        bottom: 30px;
         top: auto;
         right: 0px;
         left: 0px;

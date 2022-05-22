@@ -1,3 +1,7 @@
+:host {
+    position: relative;
+}
+
 .sidenav-item-list {
     width: 100%;
     height: auto;
@@ -37,4 +41,15 @@
 .active-dashboard-feature {
     background: white;
     color: #64b3f4;
+}
+
+
+.notification-wrapper {
+    width: 250px;
+    height: 250px;
+    position: absolute;
+    left: 45px;
+    top: -75px;
+    z-index: 10;
+    display: flex;
 }

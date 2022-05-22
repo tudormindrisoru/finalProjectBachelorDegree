@@ -3,7 +3,7 @@
   <mat-tab-group dynamicHeight>
     <mat-tab label="Schedule">
       <div class="schedule-container">
-        <form [formGroup]="scheduleFormGroup">
+        <form [formGroup]="scheduleFormGroup" *ngIf="scheduleFormGroup">
           <mat-tab-group formArrayName="days">
             <mat-tab
               *ngFor="
@@ -23,21 +23,66 @@
                   [formGroupName]="j"
                 >
                   <mat-card>
-                    <mat-form-field>
-                      <mat-label>Start hour</mat-label>
-                      <input matInput type="time" formControlName="start" />
+                    <mat-form-field appearance="fill">
+                      <mat-label>Start time</mat-label>
+
+                      <input
+                        matTimepicker
+                        #end="matTimepicker"
+                        [strict]="false"
+                        mode="24h"
+                        placeholder="Please select time..."
+                        required
+                        formControlName="start"
+                      />
+                      <mat-icon
+                        color="primary"
+                        matSuffix
+                        (click)="end.showDialog()"
+                        >access_time</mat-icon
+                      >
                     </mat-form-field>
 
-                    <mat-icon color="primary">{{
-                      forwardArrow ? "arrow_forward" : "arrow_downward"
-                    }}</mat-icon>
+                    <div class="schedule-arrow-icon-container">
+                      <mat-icon class="arrow-icon" color="primary"
+                        >arrow_forward</mat-icon
+                      >
+                      <mat-icon
+                        class="schedule-warning"
+                        color="accent"
+                        matTooltip="This schedule interval is not saved."
+                        *ngIf="!isScheduleSaved(i, j)"
+                        >warning</mat-icon
+                      >
+                    </div>
 
-                    <mat-form-field>
-                      <mat-label>End hour</mat-label>
-                      <input matInput type="time" formControlName="end" />
+                    <mat-form-field appearance="fill">
+                      <mat-label>End time</mat-label>
+
+                      <input
+                        matTimepicker
+                        #start="matTimepicker"
+                        [strict]="false"
+                        mode="24h"
+                        placeholder="Please select time..."
+                        formControlName="end"
+                        required
+                      />
+                      <mat-icon
+                        color="primary"
+                        matSuffix
+                        (click)="start.showDialog()"
+                        >access_time</mat-icon
+                      >
                     </mat-form-field>
                     <div
-                      class="remove-interval-button noselect"
+                      class="button save-interval-button noselect"
+                      (click)="onSaveInterval(i, j)"
+                    >
+                      <mat-icon>save</mat-icon>
+                    </div>
+                    <div
+                      class="button remove-interval-button noselect"
                       (click)="onRemoveInterval(i, j)"
                     >
                       <mat-icon>delete</mat-icon>
@@ -48,7 +93,7 @@
               <div class="hours-information">
                 <span
                   >Working hours for {{ day["controls"].dayName?.value }} :
-                  {{ getHoursPerDay(day["controls"].weekDay?.value) }}</span
+                  {{ day["controls"].workingHours?.value }}</span
                 >
               </div>
               <div class="action-buttons">
@@ -56,19 +101,11 @@
                   class="add-interval"
                   mat-raised-button
                   color="primary"
+                  [disabled]="isAddScheduleIntervalDisabled(i)"
                   (click)="onAddInterval(i)"
                 >
                   <span>Add interval</span>
                   <mat-icon matSuffix>add</mat-icon>
-                </button>
-                <button
-                  class="save-changes-button"
-                  mat-raised-button
-                  color="primary"
-                  (click)="onSaveIntervals(i)"
-                >
-                  <span>Save changes</span>
-                  <mat-icon matSuffix>save</mat-icon>
                 </button>
               </div>
             </mat-tab>
@@ -78,7 +115,7 @@
     </mat-tab>
     <mat-tab label="Vacation">
       <div class="vacation-container">
-        <form [formGroup]="vacationFormGroup">
+        <form [formGroup]="vacationFormGroup" *ngIf="vacationFormGroup">
           <div class="vacation-interval" formArrayName="intervals">
             <div
               class="interval-container"
@@ -88,39 +125,54 @@
               "
             >
               <mat-card>
-                <mat-form-field [formGroupName]="k">
-                  <mat-label>Enter a date range</mat-label>
-                  <mat-date-range-input [rangePicker]="rangePicker">
-                    <input
-                      matStartDate
-                      placeholder="Start date"
-                      formControlName="startDate"
-                    />
-                    <input
-                      matEndDate
-                      placeholder="End date"
-                      formControlName="endDate"
-                    />
-                  </mat-date-range-input>
-                  <mat-datepicker-toggle
-                    matSuffix
-                    [for]="rangePicker"
-                  ></mat-datepicker-toggle>
-                  <mat-date-range-picker #rangePicker>
-                    <mat-date-range-picker-actions>
-                      <button mat-button matDateRangePickerCancel>
-                        Cancel
-                      </button>
-                      <button
-                        mat-raised-button
-                        color="primary"
-                        matDateRangePickerApply
-                      >
-                        Apply
-                      </button>
-                    </mat-date-range-picker-actions>
-                  </mat-date-range-picker>
-                </mat-form-field>
+                <div class="vacation-card-wrapper">
+                  <mat-form-field [formGroupName]="k">
+                    <mat-label>Enter a date range</mat-label>
+                    <mat-date-range-input [rangePicker]="rangePicker">
+                      <input
+                        matStartDate
+                        placeholder="Start date"
+                        formControlName="startDate"
+                      />
+                      <input
+                        matEndDate
+                        placeholder="End date"
+                        formControlName="endDate"
+                      />
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle
+                      matSuffix
+                      [for]="rangePicker"
+                    ></mat-datepicker-toggle>
+                    <mat-date-range-picker #rangePicker>
+                      <mat-date-range-picker-actions>
+                        <button mat-button matDateRangePickerCancel>
+                          Cancel
+                        </button>
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          matDateRangePickerApply
+                        >
+                          Apply
+                        </button>
+                      </mat-date-range-picker-actions>
+                    </mat-date-range-picker>
+                  </mat-form-field>
+                  <mat-icon
+                    class="vacation-warning"
+                    color="accent"
+                    matTooltip="This vacation interval is not saved."
+                    *ngIf="!isVacationSaved(k)"
+                    >warning</mat-icon
+                  >
+                </div>
+                <div
+                  class="save-vacation-button noselect"
+                  (click)="onSaveVacation(k)"
+                >
+                  <mat-icon>save</mat-icon>
+                </div>
                 <div
                   class="remove-vacation-button noselect"
                   (click)="onRemoveVacation(k)"
@@ -132,19 +184,11 @@
           </div>
           <div class="vacation-action-buttons noselect">
             <button
-              class="save-changes-button"
-              mat-raised-button
-              color="primary"
-              (click)="onSaveVacations()"
-            >
-              <span>Save vacations</span>
-              <mat-icon matSuffix>save</mat-icon>
-            </button>
-            <button
               class="add-vacation-button"
               mat-raised-button
               color="primary"
               (click)="onAddVacation()"
+              [disabled]="isAddVacationIntervalDisabled()"
             >
               <span>Add vacation</span>
               <mat-icon matSuffix>add</mat-icon>

@@ -1,4 +1,4 @@
-import { ErrorHandlerService } from './../error-handler.service';
+import { SnackbarHandlerService } from '../snackbar-handler.service';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, timer } from 'rxjs';
@@ -17,7 +17,7 @@ export class ProfileService {
 
   constructor(
     private http: HttpClient,
-    private errorHandlerService: ErrorHandlerService
+    private snackbarHandlerService: SnackbarHandlerService
   ) {}
 
   jsonAuthHeader(): any {
@@ -29,20 +29,6 @@ export class ProfileService {
     return headerReq;
   }
 
-  formDataAuthHeader(): any {
-    const jwt = localStorage.getItem('Authorization');
-    const header: any = {
-      'Content-Type': 'multipart/form-data',
-    };
-    if (!!jwt) {
-      return {
-        Authorization: jwt,
-        ...header,
-      };
-    }
-    return header;
-  }
-
   getDoctorInfo(): Observable<Response<Doctor>> {
     const GET_DOCTOR_INFO_URL = this.SERVER_URL + '/doctors';
     return this.http
@@ -52,7 +38,7 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('GET_DOCTOR_INFO'))
+        catchError(this.snackbarHandlerService.handleError('GET_DOCTOR_INFO'))
       );
   }
 
@@ -72,7 +58,7 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('GET_OFFICE_INFO'))
+        catchError(this.snackbarHandlerService.handleError('GET_OFFICE_INFO'))
       );
   }
 
@@ -85,22 +71,23 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('UPDATE_USER_INFO'))
+        catchError(this.snackbarHandlerService.handleError('UPDATE_USER_INFO'))
       );
   }
 
   updatePhoto(file): Observable<Response<any>> {
     const UPDATE_PHOTO_URL = this.SERVER_URL + '/users/update-photo';
     const formData = new FormData();
+    const jwt = localStorage.getItem('Authorization');
     formData.append('photo', file, file.name);
     return this.http
       .put<HttpResponse<ArrayBuffer>>(UPDATE_PHOTO_URL, formData, {
         observe: 'response',
-        headers: new HttpHeaders(this.formDataAuthHeader()),
+        headers: { Authorization: jwt },
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('UPDATE_PHOTO'))
+        catchError(this.snackbarHandlerService.handleError('UPDATE_PHOTO'))
       );
   }
 
@@ -113,7 +100,9 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('UPDATE_DOCTOR_INFO'))
+        catchError(
+          this.snackbarHandlerService.handleError('UPDATE_DOCTOR_INFO')
+        )
       );
   }
 
@@ -126,7 +115,9 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('UPDATE_OFFICE_INFO'))
+        catchError(
+          this.snackbarHandlerService.handleError('UPDATE_OFFICE_INFO')
+        )
       );
   }
 
@@ -139,7 +130,9 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('UPDATE_OFFICE_INFO'))
+        catchError(
+          this.snackbarHandlerService.handleError('UPDATE_OFFICE_INFO')
+        )
       );
   }
 
@@ -152,7 +145,9 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('REMOVE_OFFICE_INFO'))
+        catchError(
+          this.snackbarHandlerService.handleError('REMOVE_OFFICE_INFO')
+        )
       );
   }
 
@@ -166,7 +161,9 @@ export class ProfileService {
       .pipe(
         first(),
         debounce(() => timer(2000)),
-        catchError(this.errorHandlerService.handleError('SEARCH_DOCTORS_INFO'))
+        catchError(
+          this.snackbarHandlerService.handleError('SEARCH_DOCTORS_INFO')
+        )
       );
   }
 
@@ -179,7 +176,9 @@ export class ProfileService {
       })
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError('INVITE_DOCTOR_INFO'))
+        catchError(
+          this.snackbarHandlerService.handleError('INVITE_DOCTOR_INFO')
+        )
       );
   }
 }

@@ -27,10 +27,16 @@ import { AppointmentDialogComponent } from './components/appointment-dialog/appo
     MaterialModule,
     RouterModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  exports: [ LogoComponent, CommonModule, AgmCoreModule, AuthDialogComponent, MaterialModule ],
-  entryComponents: [ SignInComponent, SignUpComponent ],
+  exports: [
+    LogoComponent,
+    CommonModule,
+    AgmCoreModule,
+    AuthDialogComponent,
+    MaterialModule,
+  ],
+  entryComponents: [SignInComponent, SignUpComponent],
   providers: [],
 })
 export class SharedModule {}

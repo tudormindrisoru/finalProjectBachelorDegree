@@ -1,12 +1,20 @@
 <div class="sidenav-item-list">
-    <ul [ngStyle]="{'text-align' : openAction ? 'center' : 'inherit'}">
-        <li *ngFor="let item of itemList" routerLink={{item.navigateTo}}>
-            <mat-icon>{{ item.icon }}</mat-icon>
-            <span *ngIf="useLabels">{{ item.label }}</span>
-        </li>
-        <li (click)="onToggleClick()" *ngIf="toggleButton">
-            <mat-icon>{{ toggleButton.icon }}</mat-icon>
-            <span *ngIf="useLabels">{{ toggleButton.label }}</span>
-        </li>
-    </ul>
+  <ul [ngStyle]="{ 'text-align': openAction ? 'center' : 'inherit' }">
+    <li *ngFor="let item of itemList" (click)="item.onClick()">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <span *ngIf="useLabels">{{ item.label }}</span>
+    </li>
+    <li (click)="onToggleClick()" *ngIf="toggleButton">
+      <mat-icon>{{ toggleButton.icon }}</mat-icon>
+      <span *ngIf="useLabels">{{ toggleButton.label }}</span>
+    </li>
+  </ul>
 </div>
+<app-notifications-popup
+  class="notification-wrapper"
+  *ngIf="isNotificationOpen"
+  [pendingAppointments]="pendingAppointments"
+  (accept)="onAcceptAppointmentRequest($event)"
+  (reject)="onRejectAppointmentRequest($event)"
+  (close)="onCloseNotificationPopup($event)"
+></app-notifications-popup>
