@@ -111,6 +111,7 @@ class Appointment {
           notes: data.notes,
           isApproved: 1,
         };
+
         const INSERT_APPOINTMENT_SQL = `INSERT INTO appointments SET doctorId=${data.doctorId}, officeId=${data.officeId}, patientId=${data.patientId}, startDate='${data.startDate}', endDate='${data.endDate}', notes='${data.notes}', isApproved=1`;
         console.log("INSERT APPOINTMENT SQL = ", INSERT_APPOINTMENT_SQL);
         const insertExecution = await db.execute(INSERT_APPOINTMENT_SQL);
@@ -148,6 +149,105 @@ class Appointment {
     } catch (err) {
       console.error("EROARE = ", err);
       return new Response(500, false, err).getResponse();
+    }
+  }
+
+  static async getAllPendingAppointments(doctorId) {
+    try {
+      const GET_NOT_APPROVED_APPOINTMENTS_SQL = `SELECT a.id, a.startDate, a.endDate, a.notes, a.isApproved, p.id AS 'patientId' ,p.firstName, p.lastName, p.phone, p.photo FROM appointments a JOIN users p ON a.patientId = p.id WHERE a.isApproved = 0 AND a.doctorId = ${doctorId}`;
+      const result = await db.execute(GET_NOT_APPROVED_APPOINTMENTS_SQL);
+      if (!!result && result[0]) {
+        const mappedResult = result[0].map((element) => {
+          return {
+            id: element.id,
+            startDate: element.startDate,
+            endDate: element.endDate,
+            notes: element.notes,
+            isApproved: element.isApproved,
+            patient: {
+              id: element.patientId,
+              firstName: element.firstName,
+              lastName: element.lastName,
+              phone: element.phone,
+              photo: element.photo,
+            },
+          };
+        });
+        console.log(mappedResult);
+        return new Response(200, true, mappedResult).getResponse();
+      }
+      return new Response(400, false, "Something went wrong").getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Server error").getResponse();
+    }
+  }
+
+  static async approveAppointment(doctorId, id) {
+    try {
+      const SQL_APPROVE_APPOINTMENT = `UPDATE appointments SET isApproved = 1 WHERE doctorId = ${doctorId} AND id = ${id}`;
+      const update_result = await db.execute(SQL_APPROVE_APPOINTMENT);
+      if (!!update_result && update_result[0].affectedRows === 1) {
+        return new Response(200, true, "Appointment approved.").getResponse();
+      }
+      return new Response(
+        400,
+        false,
+        "Appointment could not be approved."
+      ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Server error").getResponse();
+    }
+  }
+
+  static async rejectAppointment(doctorId, id) {
+    try {
+      const SQL_REJECT_APPOINTMENT = `DELETE FROM appointments WHERE doctorId = ${doctorId} AND id = ${id}`;
+      const delete_result = await db.execute(SQL_REJECT_APPOINTMENT);
+      if (!!delete_result && delete_result[0].affectedRows === 1) {
+        return new Response(200, true, "Appointment rejected.").getResponse();
+      }
+      return new Response(
+        400,
+        false,
+        "Appointment could not be rejected."
+      ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Server error").getResponse();
+    }
+  }
+
+  static async getPendingAppointmentById(doctorId, appointmentId) {
+    try {
+      const SQL_GET_PENDING_APPOINTMENT = `SELECT a.id, a.startDate, a.endDate, a.notes, a.isApproved, p.id AS 'patientId' ,p.firstName, p.lastName, p.phone, p.photo FROM appointments a JOIN users p ON a.patientId = p.id WHERE a.isApproved = 0 AND a.doctorId = ${doctorId} AND a.id = ${appointmentId}`;
+      const result = await db.execute(SQL_GET_PENDING_APPOINTMENT);
+      if (!!result && !!result[0] && !!result[0][0]) {
+        const pendingRequest = {
+          id: result[0][0].id,
+          startDate: result[0][0].startDate,
+          endDate: result[0][0].endDate,
+          notes: result[0][0].notes,
+          isApproved: result[0][0].isApproved,
+          patient: {
+            id: result[0][0].patientId,
+            firstName: result[0][0].firstName,
+            lastName: result[0][0].lastName,
+            phone: result[0][0].phone,
+            photo: result[0][0].photo,
+          },
+        };
+        return new Response(200, true, pendingRequest).getResponse();
+      }
+      return new Response(
+        400,
+        false,
+        "Appointment request not found."
+      ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Server error").getResponse();
     }
   }
 }

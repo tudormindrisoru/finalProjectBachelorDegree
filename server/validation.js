@@ -113,10 +113,20 @@ const updateAppointmentValidation = (request) => {
   return schema.validate(request);
 };
 
-const scheduleSearchValidation = (request) => {
+const approveAppointmentValidation = (request) => {
   const schema = Joi.object({
-    affiliationID: Joi.string().required(),
-    date: Joi.string().required(),
+    id: Joi.number().required(),
+    isApproved: Joi.boolean().required(),
+  });
+  return schema.validate(request);
+};
+
+const scheduleValidation = (request) => {
+  const schema = Joi.object({
+    id: Joi.number(),
+    weekDay: Joi.number().required(),
+    start: Joi.number().required(),
+    end: Joi.number().required(),
   });
   return schema.validate(request);
 };
@@ -130,8 +140,9 @@ const workingHoursIntervalValidation = (request) => {
   return schema.validate(request);
 };
 
-const vacationIntervalValidation = (request) => {
+const vacationValidation = (request) => {
   const schema = Joi.object({
+    id: Joi.number(),
     startDate: Joi.string().required(),
     endDate: Joi.string().required(),
   });
@@ -153,4 +164,7 @@ module.exports = {
   createAppointmentValidation,
   updateAppointmentValidation,
   workingHoursIntervalValidation,
+  scheduleValidation,
+  vacationValidation,
+  approveAppointmentValidation,
 };

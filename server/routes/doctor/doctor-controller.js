@@ -2,6 +2,8 @@ const router = require("express").Router();
 const multer = require("multer");
 const { verifyToken } = require("../../middlewares/auth");
 const scheduleController = require("./schedule/schedule-controller");
+const vacationController = require("./vacation/vacation-controller");
+
 const {
   postDoctorValidation,
   updateDoctorValidation,
@@ -10,7 +12,6 @@ const {
 // const { verify } = require('jsonwebtoken');
 
 // const scheduleController = require('./schedule/schedule');
-// const vacationController = require('./vacation/vacation');
 // router.use('/schedule', scheduleController)
 
 const Doctor = require("../../models/doctor");
@@ -19,6 +20,7 @@ const User = require("../../models/user");
 const { update } = require("../../models/doctor");
 
 router.use("/schedule", scheduleController);
+router.use("/vacation", vacationController);
 
 router.get("/", verifyToken, async (req, res) => {
   try {
