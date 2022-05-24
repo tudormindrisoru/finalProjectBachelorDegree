@@ -6,7 +6,7 @@
         <ng-template matStepLabel>Office name</ng-template>
         <mat-form-field>
           <mat-label>Office name</mat-label>
-          <input matInput formControlName="officeName" required>
+          <input matInput formControlName="officeName" required />
           <mat-icon matSuffix color="primary">business_center</mat-icon>
         </mat-form-field>
         <div>
@@ -20,13 +20,23 @@
         <mat-form-field>
           <mat-label>Address</mat-label>
           <!-- <input matInput formControlName="address" ngx-google-places-autocomplete [options]="autocompleteOptions" #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)" -->
-                 <!-- required> -->
+          <!-- required> -->
           <mat-icon matSuffix color="primary">pin_drop</mat-icon>
         </mat-form-field>
-        <div style="width:100%; height: auto;">
-          <agm-map [latitude]="lat" [longitude]="lng" style="width:100%;" [zoom]="16">
-            <agm-marker [latitude]="markerLat" [longitude]="markerLng" *ngIf="markerLat && markerLng"></agm-marker>
-          </agm-map>
+        <div style="width: 100%; height: auto">
+          <!-- <agm-map
+            [latitude]="lat"
+            [longitude]="lng"
+            style="width: 100%"
+            [zoom]="16"
+          >
+            <agm-marker
+              [latitude]="markerLat"
+              [longitude]="markerLng"
+              *ngIf="markerLat && markerLng"
+            ></agm-marker>
+          </agm-map> -->
+          <app-map [lat]="lat" [lng]="lng" style="width: 100%"></app-map>
         </div>
         <div>
           <button mat-button matStepperPrevious>Back</button>
@@ -39,8 +49,12 @@
         <ng-template matStepLabel>Code received via SMS</ng-template>
         <mat-form-field>
           <mat-label>Code</mat-label>
-          <input matInput formControlName="validationCode" placeholder="Ex. 123456"
-                 required>
+          <input
+            matInput
+            formControlName="validationCode"
+            placeholder="Ex. 123456"
+            required
+          />
           <mat-icon matSuffix color="primary">pin</mat-icon>
         </mat-form-field>
         <div>

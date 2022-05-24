@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { JoinOfficeDialogComponent } from './join-office-dialog.component';
+import { MapComponent } from './map.component';
 
-describe('JoinOfficeDialogComponent', () => {
-  let component: JoinOfficeDialogComponent;
-  let fixture: ComponentFixture<JoinOfficeDialogComponent>;
+describe('MapComponent', () => {
+  let component: MapComponent;
+  let fixture: ComponentFixture<MapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ JoinOfficeDialogComponent ]
+      declarations: [ MapComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(JoinOfficeDialogComponent);
+    fixture = TestBed.createComponent(MapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

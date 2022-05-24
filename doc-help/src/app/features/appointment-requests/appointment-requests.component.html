@@ -1,0 +1,36 @@
+<div class="appointment-requests-container">
+  <mat-card class="doctor-search-card">
+    <mat-form-field appearance="fill">
+      <mat-label>City</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let city of cityList" [value]="city">
+          {{ city }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Specialty</mat-label>
+      <mat-select>
+        <mat-option *ngFor="let specialty of specialtyList" [value]="specialty">
+          {{ specialty }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- <mat-form-field appearance="standard">
+        <mat-label>Doctor</mat-label>
+        <input type="text"
+               matInput
+               [matAutocomplete]="auto"
+               (keyup)="onSearchDoctors($event)"
+               >
+        <mat-icon matSuffix color="primary">search</mat-icon>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
+          <mat-option *ngFor="let option of filteredOptions$ | async; let i = index" [value]="option" (click)="onSelectDoctor(option)">
+              <img src={{getProfileImg(option.user.photo)}}>
+            {{ option.user.firstName }} {{option.user.lastName}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field> -->
+  </mat-card>
+</div>

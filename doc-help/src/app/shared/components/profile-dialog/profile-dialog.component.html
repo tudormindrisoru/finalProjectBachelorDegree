@@ -1,28 +1,40 @@
 <h1 mat-dialog-title>{{ title }}</h1>
 <div mat-dialog-content>
-    <div *ngIf="title === 'Remove office'">
-        Are you sure you want to delete the office? You will delete all affiliations as well. 
-    </div>
+  <div *ngIf="title === 'Remove office'">
+    Are you sure you want to delete the office? You will delete all affiliations
+    as well.
+  </div>
 
-    <div *ngIf="title === 'Invite doctor'">
-        <mat-form-field appearance="standard">
-            <mat-label>Search</mat-label>
-            <input type="text"
-                   matInput
-                   [matAutocomplete]="auto"
-                   (keyup)="onSearchDoctors($event)"
-                   >
-            <mat-icon matSuffix color="primary">search</mat-icon>
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
-              <mat-option *ngFor="let option of filteredOptions$ | async; let i = index" [value]="option" (click)="onSelectDoctor(option)">
-                  <img src={{getProfileImg(option.user.photo)}}>
-                {{ option.user.firstName }} {{option.user.lastName}}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
-    </div>
+  <div *ngIf="title === 'Invite doctor'">
+    <mat-form-field appearance="standard">
+      <mat-label>Search</mat-label>
+      <input
+        type="text"
+        matInput
+        [matAutocomplete]="auto"
+        (keyup)="onSearchDoctors($event)"
+      />
+      <mat-icon matSuffix color="primary">search</mat-icon>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
+        <mat-option
+          *ngFor="let option of filteredOptions$ | async; let i = index"
+          [value]="option"
+          (click)="onSelectDoctor(option)"
+        >
+          <img src="{{ getProfileImg(option.user.photo) }}" />
+          {{ option.user.firstName }} {{ option.user.lastName }}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
 </div>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close="false">Close</button>
-  <button mat-raised-button mat-dialog-close={{onClickOk()}} color="primary">Ok</button>
+  <button
+    mat-raised-button
+    mat-dialog-close="{{ onClickOk() }}"
+    color="primary"
+  >
+    Ok
+  </button>
 </div>

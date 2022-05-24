@@ -23,7 +23,6 @@ export class NotificationsPopupComponent implements OnInit {
   }
 
   onReject(id): void {
-    debugger;
     this.reject.emit(id);
   }
 

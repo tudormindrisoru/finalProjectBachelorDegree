@@ -16,12 +16,15 @@
       <ng-template #notMobileView>
         <nav class="top-nav-web-view">
           <ul>
-            <li (click)="openAuthDialog()" *ngIf="!isAuthenticated; else isAuth">
+            <li
+              (click)="openAuthDialog()"
+              *ngIf="!isAuthenticated; else isAuth"
+            >
               <mat-icon>login</mat-icon>
               <span class="label">Sign in</span>
             </li>
             <ng-template #isAuth>
-              <li (click)="sign-out()">
+              <li (click)="sign - out()">
                 <mat-icon>logout</mat-icon>
                 <span class="label">Sign out</span>
               </li>

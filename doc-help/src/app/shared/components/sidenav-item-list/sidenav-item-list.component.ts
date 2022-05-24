@@ -63,6 +63,11 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
         onClick: () => this.toggleNotificationPopup(),
       },
       {
+        icon: 'medical_services',
+        label: 'Find a doctor',
+        onClick: () => this.redirectTo('dashboard/appointment-requests'),
+      },
+      {
         icon: 'event_note',
         label: 'Appointments',
         onClick: () => this.redirectTo('dashboard/appointments'),
@@ -108,11 +113,10 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
     return this.notificationService.isShown;
   }
 
-  onToggleClick(): void {
-    this.toggleEvent.emit();
-  }
-
   redirectTo(url: string): void {
+    if (this.isNotificationOpen) {
+      this.onCloseNotificationPopup();
+    }
     this.router.navigate([`/${url}`]);
   }
 
@@ -158,8 +162,15 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
       });
   }
 
-  onCloseNotificationPopup(_) {
+  onCloseNotificationPopup() {
     this.toggleNotificationPopup();
+  }
+
+  onToggleClick(): void {
+    if (this.isNotificationOpen) {
+      this.onCloseNotificationPopup();
+    }
+    this.toggleEvent.emit();
   }
 
   ngOnDestroy(): void {

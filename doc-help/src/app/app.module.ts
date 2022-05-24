@@ -21,7 +21,6 @@ import { UserState } from './store/state/user.state';
 import { NgxsModule } from '@ngxs/store';
 import { DoctorState } from './store/state/doctor.state';
 import { OfficeState } from './store/state/office.state';
-import { AgmCoreModule } from '@agm/core';
 
 @NgModule({
   declarations: [AppComponent, MainComponent, PageNotFoundComponent],
@@ -37,10 +36,6 @@ import { AgmCoreModule } from '@agm/core';
     NgxsReduxDevtoolsPluginModule.forRoot(),
     NgxsLoggerPluginModule.forRoot(),
     NgxsModule.forRoot([UserState, DoctorState, OfficeState]),
-    AgmCoreModule.forRoot({
-      apiKey: environment.agmAutocomplete,
-      libraries: ['places'],
-    }),
   ],
   providers: [AuthGuard, AuthService],
   bootstrap: [AppComponent],

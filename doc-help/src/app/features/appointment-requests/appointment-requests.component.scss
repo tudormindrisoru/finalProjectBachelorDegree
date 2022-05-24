@@ -1,0 +1,19 @@
+.appointment-requests-container {
+   width: 100%;
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+
+   & > .doctor-search-card {
+        max-width: 500px;
+        align-self: center;
+        margin-top: 50px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+
+        & > mat-form-field {
+            margin: 0px 4px;
+        }
+   }
+}

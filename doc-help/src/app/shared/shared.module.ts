@@ -4,7 +4,6 @@ import { LogoComponent } from './components/logo/logo.component';
 import { MaterialModule } from '../material.module';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { AgmCoreModule } from '@agm/core';
 // import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
@@ -29,13 +28,7 @@ import { AppointmentDialogComponent } from './components/appointment-dialog/appo
     HttpClientModule,
     ReactiveFormsModule,
   ],
-  exports: [
-    LogoComponent,
-    CommonModule,
-    AgmCoreModule,
-    AuthDialogComponent,
-    MaterialModule,
-  ],
+  exports: [LogoComponent, CommonModule, AuthDialogComponent, MaterialModule],
   entryComponents: [SignInComponent, SignUpComponent],
   providers: [],
 })

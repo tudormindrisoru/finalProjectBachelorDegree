@@ -10,9 +10,10 @@ import { Doctor, User, Response, Office } from 'src/app/shared/models/models';
 import { first } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { UpdateDoctorInfo } from 'src/app/store/actions/doctor.actions';
-import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
-import { UpdateOfficeInfo, RemoveOfficeInfo } from 'src/app/store/actions/office.actions';
+import {
+  UpdateOfficeInfo,
+  RemoveOfficeInfo,
+} from 'src/app/store/actions/office.actions';
 import { UpdateUser } from 'src/app/store/actions/user.actions';
 import { ProfileDialogComponent } from 'src/app/shared/components/profile-dialog/profile-dialog.component';
 import { ThirdPartyDraggable } from '@fullcalendar/interaction';
@@ -24,8 +25,8 @@ import { report } from 'process';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
-  @ViewChild('placesRef') placesRef: GooglePlaceDirective;
-  @ViewChild('autocompleteRef') autocompleteRef: GooglePlaceDirective;
+  // @ViewChild('placesRef') placesRef: GooglePlaceDirective;
+  // @ViewChild('autocompleteRef') autocompleteRef: GooglePlaceDirective;
 
   options = {
     types: ['address'],
@@ -81,6 +82,12 @@ export class ProfileComponent implements OnInit {
   }
   get isOfficeAdded(): boolean {
     return !!this.office;
+  }
+  get latitude(): number | undefined {
+    return this.office?.latitude;
+  }
+  get longitude(): number | undefined {
+    return this.office?.longitude;
   }
 
   constructor(
@@ -274,138 +281,158 @@ export class ProfileComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e) => (this.profileImage = reader.result);
       reader.readAsDataURL(file);
-      this.profileService.updatePhoto(file).subscribe( (response: HttpResponse<Response<any>>) => {
-        if (response.body.success) {
-          this.user.photo = response.body.message.photo;
-        }
-      });
+      this.profileService
+        .updatePhoto(file)
+        .subscribe((response: HttpResponse<Response<any>>) => {
+          if (response.body.success) {
+            this.user.photo = response.body.message.photo;
+            const doctorIndex = this.office?.doctors?.findIndex(
+              (doc) => doc.id === this.user.docId
+            );
+            if (doctorIndex !== -1) {
+              this.office.doctors[doctorIndex].user.photo = this.user.photo;
+            }
+          }
+        });
     }
   }
-
-  handleAddressChange(address: Address): void {
-    const route = address.address_components.find(
-      (res) => res.types.findIndex((res2) => res2 === 'route') !== -1
-    );
-    const streetNumber = address.address_components.find(
-      (res) => res.types.findIndex((res2) => res2 === 'street_number') !== -1
-    );
-    const locality = address.address_components.find(
-      (res) => res.types.findIndex((res2) => res2 === 'locality') !== -1
-    );
-    const country = address.address_components.find(
-      (res) => res.types.findIndex((res2) => res2 === 'country') !== -1
-    );
-
-    const newAdrress =
-      (route ? route.long_name + ' ' : '') +
-      (streetNumber ? streetNumber.long_name + ' ' : '') +
-      (locality ? locality.long_name + ' ' : '') +
-      (country ? country.long_name + ' ' : '');
-    this.officeFormGroup.controls.address.setValue(newAdrress);
-    this.officeFormGroup.controls.longitude.setValue(
-      address.geometry.location.lng()
-    );
-    this.officeFormGroup.controls.latitude.setValue(
-      address.geometry.location.lat()
-    );
-    console.log(address);
+  handleMapChange($event) {
+    console.log('test', $event);
   }
-  
+  // handleAddressChange(address: Address): void {
+  //   const route = address.address_components.find(
+  //     (res) => res.types.findIndex((res2) => res2 === 'route') !== -1
+  //   );
+  //   const streetNumber = address.address_components.find(
+  //     (res) => res.types.findIndex((res2) => res2 === 'street_number') !== -1
+  //   );
+  //   const locality = address.address_components.find(
+  //     (res) => res.types.findIndex((res2) => res2 === 'locality') !== -1
+  //   );
+  //   const country = address.address_components.find(
+  //     (res) => res.types.findIndex((res2) => res2 === 'country') !== -1
+  //   );
+
+  //   const newAdrress =
+  //     (route ? route.long_name + ' ' : '') +
+  //     (streetNumber ? streetNumber.long_name + ' ' : '') +
+  //     (locality ? locality.long_name + ' ' : '') +
+  //     (country ? country.long_name + ' ' : '');
+  //   this.officeFormGroup.controls.address.setValue(newAdrress);
+  //   this.officeFormGroup.controls.longitude.setValue(
+  //     address.geometry.location.lng()
+  //   );
+  //   this.officeFormGroup.controls.latitude.setValue(
+  //     address.geometry.location.lat()
+  //   );
+  //   console.log(address);
+  // }
+
   saveUser(): void {
     if (this.userFormGroup.valid) {
       let user: User = {
-        'firstName': this.userControls.firstName.value,
-        'lastName': this.userControls.lastName.value,
-        'phone': this.userControls.phone.value
+        firstName: this.userControls.firstName.value,
+        lastName: this.userControls.lastName.value,
+        phone: this.userControls.phone.value,
       };
 
-      this.profileService.saveUser(user).subscribe((response: HttpResponse<Response<User>>) => {
-        if(response.body.success || response.ok) {
-          this.user.firstName = this.userControls.firstName.value;
-          this.user.lastName = this.userControls.lastName.value;
-          this.user.phone = this.userControls.phone.value;
-          this.store.dispatch(new UpdateUser(this.user));
-        }
-      });
+      this.profileService
+        .saveUser(user)
+        .subscribe((response: HttpResponse<Response<User>>) => {
+          if (response.body.success || response.ok) {
+            this.user.firstName = this.userControls.firstName.value;
+            this.user.lastName = this.userControls.lastName.value;
+            this.user.phone = this.userControls.phone.value;
+            this.store.dispatch(new UpdateUser(this.user));
+          }
+        });
     }
   }
 
   saveDoctor(): void {
     if (this.doctorFormGroup.valid) {
       let doctor: Doctor = {
-        'cuim': this.doctorControls.cuim.value,
-        'specialty': this.doctorControls.specialty.value
-      }
-      this.profileService.saveDoctor(doctor).subscribe( (response: HttpResponse<Response<Doctor>>) => {
-        if(response.body.success || response.ok) {
-          this.doctor.cuim = doctor.cuim;
-          this.doctor.specialty = doctor.specialty;
-          console.log(this.doctor);
-          this.store.dispatch(new UpdateDoctorInfo(this.doctor));
-        }
-      });
+        cuim: this.doctorControls.cuim.value,
+        specialty: this.doctorControls.specialty.value,
+      };
+      this.profileService
+        .saveDoctor(doctor)
+        .subscribe((response: HttpResponse<Response<Doctor>>) => {
+          if (response.body.success || response.ok) {
+            this.doctor.cuim = doctor.cuim;
+            this.doctor.specialty = doctor.specialty;
+            console.log(this.doctor);
+            this.store.dispatch(new UpdateDoctorInfo(this.doctor));
+          }
+        });
     }
   }
 
   addOffice(): void {
-    if(this.officeFormGroup.valid) {
+    if (this.officeFormGroup.valid) {
       let office: Office = {
-        'address': this.officeControls.address.value,
-        'oName': this.officeControls.name.value,
-        'latitude': this.officeControls.latitude.value,
-        'longitude': this.officeControls.longitude.value
+        address: this.officeControls.address.value,
+        oName: this.officeControls.name.value,
+        latitude: this.officeControls.latitude.value,
+        longitude: this.officeControls.longitude.value,
       };
 
-      if(!this.office) {
-        this.profileService.addOffice(office).subscribe( (response: HttpResponse<Response<Office>>) => {
-          if(response.body.success || response.ok) {
-            this.office = response.body.message;
-            this.store.dispatch(new UpdateOfficeInfo(this.office));
-          }
-        });
+      if (!this.office) {
+        this.profileService
+          .addOffice(office)
+          .subscribe((response: HttpResponse<Response<Office>>) => {
+            if (response.body.success || response.ok) {
+              this.office = response.body.message;
+              this.store.dispatch(new UpdateOfficeInfo(this.office));
+            }
+          });
       } else {
-        this.profileService.updateOffice(office).subscribe(((response: HttpResponse<Response<any>>) => {
-          if(response.body.success || response.ok) {
-            this.office.address = office.address;
-            this.office.oName = office.oName;
-            this.office.latitude = office.latitude;
-            this.office.longitude = office.longitude;
-            console.log(this.office);
-            this.store.dispatch(new UpdateOfficeInfo(this.office));
-          }
-        }));
+        this.profileService
+          .updateOffice(office)
+          .subscribe((response: HttpResponse<Response<any>>) => {
+            if (response.body.success || response.ok) {
+              this.office.address = office.address;
+              this.office.oName = office.oName;
+              this.office.latitude = office.latitude;
+              this.office.longitude = office.longitude;
+              console.log(this.office);
+              this.store.dispatch(new UpdateOfficeInfo(this.office));
+            }
+          });
       }
     }
   }
 
   inviteDoctor(doctor): void {
-    if(doctor.id && this.office.id) {
-      const data = { 'doctorId': doctor.id, 'officeId': this.office.id };
+    if (doctor.id && this.office.id) {
+      const data = { doctorId: doctor.id, officeId: this.office.id };
       console.log(data);
-      this.profileService.inviteDoctor(data).subscribe((response: HttpResponse<Response<any>>) => {
-        if(!!response.body && response.body.success) {
-          console.log(response.body);
-        }
-      });
+      this.profileService
+        .inviteDoctor(data)
+        .subscribe((response: HttpResponse<Response<any>>) => {
+          if (!!response.body && response.body.success) {
+            console.log(response.body);
+          }
+        });
     }
   }
 
-  updateOffice(): void {
-
-  }
+  updateOffice(): void {}
 
   removeOffice(): void {
     if (this.office.id) {
-      this.profileService.removeOffice().subscribe( (response: HttpResponse<Response<any>>) => {
-        if(response.body.success || response.ok) {
-          this.office = null;
-          this.officeFormGroup.controls.name.setValue('');
-          this.officeFormGroup.controls.address.setValue('');
-          this.officeFormGroup.controls.latitude.setValue('');
-          this.officeFormGroup.controls.longitude.setValue('');
-          this.store.dispatch(new RemoveOfficeInfo());
-        }
-      });
+      this.profileService
+        .removeOffice()
+        .subscribe((response: HttpResponse<Response<any>>) => {
+          if (response.body.success || response.ok) {
+            this.office = null;
+            this.officeFormGroup.controls.name.setValue('');
+            this.officeFormGroup.controls.address.setValue('');
+            this.officeFormGroup.controls.latitude.setValue('');
+            this.officeFormGroup.controls.longitude.setValue('');
+            this.store.dispatch(new RemoveOfficeInfo());
+          }
+        });
     }
   }
 
@@ -415,7 +442,7 @@ export class ProfileComponent implements OnInit {
       data: { title },
     });
 
-    dialogRef.afterClosed().subscribe(data => {
+    dialogRef.afterClosed().subscribe((data) => {
       console.log('The dialog was closed', JSON.parse(data));
       data = JSON.parse(data);
       console.log(data);
@@ -428,23 +455,21 @@ export class ProfileComponent implements OnInit {
           this.saveDoctor();
         }
 
-        if(title === 'Invite doctor') {
-          if(!!data.doctor) {
+        if (title === 'Invite doctor') {
+          if (!!data.doctor) {
             this.inviteDoctor(data.doctor);
           }
         }
 
-        if(title === 'Remove doctor') {
-
+        if (title === 'Remove doctor') {
         }
 
-        if(title === 'Remove office') {
+        if (title === 'Remove office') {
           this.removeOffice();
         }
       }
     });
   }
-
 
   // isYou(doctorIndex: number): boolean {
   //   return JSON.stringify(this.office.you) === JSON.stringify(this.office.doctors[doctorIndex]);

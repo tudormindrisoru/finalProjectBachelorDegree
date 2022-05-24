@@ -116,7 +116,7 @@
         <div class="office-information-container">
           <div class="office-left-side">
             <form [formGroup]="officeFormGroup" class="column-form">
-              <mat-form-field>
+              <!-- <mat-form-field>
                 <mat-label>Address</mat-label>
                 <input
                   matInput
@@ -135,7 +135,7 @@
                       : ""
                   }}
                 </mat-error>
-              </mat-form-field>
+              </mat-form-field> -->
               <mat-form-field>
                 <mat-label>Name</mat-label>
                 <input
@@ -153,23 +153,12 @@
                 </mat-error>
               </mat-form-field>
               <mat-form-field>
-                <mat-label>Longitude</mat-label>
-                <input matInput formControlName="longitude" readonly required />
-                <mat-error *ngIf="officeControls.longitude.invalid">
+                <mat-label>Address</mat-label>
+                <input matInput formControlName="address" required />
+                <mat-error *ngIf="officeControls.address.invalid">
                   {{
-                    officeControls.longitude.errors.required
-                      ? "*Longitude is required."
-                      : ""
-                  }}
-                </mat-error>
-              </mat-form-field>
-              <mat-form-field>
-                <mat-label>Latitude</mat-label>
-                <input matInput formControlName="latitude" readonly required />
-                <mat-error *ngIf="officeControls.latitude.invalid">
-                  {{
-                    officeControls.latitude.errors.required
-                      ? "*Latitude is required."
+                    officeControls.address.errors.required
+                      ? "*Address is invalid or required."
                       : ""
                   }}
                 </mat-error>
@@ -177,18 +166,13 @@
             </form>
           </div>
           <div class="office-right-side">
-            <div class="agm-container">
-              <agm-map
-                [latitude]="officeFormGroup.value.latitude"
-                [longitude]="officeFormGroup.value.longitude"
-                [zoom]="16"
-                #placesRef
-              >
-                <agm-marker
-                  [latitude]="officeFormGroup.value.latitude"
-                  [longitude]="officeFormGroup.value.longitude"
-                ></agm-marker>
-              </agm-map>
+            <div class="here-maps-container">
+              <app-map
+                [lat]="latitude"
+                [lng]="longitude"
+                (notify)="handleMapChange($event)"
+                class="here-map"
+              ></app-map>
             </div>
           </div>
         </div>
@@ -217,19 +201,31 @@
         <div class="affiliated-doctors">
           <h3 class="info-label">Doctors</h3>
           <div class="doctors-list noselect" *ngIf="office && office.doctors">
-            <div *ngFor="let d of office.doctors" class="doctor-wrapper" >
-              <div class="doctor-container" >
-                <img src={{getProfileImg(d.user.photo)}} [ngClass]="d.id === office.administratorId ? 'office-owner' : ''" >
-                <div class="office-owner-shield" *ngIf="doctor.id === office.administratorId">
-                  <mat-icon 
-                  matTooltipPosition="below"
-                  matTooltip="Administrator of the office." 
-                  color="primary">health_and_safety</mat-icon>
-                  
+            <div *ngFor="let d of office.doctors" class="doctor-wrapper">
+              <div class="doctor-container">
+                <img
+                  src="{{ getProfileImg(d.user.photo) }}"
+                  [ngClass]="
+                    d.id === office.administratorId ? 'office-owner' : ''
+                  "
+                />
+                <div
+                  class="office-owner-shield"
+                  *ngIf="doctor.id === office.administratorId"
+                >
+                  <mat-icon
+                    matTooltipPosition="below"
+                    matTooltip="Administrator of the office."
+                    color="primary"
+                    >health_and_safety</mat-icon
+                  >
                 </div>
               </div>
             </div>
-            <div class="doctor-wrapper" *ngIf="doctor.id === office.administratorId">
+            <div
+              class="doctor-wrapper"
+              *ngIf="doctor.id === office.administratorId"
+            >
               <div class="doctor-container">
                 <div class="add-doctor" (click)="openDialog('Invite doctor')">
                   <mat-icon color="primary">add</mat-icon>
