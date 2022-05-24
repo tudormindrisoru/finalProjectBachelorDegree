@@ -87,6 +87,40 @@ class Doctor {
       return new Response(500, false, err).getResponse();
     }
   }
+
+  static async getPatientHistory(doctorId) {
+    //TO DO: update this request to get user form
+    try {
+      const SQL_GET_PATIENT_HISTORY = `SELECT u.firstName, u.lastName, u.phone, u.photo, u.email, a.patientId, a.startDate, a.endDate, a.notes FROM users u JOIN appointments a ON a.patientId = u.id WHERE a.doctorId = ${doctorId} ORDER BY a.startDate DESC`;
+      const result = await db.execute(SQL_GET_PATIENT_HISTORY);
+      if (!!result && !!result[0]) {
+        const mappedRes = result[0].map((e) => {
+          return {
+            startDate: e.startDate,
+            endDate: e.endDate,
+            notes: e.notes,
+            patient: {
+              id: e.patientId,
+              firstName: e.firstName,
+              lastName: e.lastName,
+              email: e.email,
+              phone: e.phone,
+              photo: e.photo,
+            },
+          };
+        });
+        return new Response(200, true, mappedRes).getResponse();
+      }
+      return new Response(
+        404,
+        false,
+        "No paietient history found."
+      ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Somethig went wrong").getResponse();
+    }
+  }
 }
 
 module.exports = Doctor;

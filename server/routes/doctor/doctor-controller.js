@@ -131,6 +131,25 @@ router.get("/search-to-invite/:name", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/patient-history", verifyToken, async (req, res) => {
+  res.set({
+    "Content-Type": "application/json",
+    Authorization: req.headers.authorization,
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Expose-Headers": "*",
+  });
+
+  const id = req.user.id;
+  const doctor = await Doctor.findOneByUserId(id);
+
+  if (doctor.success) {
+    const result = await Doctor.getPatientHistory(doctor.message.id);
+    res.status(result.status).send(result);
+  } else {
+    res.status(doctor.status).send(doctor);
+  }
+});
+
 // const storage = multer.diskStorage({
 //     destination: function(req, file, cb) {
 //         cb(null,'./photos/');

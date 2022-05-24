@@ -15,7 +15,6 @@ class User {
 
   async save() {
     try {
-      console.log("TEST ----- USER ADD");
       const encryptedPassword = await bcrypt.hash(this.password, saltRounds);
       const d = new Date();
       const createdDate = `${d.getFullYear()}-${d.getMonth() + 1}-${
@@ -59,21 +58,21 @@ class User {
       const GET_USERS_SQL = `SELECT * FROM users WHERE (firstName LIKE '${name}%' OR lastName LIKE '${name}%') AND isVerified = 1 AND id != ${id}`;
       const users = await db.execute(GET_USERS_SQL);
       let res = [];
-      if(!!users[0] && users[0].length > 0) {
-          res = users[0].map(element => {
-            return {
-              'id': element.id,
-              'firstName': element.firstName,
-              'lastName': element.lastName,
-              'photo': element.photo,
-              'phone': element.phone
-            }
-          });
+      if (!!users[0] && users[0].length > 0) {
+        res = users[0].map((element) => {
+          return {
+            id: element.id,
+            firstName: element.firstName,
+            lastName: element.lastName,
+            photo: element.photo,
+            phone: element.phone,
+          };
+        });
       }
       return new Response(200, true, res).getResponse();
-    } catch(err) {
-        console.error(err);
-        return new Response(500, false, err).getResponse();
+    } catch (err) {
+      console.error(err);
+      return new Response(500, false, err).getResponse();
     }
   }
 
@@ -84,11 +83,12 @@ class User {
       if (user) {
         console.log(user[0][0]);
         if (user[0][0].isVerified) {
+          console.log(bcrypt.decodeBase64(user[0][0].password));
           const passMatch = await bcrypt.compare(password, user[0][0].password);
           if (passMatch) {
             delete user[0][0].password;
             const userData = user[0][0];
-            return new Response(200, true, user[0][0]).getResponse();
+            return new Response(200, true, userData).getResponse();
           }
         } else {
           return new Response(
@@ -137,7 +137,7 @@ class User {
       return new Response(500, false, "Something bad happened.").getResponse();
     }
   }
-  
+
   static async updatePhotoById(id, path) {
     try {
       const SQL_UPDATE_PHOTO = `UPDATE users SET photo = "${path}" WHERE id = ${id}`;
@@ -146,8 +146,12 @@ class User {
       if (!!result[0] && result[0].affectedRows === 1) {
         return new Response(200, true, { photo: path }).getResponse();
       }
-      return new Response(400, false, "The image could not be updated.").getResponse();
-    } catch(err) {
+      return new Response(
+        400,
+        false,
+        "The image could not be updated."
+      ).getResponse();
+    } catch (err) {
       console.error(err);
       return new Response(500, false, err).getResponse();
     }
@@ -155,22 +159,22 @@ class User {
 
   static async updateUserById(data, id) {
     try {
-        const SQL_UDDATE_USER =
-          `UPDATE users SET ` +
-          (data.firstName ? `firstName='${data.firstName}',` : "") +
-          (data.lastName ? `lastName='${data.lastName}', ` : "") +
-          (data.phone ? `phone='${data.phone}'` : "") +
-          ` WHERE id=${id};`;
-        const updatedUser = await db.execute(SQL_UDDATE_USER);
-        if(updatedUser[0].affectedRows === 1) {
-            console.log('updated USER = ',updatedUser);
-            return new Response(200, true, updatedUser[0][0]).getResponse();
-        } else {
-            return new Response(404, false, "User not found.").getResponse();   
-        }
-    } catch(error) {
-        console.error(error);
-        return new Response(500, false, error).getResponse();
+      const SQL_UDDATE_USER =
+        `UPDATE users SET ` +
+        (data.firstName ? `firstName='${data.firstName}',` : "") +
+        (data.lastName ? `lastName='${data.lastName}', ` : "") +
+        (data.phone ? `phone='${data.phone}'` : "") +
+        ` WHERE id=${id};`;
+      const updatedUser = await db.execute(SQL_UDDATE_USER);
+      if (updatedUser[0].affectedRows === 1) {
+        console.log("updated USER = ", updatedUser);
+        return new Response(200, true, updatedUser[0][0]).getResponse();
+      } else {
+        return new Response(404, false, "User not found.").getResponse();
+      }
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, error).getResponse();
     }
   }
 
@@ -179,22 +183,22 @@ class User {
       const GET_DOCTORS_SQL = `SELECT * FROM users WHERE (firstName LIKE '${name}%' OR lastName LIKE '${name}%') AND isVerified=1;`;
       const users = await db.execute(GET_DOCTORS_SQL);
       let res = [];
-      if(!!doctors[0] && doctors[0].length > 0) {
-          res = doctors[0].map(element => {
-            return {
-              'id': element.id,
-              'specialty': element.specialty,
-              'user': {
-                'firstName': element.firstName,
-                'lastName': element.lastName,
-                'photo': element.photo,
-                'phone': element.phone
-              }
-            }
-          });
+      if (!!doctors[0] && doctors[0].length > 0) {
+        res = doctors[0].map((element) => {
+          return {
+            id: element.id,
+            specialty: element.specialty,
+            user: {
+              firstName: element.firstName,
+              lastName: element.lastName,
+              photo: element.photo,
+              phone: element.phone,
+            },
+          };
+        });
       }
       return new Response(200, true, res).getResponse();
-    } catch(err) {
+    } catch (err) {
       console.error(err);
       return new Response(500, false, err).getResponse();
     }
@@ -215,9 +219,6 @@ class User {
       return false;
     }
   }
-  // static findAll() {
-
-  // }
 }
 
 module.exports = User;
