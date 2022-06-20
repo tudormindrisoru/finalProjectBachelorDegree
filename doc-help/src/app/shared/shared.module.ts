@@ -4,13 +4,12 @@ import { LogoComponent } from './components/logo/logo.component';
 import { MaterialModule } from '../material.module';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-// import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { AuthDialogComponent } from './components/auth-dialog/auth-dialog.component';
 import { SignInComponent } from './components/sign-in/sign-in.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProfileDialogComponent } from './components/profile-dialog/profile-dialog.component';
-import { AppointmentDialogComponent } from './components/appointment-dialog/appointment-dialog.component';
+import { AppointmentRequestDialogComponent } from './components/appointment-request-dialog/appointment-request-dialog.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +18,7 @@ import { AppointmentDialogComponent } from './components/appointment-dialog/appo
     SignInComponent,
     SignUpComponent,
     ProfileDialogComponent,
-    AppointmentDialogComponent,
+    AppointmentRequestDialogComponent,
   ],
   imports: [
     CommonModule,

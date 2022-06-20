@@ -14,6 +14,9 @@ import { catchError, first, tap } from 'rxjs/operators';
 @Injectable()
 export class ScheduleService {
   private readonly SERVER_URL = environment.apiUrl;
+  private readonly SCHEDULE_INTERVALS_URL =
+    this.SERVER_URL + '/doctors/schedule/intervals';
+
   private headerDict = {
     'Content-Type': 'application/json',
     // tslint:disable-next-line: object-literal-key-quotes
@@ -35,10 +38,23 @@ export class ScheduleService {
   }
 
   getMySchedule(): Observable<Response<Schedule[]>> {
-    const SCHDULE_INTERVALS_URL =
-      this.SERVER_URL + '/doctors/schedule/intervals';
     return this.http
-      .get<HttpResponse<Response<Schedule[]>>>(SCHDULE_INTERVALS_URL, {
+      .get<HttpResponse<Response<Schedule[]>>>(this.SCHEDULE_INTERVALS_URL, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(
+          this.snackbarHandlerService.handleError('GET_DOCTOR_SCHEDULE')
+        )
+      );
+  }
+
+  getDoctorScheduleById(id: number): Observable<Response<Schedule>> {
+    const DOCTOR_SCHEDULE_URL = this.SERVER_URL + `/doctors/schedule/${id}`;
+    return this.http
+      .get<HttpResponse<Response<Schedule[]>>>(DOCTOR_SCHEDULE_URL, {
         observe: 'response',
         headers: new HttpHeaders(this.jsonAuthHeader()),
       })
@@ -52,11 +68,10 @@ export class ScheduleService {
 
   createScheduleInterval(interval): Observable<Response<Schedule>> {
     delete interval.id;
-    const SCHEDULE_INTERVALS_URL =
-      this.SERVER_URL + '/doctors/schedule/intervals';
+
     return this.http
       .post<HttpResponse<Response<Schedule>>>(
-        SCHEDULE_INTERVALS_URL,
+        this.SCHEDULE_INTERVALS_URL,
         interval,
         {
           observe: 'response',
@@ -84,13 +99,15 @@ export class ScheduleService {
   }
 
   updateScheduleInterval(interval): Observable<Response<Schedule>> {
-    const SCHEDULE_INTERVALS_URL =
-      this.SERVER_URL + '/doctors/schedule/intervals';
     return this.http
-      .put<HttpResponse<Response<Schedule>>>(SCHEDULE_INTERVALS_URL, interval, {
-        observe: 'response',
-        headers: new HttpHeaders(this.jsonAuthHeader()),
-      })
+      .put<HttpResponse<Response<Schedule>>>(
+        this.SCHEDULE_INTERVALS_URL,
+        interval,
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
       .pipe(
         first(),
         tap((result) => {
@@ -106,13 +123,14 @@ export class ScheduleService {
     if (intervalId === -1) {
       return;
     }
-    const SCHEDULE_INTERVALS_URL =
-      this.SERVER_URL + `/doctors/schedule/intervals/${intervalId}`;
     return this.http
-      .delete<HttpResponse<Response<Schedule>>>(SCHEDULE_INTERVALS_URL, {
-        observe: 'response',
-        headers: new HttpHeaders(this.jsonAuthHeader()),
-      })
+      .delete<HttpResponse<Response<Schedule>>>(
+        this.SCHEDULE_INTERVALS_URL + `/${intervalId}`,
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
       .pipe(
         first(),
         tap((result) => this.snackbarHandlerService.handleSuccess(result.body)),

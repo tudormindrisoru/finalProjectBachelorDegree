@@ -1,13 +1,13 @@
 <h1 mat-dialog-title>{{ title }}</h1>
 <div mat-dialog-content>
   <div *ngIf="title === 'Remove office'">
-    Are you sure you want to delete the office? You will delete all affiliations
-    as well.
+    Esti sigur ca vrei sa stergi cabinetul? Vei sterge toate afilierile
+    medicilor de asemenea.
   </div>
 
-  <div *ngIf="title === 'Invite doctor'">
+  <div *ngIf="title === 'Invita doctor'">
     <mat-form-field appearance="standard">
-      <mat-label>Search</mat-label>
+      <mat-label>Cauta</mat-label>
       <input
         type="text"
         matInput
@@ -29,12 +29,12 @@
   </div>
 </div>
 <div mat-dialog-actions>
-  <button mat-button mat-dialog-close="false">Close</button>
+  <button mat-button mat-dialog-close="false">Inchide</button>
   <button
     mat-raised-button
     mat-dialog-close="{{ onClickOk() }}"
     color="primary"
   >
-    Ok
+    OK
   </button>
 </div>

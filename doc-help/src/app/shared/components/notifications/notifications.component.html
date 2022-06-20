@@ -1,0 +1,10 @@
+<div
+  class="icon-wrapper"
+  (click)="openDialog()"
+  [matBadge]="pendingAppointments.length"
+  matBadgePosition="before"
+  matBadgeColor="accent"
+  [matBadgeHidden]="pendingAppointments?.length === 0 || !pendingAppointments"
+>
+  <mat-icon matTooltip="Notificari">notifications</mat-icon>
+</div>

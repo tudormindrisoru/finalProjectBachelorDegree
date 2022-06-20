@@ -1,4 +1,4 @@
-import { environment } from './../../../../environments/environment';
+import { environment } from 'src/environments/environment';
 import {
   AfterViewInit,
   Component,
@@ -12,6 +12,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import H from '@here/maps-api-for-javascript';
+import onResize from 'simple-element-resize-detector';
+import { SearchResult } from 'src/app/shared/models/models';
 
 @Component({
   selector: 'app-map',
@@ -19,55 +21,96 @@ import H from '@here/maps-api-for-javascript';
   styleUrls: ['./map.component.scss'],
 })
 export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
-  private map?: H.Map;
-  private timeoutHandle: any;
-  private platform: H.service.Platform;
-  private zoom: number = 14;
-
   @Input() public lat?: number;
   @Input() public lng?: number;
 
-  @Output() notify = new EventEmitter();
-  @ViewChild('map') mapElement?: ElementRef;
+  private map?: H.Map;
+  private platform: H.service.Platform;
+  private service: H.service.SearchService;
+  private timeoutHandle: any;
+  private markersGroup: H.map.Group;
 
-  private clearMarkers(): void {
-    this.map.removeObjects(this.map.getObjects());
+  @Output() notify = new EventEmitter<any>();
+
+  @ViewChild('map')
+  public mapElement: ElementRef;
+
+  constructor() {
+    this.platform = new H.service.Platform({
+      apikey: environment.hereMapsAPIKey,
+    });
   }
 
-  private dropMarker(coordinates: any) {
-    let marker = new H.map.Marker(coordinates);
-    this.map.addObject(marker);
+  clearMarkers(): void {
+    if (this.markersGroup) {
+      this.markersGroup.removeObjects(this.markersGroup.getObjects());
+    }
+  }
+
+  addMarkOnMap(lat, lng): void {
+    this.clearMarkers();
+    if (this.markersGroup) {
+      const marker = new H.map.Marker({ lat, lng } as H.geo.Point);
+      this.markersGroup.addObject(marker);
+    }
+  }
+
+  addressSearch(value: string): any {
+    if (this.map && this.service) {
+      this.service.geocode(
+        {
+          q: value,
+          in: 'countryCode:ROU',
+        },
+        (result) => {
+          const items = result['items'].map((element) => {
+            return {
+              address: element.address.label,
+              county: element.address.county,
+              lat: element.position.lat,
+              lng: element.position.lng,
+            } as SearchResult;
+          });
+          if (items.length > 0) {
+            this.notify.emit(items);
+          }
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    }
   }
 
   ngAfterViewInit(): void {
     if (!this.map && this.mapElement) {
-      // instantiate a platform, default layers and a map as usual
-      this.platform = new H.service.Platform({
-        apikey: environment.hereMapsAPIKey,
-      });
-      // const layers = platform.createDefaultLayers();
-      let defaultLayers = this.platform.createDefaultLayers();
-      this.map = new H.Map(
+      const layers = this.platform.createDefaultLayers();
+      const map = new H.Map(
         this.mapElement.nativeElement,
-        defaultLayers.vector.normal.map,
+        layers.vector.normal.map,
         {
-          zoom: this.zoom,
-          center: { lat: this.lat || 47.151726, lng: this.lng || 27.587914 },
+          pixelRatio: window.devicePixelRatio,
+          center: { lat: this.lat ?? 45.9442858, lng: this.lng ?? 25.0094303 },
+          zoom: 12,
         }
       );
-      if (this.lat && this.lat) {
-        this.clearMarkers();
-        this.dropMarker({ lng: this.lng, lat: this.lat });
+      onResize(this.mapElement.nativeElement, () => {
+        map.getViewPort().resize();
+      });
+      this.markersGroup = new H.map.Group();
+      map.addObject(this.markersGroup);
+      if (this.lat && this.lng) {
+        this.addMarkOnMap(this.lat, this.lng);
       }
-    }
 
-    this.map.addEventListener('mapviewchange', (ev: H.map.ChangeEvent) => {
-      this.notify.emit(ev);
-    });
-    new H.mapevents.Behavior(new H.mapevents.MapEvents(this.map));
+      new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+      this.map = map;
+
+      this.service = this.platform.getSearchService();
+    }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges) {
     clearTimeout(this.timeoutHandle);
     this.timeoutHandle = setTimeout(() => {
       if (this.map) {
@@ -80,26 +123,18 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         if (changes.lng !== undefined) {
           this.map.setCenter({ lat: this.lat, lng: changes.lng.currentValue });
         }
-        if (this.lat && this.lat) {
-          this.clearMarkers();
-          this.dropMarker({ lng: this.lng, lat: this.lat });
+
+        if (
+          changes.lat.currentValue !== undefined &&
+          changes.lng.currentValue !== undefined &&
+          (changes.lat.previousValue !== this.lat ||
+            changes.lng.previousValue !== this.lng)
+        ) {
+          this.addMarkOnMap(changes.lat.currentValue, changes.lng.currentValue);
         }
       }
     }, 100);
   }
 
-  handleMapChange(event: H.map.ChangeEvent): void {
-    if (event.newValue.lookAt) {
-      const lookAt = event.newValue.lookAt;
-      this.zoom = lookAt.zoom;
-      this.lat = lookAt.position.lat;
-      this.lng = lookAt.position.lng;
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.map.removeEventListener('mapviewchange', (ev: H.map.ChangeEvent) => {
-      this.notify.emit(ev);
-    });
-  }
+  ngOnDestroy(): void {}
 }

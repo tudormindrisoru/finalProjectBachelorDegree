@@ -1,36 +1,185 @@
 <div class="appointment-requests-container">
   <mat-card class="doctor-search-card">
     <mat-form-field appearance="fill">
-      <mat-label>City</mat-label>
-      <mat-select>
+      <mat-label>Oras</mat-label>
+      <mat-select
+        (select)="onCitySelect()"
+        (selectionChange)="onCitySelectionChange($event.value)"
+      >
         <mat-option *ngFor="let city of cityList" [value]="city">
           {{ city }}
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label>Cabinet</mat-label>
+      <mat-select
+        [disabled]="isOfficeFieldDisabled"
+        (selectionChange)="onOfficeSelectionChange($event)"
+        (select)="onOfficeSelect()"
+        #officeControl
+      >
+        <mat-option *ngFor="let office of officeList" [value]="office">{{
+          office.oName
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <mat-form-field appearance="fill">
-      <mat-label>Specialty</mat-label>
-      <mat-select>
+      <mat-label>Specialitate</mat-label>
+      <mat-select
+        [disabled]="isSpecialtyFieldDisabled"
+        (selectionChange)="onSpecialtySelectionChange($event.value)"
+        (select)="onSpecialtySelect()"
+        #specialtyControl
+      >
         <mat-option *ngFor="let specialty of specialtyList" [value]="specialty">
           {{ specialty }}
         </mat-option>
       </mat-select>
     </mat-form-field>
-    <!-- <mat-form-field appearance="standard">
-        <mat-label>Doctor</mat-label>
-        <input type="text"
-               matInput
-               [matAutocomplete]="auto"
-               (keyup)="onSearchDoctors($event)"
-               >
-        <mat-icon matSuffix color="primary">search</mat-icon>
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayName">
-          <mat-option *ngFor="let option of filteredOptions$ | async; let i = index" [value]="option" (click)="onSelectDoctor(option)">
-              <img src={{getProfileImg(option.user.photo)}}>
-            {{ option.user.firstName }} {{option.user.lastName}}
+
+    <mat-form-field appearance="fill">
+      <mat-label>Doctor</mat-label>
+      <mat-select
+        [disabled]="isDoctorFieldDisabled"
+        #doctorControl
+        (selectionChange)="onDoctorSelectionChange($event.value)"
+      >
+        <mat-option *ngFor="let doctor of filteredDoctors" [value]="doctor">
+          {{ doctor.firstName }} {{ doctor.lastName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </mat-card>
+  <mat-card
+    class="appointment-request-card"
+    *ngIf="isDoctorSelected && selectedDoctor"
+  >
+    <div class="title">{{ selectedDoctor?.officeName }}</div>
+    <div class="doctor-informations">
+      <div class="image">
+        <img src="{{ getProfileImg(selectedDoctor.photo) }}" alt="" />
+      </div>
+      <div class="details">
+        <p>Dr. {{ selectedDoctor.firstName }} {{ selectedDoctor.lastName }}</p>
+        <p>{{ selectedDoctor.specialty }}</p>
+        <p><mat-icon>phone</mat-icon>{{ selectedDoctor.phone }}</p>
+        <p *ngIf="selectedDoctorsReviewAveragePoints">
+          {{ selectedDoctorsReviewAveragePoints }}
+          <mat-icon>star</mat-icon>
+        </p>
+      </div>
+    </div>
+    <div class="appointment-informations">
+      <div class="schedule" *ngIf="selectedDoctor.schedule">
+        {{ "Program: " }}
+        <div *ngFor="let s of selectedDoctor.schedule">
+          {{ convertTimeToText(s) }}
+        </div>
+      </div>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Alege o data</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [min]="minDate"
+          [matDatepickerFilter]="scheduleFilter"
+          (dateChange)="onDateChange($event)"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Alege o ora</mat-label>
+        <mat-select
+          name="hour"
+          [disabled]="
+            !selectedDoctor.appointmentOptions ||
+            selectedDoctor?.appointmentOptions?.length === 0
+          "
+          #hourTimeSlotSelector
+        >
+          <mat-option
+            *ngFor="
+              let option of selectedDoctor?.appointmentOptions;
+              let i = index
+            "
+            [value]="i"
+          >
+            {{ option.label }}
           </mat-option>
-        </mat-autocomplete>
-      </mat-form-field> -->
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        [disabled]="
+          !selectedDoctor ||
+          !selectedDoctor?.schedule ||
+          selectedDoctor?.appointmentOptions?.length === 0 ||
+          hourTimeSlotSelector.empty
+        "
+        mat-raised-button
+        color="primary"
+        (click)="openAppointmentRequestDialog(hourTimeSlotSelector.value)"
+      >
+        Solicita programare
+      </button>
+    </div>
+    <div class="office-informations">
+      <div class="address">
+        <mat-icon>pin_drop</mat-icon>
+        {{ selectedDoctor.address }}
+      </div>
+      <div class="map">
+        <app-map
+          [lng]="selectedDoctor.longitude"
+          [lat]="selectedDoctor.latitude"
+          (notify)="console.log($event)"
+        ></app-map>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="last-appointments-card">
+    <mat-card-title>
+      {{
+        lastAppointments?.length > 1
+          ? "Ultimele " + lastAppointments?.length + " programari"
+          : "Ultima programare"
+      }}</mat-card-title
+    >
+    <div *ngIf="lastAppointments" class="appointments-wrapper">
+      <div class="appointment title">
+        <p>Nume si prenume</p>
+        <p>Specialitate</p>
+        <p>Data programarii</p>
+        <p>Ora de inceput si sfarsit</p>
+        <p>Recenzie</p>
+      </div>
+      <div *ngFor="let appointment of lastAppointments" class="appointment">
+        <p>{{ appointment.firstName }} {{ appointment.lastName }}</p>
+        <p>{{ appointment.specialty }}</p>
+        <p>{{ appointment.startDate | date: "dd-MM-yyyy" }}</p>
+        <p>
+          {{ appointment.startDate | date: "hh:mm" }} -
+          {{ appointment.endDate | date: "hh:mm" }}
+        </p>
+        <p class="rating-container">
+          <ngx-material-rating
+            [color]="primary"
+            [dense]="true"
+            [readonly]="appointment?.points"
+            [max]="5"
+            [color]="warn"
+            [value]="appointment?.points"
+            (change)="onRatingChange(appointment, $event.value)"
+          >
+          </ngx-material-rating>
+        </p>
+      </div>
+    </div>
   </mat-card>
 </div>

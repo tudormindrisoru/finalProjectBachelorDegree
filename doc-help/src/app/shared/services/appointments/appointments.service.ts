@@ -26,6 +26,7 @@ export class AppointmentsService {
   private readonly APPROVED_APPOINTMENTS_URL =
     this.SERVER_URL + '/appointments/approved';
   private readonly APPOINTMENT_URL = this.SERVER_URL + '/appointments';
+  private readonly OFFICES_URL = this.SERVER_URL + '/offices';
 
   private headerDict = {
     'Content-Type': 'application/json',
@@ -97,6 +98,9 @@ export class AppointmentsService {
       )
       .pipe(
         first(),
+        tap((result) => {
+          this.snackbarHandlerService.handleSuccess(result.body);
+        }),
         catchError(
           this.snackbarHandlerService.handleError('UPDATE_APPROVED_APPOINTMENT')
         )
@@ -136,9 +140,9 @@ export class AppointmentsService {
 
   approveAppointment(id): Observable<Response<string>> {
     return this.http
-      .put<HttpResponse<Response<any>>>(
-        this.APPOINTMENT_URL,
-        { id, isApproved: true },
+      .patch<HttpResponse<Response<any>>>(
+        this.APPOINTMENT_URL + `/approve`,
+        { id: id },
         {
           observe: 'response',
           headers: new HttpHeaders(this.jsonAuthHeader()),
@@ -156,11 +160,16 @@ export class AppointmentsService {
   }
 
   rejectAppointment(id: number): Observable<Response<string>> {
+    console.log(this.jsonAuthHeader());
     return this.http
-      .delete<HttpResponse<Response<any>>>(this.APPOINTMENT_URL + `/${id}`, {
-        observe: 'response',
-        headers: new HttpHeaders(this.jsonAuthHeader()),
-      })
+      .patch<HttpResponse<Response<any>>>(
+        this.APPOINTMENT_URL + `/reject`,
+        { id: id },
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
       .pipe(
         first(),
         tap((result) => {
@@ -169,6 +178,148 @@ export class AppointmentsService {
         catchError(
           this.snackbarHandlerService.handleError('REJECT_APPOINTMENT')
         )
+      );
+  }
+
+  getCityOptions(): Observable<Response<any[]>> {
+    return this.http
+      .get<HttpResponse<Response<any[]>>>(
+        this.OFFICES_URL + '/available-cities',
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        catchError(this.snackbarHandlerService.handleError('AVAILABLE_CITIES'))
+      );
+  }
+
+  getOfficeOptions(city: string): Observable<Response<any[]>> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('city', city);
+
+    return this.http
+      .get<HttpResponse<Response<any[]>>>(this.OFFICES_URL, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+        params: queryParams,
+      })
+      .pipe(
+        first(),
+        catchError(this.snackbarHandlerService.handleError('AVAILABLE_OFFICES'))
+      );
+  }
+
+  getDoctorsOptions(officeId: number): Observable<Response<any[]>> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('officeId', officeId.toString());
+    return this.http
+      .get<HttpResponse<Response<any[]>>>(this.OFFICES_URL + '/doctors', {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+        params: queryParams,
+      })
+      .pipe(
+        first(),
+        catchError(
+          this.snackbarHandlerService.handleError('AVAILABLE_SPECIALTIES')
+        )
+      );
+  }
+
+  getHoursSlotsOptions(
+    date: Date | string,
+    doctorId: number
+  ): Observable<Response<any>> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('date', date.toString());
+    queryParams = queryParams.append('doctorId', doctorId.toString());
+    return this.http
+      .get<HttpResponse<Response<any>>>(this.APPOINTMENT_URL + `/free-slots`, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+        params: queryParams,
+      })
+      .pipe(
+        first(),
+        catchError(this.snackbarHandlerService.handleError('GET_FREE_SLOTS'))
+      );
+  }
+
+  requestAppointment(data): Observable<Response<string>> {
+    return this.http
+      .post<HttpResponse<Response<string>>>(
+        this.APPOINTMENT_URL + '/request',
+        data,
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        tap((result) => {
+          this.snackbarHandlerService.handleSuccess(result.body);
+        }),
+        catchError(
+          this.snackbarHandlerService.handleError('CREATE_APPOINTMENT_REQUEST')
+        )
+      );
+  }
+
+  getLastFiveAppointments(): Observable<Response<any>> {
+    return this.http
+      .get<HttpResponse<Response<any>>>(this.APPOINTMENT_URL + '/last', {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        // tap((result) => {
+        //   console.log(result);
+        // }),
+        catchError(
+          this.snackbarHandlerService.handleError('GET_LAST_APPOINTMENTS')
+        )
+      );
+  }
+
+  getRatings(reviews: string): Observable<Response<any>> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('reviewIds', reviews);
+    return this.http
+      .get<HttpResponse<Response<any>>>(this.APPOINTMENT_URL + '/ratings', {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+        params: queryParams,
+      })
+      .pipe(
+        first(),
+        catchError(this.snackbarHandlerService.handleError('GET_RATINGS'))
+      );
+  }
+
+  setRating(
+    appointmentId: number,
+    points: number
+  ): Observable<Response<string>> {
+    return this.http
+      .post<HttpResponse<Response<string>>>(
+        this.APPOINTMENT_URL + '/ratings',
+        { appointmentId, points },
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        tap((result) => {
+          this.snackbarHandlerService.handleSuccess(result.body);
+        }),
+        catchError(this.snackbarHandlerService.handleError('POST_RATING'))
       );
   }
 }

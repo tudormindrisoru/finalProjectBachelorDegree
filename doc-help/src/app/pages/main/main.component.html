@@ -9,7 +9,7 @@
         </button>
         <mat-menu #beforeMenu="matMenu" xPosition="before">
           <button mat-menu-item (click)="openAuthDialog()">
-            <span class="primary-color font-bold">Sign in</span>
+            <span class="primary-color font-bold">Autentificare</span>
           </button>
         </mat-menu>
       </ng-template>
@@ -21,12 +21,12 @@
               *ngIf="!isAuthenticated; else isAuth"
             >
               <mat-icon>login</mat-icon>
-              <span class="label">Sign in</span>
+              <span class="label">Autentificare</span>
             </li>
             <ng-template #isAuth>
               <li (click)="sign - out()">
                 <mat-icon>logout</mat-icon>
-                <span class="label">Sign out</span>
+                <span class="label">Deconectare</span>
               </li>
             </ng-template>
           </ul>

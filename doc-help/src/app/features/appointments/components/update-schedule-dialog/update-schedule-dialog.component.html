@@ -1,7 +1,7 @@
-<h1 mat-dialog-title>Update schedule</h1>
+<h1 mat-dialog-title>Actualizeaza program</h1>
 <div mat-dialog-content>
   <mat-tab-group dynamicHeight>
-    <mat-tab label="Schedule">
+    <mat-tab label="Program">
       <div class="schedule-container">
         <form [formGroup]="scheduleFormGroup" *ngIf="scheduleFormGroup">
           <mat-tab-group formArrayName="days">
@@ -24,7 +24,7 @@
                 >
                   <mat-card>
                     <mat-form-field appearance="fill">
-                      <mat-label>Start time</mat-label>
+                      <mat-label>Inceput</mat-label>
 
                       <input
                         matTimepicker
@@ -57,7 +57,7 @@
                     </div>
 
                     <mat-form-field appearance="fill">
-                      <mat-label>End time</mat-label>
+                      <mat-label>Sfarsit</mat-label>
 
                       <input
                         matTimepicker
@@ -92,7 +92,7 @@
               </div>
               <div class="hours-information">
                 <span
-                  >Working hours for {{ day["controls"].dayName?.value }} :
+                  >Ore lucratoare {{ day["controls"].dayName?.value }} :
                   {{ day["controls"].workingHours?.value }}</span
                 >
               </div>
@@ -104,7 +104,7 @@
                   [disabled]="isAddScheduleIntervalDisabled(i)"
                   (click)="onAddInterval(i)"
                 >
-                  <span>Add interval</span>
+                  <span>Adauga interval</span>
                   <mat-icon matSuffix>add</mat-icon>
                 </button>
               </div>
@@ -113,7 +113,7 @@
         </form>
       </div>
     </mat-tab>
-    <mat-tab label="Vacation">
+    <mat-tab label="Concediu">
       <div class="vacation-container">
         <form [formGroup]="vacationFormGroup" *ngIf="vacationFormGroup">
           <div class="vacation-interval" formArrayName="intervals">
@@ -127,16 +127,16 @@
               <mat-card>
                 <div class="vacation-card-wrapper">
                   <mat-form-field [formGroupName]="k">
-                    <mat-label>Enter a date range</mat-label>
+                    <mat-label>Adauga un interval</mat-label>
                     <mat-date-range-input [rangePicker]="rangePicker">
                       <input
                         matStartDate
-                        placeholder="Start date"
+                        placeholder="Ora inceperii"
                         formControlName="startDate"
                       />
                       <input
                         matEndDate
-                        placeholder="End date"
+                        placeholder="Ora incheierii"
                         formControlName="endDate"
                       />
                     </mat-date-range-input>
@@ -147,14 +147,14 @@
                     <mat-date-range-picker #rangePicker>
                       <mat-date-range-picker-actions>
                         <button mat-button matDateRangePickerCancel>
-                          Cancel
+                          Inchide
                         </button>
                         <button
                           mat-raised-button
                           color="primary"
                           matDateRangePickerApply
                         >
-                          Apply
+                          Salveaza
                         </button>
                       </mat-date-range-picker-actions>
                     </mat-date-range-picker>
@@ -190,7 +190,7 @@
               (click)="onAddVacation()"
               [disabled]="isAddVacationIntervalDisabled()"
             >
-              <span>Add vacation</span>
+              <span>Adauga concediu</span>
               <mat-icon matSuffix>add</mat-icon>
             </button>
           </div>
@@ -200,5 +200,5 @@
   </mat-tab-group>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Close</button>
+  <button mat-button (click)="onNoClick()">Inchide</button>
 </div>

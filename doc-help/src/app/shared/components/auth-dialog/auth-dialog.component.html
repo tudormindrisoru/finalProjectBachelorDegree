@@ -1,52 +1,68 @@
 <h1 mat-dialog-title class="dialog-title">{{ title }}</h1>
 <div mat-dialog-content>
   <div id="forms-container">
-    <ng-template [ngIf]="title == 'Sign in'" [ngIfElse]="signUp">
+    <ng-template [ngIf]="title == 'Logheaza-te'" [ngIfElse]="signUp">
       <app-sign-in
         #signInComponent
         [signInType]="signInType"
         (onChangeSignInType)="changeSignInType($event)"
       ></app-sign-in>
-      <div class="switch-sign" (click)="switchToSignUp()">Do not have an account yet? Create an account here.</div>
+      <div class="switch-sign" (click)="switchToSignUp()">
+        Nu ai inca un cont? Creaza unul apasand aici.
+      </div>
     </ng-template>
     <ng-template #signUp>
-      <app-sign-up
-        #signUpComponent
-      ></app-sign-up>
-      <div class="switch-sign" (click)="switchToSignIn()">Have an account? Sign In.</div>
+      <app-sign-up #signUpComponent></app-sign-up>
+      <div class="switch-sign" (click)="switchToSignIn()">
+        Ai cont deja? Logheaza-te apasand aici.
+      </div>
     </ng-template>
   </div>
 </div>
 <div mat-card-actions>
-  <button mat-button (click)="cancelDialog(false)">Cancel</button>
+  <button mat-button (click)="cancelDialog(false)">Anulare</button>
   <button
-    *ngIf="title === 'Sign in' && signInType === 'Normal'"
+    *ngIf="title === 'Logheaza-te' && signInType === 'Normal'"
     mat-raised-button
     color="primary"
     class="right-button"
     (click)="normalSignIn()"
     [disabled]="!isNormalSignInFormValid()"
   >
-    Submit
+    Trimite
   </button>
   <button
-    *ngIf="title === 'Sign in' && signInType === 'ViaSMS'"
+    *ngIf="title === 'Logheaza-te' && signInType === 'ViaSMS'"
     mat-raised-button
     color="primary"
     class="right-button"
     (click)="signInSMS()"
-    [disabled] = "!isSmsStepValid()"
+    [disabled]="!isSmsStepValid()"
   >
-    {{smsStep == 1 ? "Next" : "Submit"}}
+    {{ smsStep == 1 ? "Urmatorul" : "Trimite" }}
   </button>
   <button
-    *ngIf="title === 'Sign up'"
+    *ngIf="title === 'Inregistreaza-te' && 3 > getRegisterStep()"
     mat-raised-button
     color="primary"
     class="right-button"
     (click)="onRegister()"
-    [disabled]="getRegisterStep() === 1 ? !isFirstStepRegisterValid() : !isSecondStepRegisterValid()"
+    [disabled]="
+      getRegisterStep() === 1
+        ? !isFirstStepRegisterValid()
+        : !isSecondStepRegisterValid()
+    "
   >
-  {{getRegisterStep() === 1 ? 'Next' : 'Submit'}}
+    {{ getRegisterStep() === 1 ? "Urmatorul" : "Trimite" }}
+  </button>
+
+  <button
+    mat-raised-button
+    color="primary"
+    class="right-button"
+    *ngIf="getRegisterStep() === 3"
+    (click)="cancelDialog()"
+  >
+    Ok
   </button>
 </div>

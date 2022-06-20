@@ -71,3 +71,13 @@ export const specialtyList = [
   'Oftalmologie',
   'Urologie',
 ];
+
+export const days = [
+  'Luni',
+  'Marti',
+  'Miercuri',
+  'Joi',
+  'Vineri',
+  'Sambata',
+  'Duminica',
+];

@@ -20,7 +20,6 @@ import { CalendarEventDetailsDialogComponent } from '../calendar-event-details-d
 import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
 import { HttpResponse } from '@angular/common/http';
 import { Appointment, Response } from 'src/app/shared/models/models';
-import { elementEventFullName } from '@angular/compiler/src/view_compiler/view_compiler';
 
 @Component({
   selector: 'app-calendar-view',
@@ -41,11 +40,11 @@ export class CalendarViewComponent implements OnInit {
     initialView: 'timeGridWeek',
 
     // themeSystem: 'bootstrap',
-    locale: 'en',
+    locale: 'ro',
     plugins: [timeGridPlugin, interactionPlugin, bootstrapPlugin],
     customButtons: {
       updateScheduleButton: {
-        text: 'Update schedule',
+        text: 'Actualizeaza program',
         click: this.onUpdateSchedule.bind(this),
       },
     },
@@ -55,8 +54,8 @@ export class CalendarViewComponent implements OnInit {
       end: 'updateScheduleButton today prev,next', // will normally be on the right. if RTL, will be on the left
     },
     buttonText: {
-      today: 'today',
-      updateSchedule: 'Update schedule',
+      today: 'astazi',
+      updateSchedule: 'Actualizeaza program',
     },
     dateClick: this.handleDateClick.bind(this), // bind is important!
     eventClick: this.handleEventClick.bind(this),
@@ -84,6 +83,7 @@ export class CalendarViewComponent implements OnInit {
                   notes: element.notes,
                   photo: element.patient.photo,
                   phone: element.patient.phone,
+                  reason: element.reason,
                 };
               }
             );
@@ -111,26 +111,28 @@ export class CalendarViewComponent implements OnInit {
   ngOnInit(): void {}
 
   handleDateClick(arg) {
-    const data = {
-      start: arg.dateStr,
-      end: new Date(
-        new Date(arg.date).getTime() +
-          1800000 -
-          new Date(arg.date).getTimezoneOffset() * 60000
-      )
-        .toISOString()
-        .split('.')[0],
-      id: null,
-      title: '',
-      notes: '',
-      photo: null,
-      phone: null,
-    };
-    this.onOpenEventDetailsDialog(data);
+    if (new Date() < new Date(arg.dateStr)) {
+      const data = {
+        start: arg.dateStr,
+        end: new Date(
+          new Date(arg.date).getTime() +
+            900000 -
+            new Date(arg.date).getTimezoneOffset() * 60000
+        )
+          .toISOString()
+          .split('.')[0],
+        id: null,
+        title: '',
+        notes: '',
+        photo: null,
+        phone: null,
+      };
+      this.onOpenEventDetailsDialog(data);
+    }
   }
 
   handleEventClick(arg) {
-    console.log(arg.event.startStr);
+    console.log(arg.event.startStr, arg.event.endStr);
     const data = {
       start: arg.event.startStr,
       end: arg.event.endStr,
@@ -139,11 +141,13 @@ export class CalendarViewComponent implements OnInit {
       notes: arg.event.extendedProps.notes,
       photo: arg.event.extendedProps.photo,
       phone: arg.event.extendedProps.phone,
+      reason: arg.event.extendedProps.reason,
     };
     this.onOpenEventDetailsDialog(data);
   }
 
   onOpenEventDetailsDialog(arg): void {
+    console.log('arg ', arg);
     const dialogRef = this.dialog.open(CalendarEventDetailsDialogComponent, {
       width: '450px',
       data: arg,
@@ -152,7 +156,7 @@ export class CalendarViewComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.onAddAppointment(result);
+        this.calendarComponent.getApi().refetchEvents();
       }
     });
   }

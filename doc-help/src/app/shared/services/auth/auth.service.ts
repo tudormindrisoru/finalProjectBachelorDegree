@@ -25,6 +25,15 @@ export class AuthService {
     private snackbarHandlerService: SnackbarHandlerService
   ) {}
 
+  jsonAuthHeader(): any {
+    const jwt = localStorage.getItem('Authorization');
+    let headerReq = JSON.parse(JSON.stringify(this.headerDict));
+    if (!!jwt) {
+      headerReq = { ...headerReq, Authorization: jwt };
+    }
+    return headerReq;
+  }
+
   public smsSingInFirstStep(data: any): Observable<any> {
     const CREATE_CODE_URL = this.SERVER_URL + '/auth/login-with-phone-step1';
     return this.http
@@ -95,6 +104,21 @@ export class AuthService {
         catchError(
           this.snackbarHandlerService.handleError('REGISTER_SECOND_STEP')
         )
+      );
+  }
+
+  public getUser(): Observable<Response<User>> {
+    return this.http
+      .get<HttpResponse<Response<User>>>(
+        this.SERVER_URL + '/auth/user-by-token',
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        catchError(this.snackbarHandlerService.handleError('GET_USER_INFO'))
       );
   }
 }

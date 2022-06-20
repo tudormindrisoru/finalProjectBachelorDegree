@@ -99,4 +99,9 @@ export class PatientsComponent implements OnInit {
   get currentDate(): Date {
     return new Date();
   }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 }

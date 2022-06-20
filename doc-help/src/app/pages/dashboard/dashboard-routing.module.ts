@@ -12,7 +12,6 @@ const DASHBOARD_ROUTES = [
   {
     path: 'appointments',
     component: AppointmentsComponent,
-    canLoad: [DoctorGuard],
   },
   { path: 'profile', component: ProfileComponent },
   { path: 'patients', component: PatientsComponent, canLoad: [DoctorGuard] },

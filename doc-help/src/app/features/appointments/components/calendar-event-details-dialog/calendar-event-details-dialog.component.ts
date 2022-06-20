@@ -43,6 +43,10 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
     return true;
   }
 
+  get isTitleDisabled(): boolean {
+    return this.data?.title !== '' || false;
+  }
+
   get isSaveButtonDisabled(): boolean {
     return !!this.selectedUser &&
       this.appointmentControls.title.value ===
@@ -58,12 +62,15 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
+  onChange(event) {
+    console.log(event);
+  }
   ngOnInit(): void {
-    this.data.start = this.data.start.split('+')[0];
-    if (!!this.data.id) {
-      this.data.end = this.data.end.split('+')[0];
-    }
-    console.log(this.data);
+    // this.data.start = this.data.start.split('+')[0];
+    // if (!!this.data.id) {
+    //   this.data.end = this.data.end.split('+')[0];
+    // }
+    console.log('AICII = ', this.data);
     this.appointmentForm = new FormGroup({
       id: new FormControl(this.data && this.data.id ? this.data.id : null),
       title: new FormControl({
@@ -74,10 +81,17 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
         value: this.data && this.data.start ? this.data.start : new Date(),
         disabled: this.areFieldsDisabled,
       }),
-      endDate: new FormControl({
+      startTime: new FormControl({
+        value:
+          this.data && this.data.start
+            ? new Date(this.data.start)
+            : new Date(new Date().getTime() + 1800000),
+        disabled: this.areFieldsDisabled,
+      }),
+      endTime: new FormControl({
         value:
           this.data && this.data.end
-            ? this.data.end
+            ? new Date(this.data.end)
             : new Date(new Date().getTime() + 1800000),
         disabled: this.areFieldsDisabled,
       }),
@@ -91,6 +105,9 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
       phone: new FormControl(
         this.data && this.data.phone ? this.data.phone : null
       ),
+      reason: new FormControl(
+        this.data && this.data.reason ? this.data.reason : null
+      ),
     });
   }
 
@@ -102,18 +119,32 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
       this.createAppointment();
     }
   }
+  dateToString(date): string {
+    return (
+      new Date(date.value).getFullYear() +
+      '-' +
+      (new Date(date.value).getMonth() + 1 < 10 ? '0' : '') +
+      (new Date(date.value).getMonth() + 1) +
+      '-' +
+      (new Date(date.value).getDate() < 10 ? '0' : '') +
+      new Date(date.value).getDate() +
+      ' ' +
+      new Date(date.value).toLocaleTimeString()
+    );
+  }
 
   updateAppointment(): void {
     const data = {
       id: this.appointmentControls.id.value,
-      startDate: this.appointmentControls.startDate.value,
-      endDate: this.appointmentControls.endDate.value,
+      startDate: this.appointmentControls.startTime.value,
+      endDate: this.appointmentControls.endTime.value,
       notes: this.appointmentControls.notes.value,
     };
     this.appointmentsService
       .updateApprovedAppointment(data)
       .subscribe((response: HttpResponse<Response<any>>) => {
         if (response.body.success) {
+          this.dialogRef.close(data);
         }
       });
   }
@@ -129,22 +160,23 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
       !this.isSaveButtonDisabled &&
       this.appointmentForm.valid
     ) {
-      let { startDate, endDate } = this.appointmentControls;
-      startDate =
-        startDate.value.split('T')[0] + ' ' + startDate.value.split('T')[1];
-      endDate = endDate.value.split('T')[0] + ' ' + endDate.value.split('T')[1];
+      let { startTime, endTime } = this.appointmentControls;
+      startTime = this.dateToString(startTime.value);
 
-      console.log(startDate);
-      console.log(endDate);
+      endTime = this.dateToString(endTime.value);
+      console.log(startTime, endTime);
+
       const data = {
         patientId: this.selectedUser.id,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startTime,
+        endDate: endTime,
         notes: this.appointmentControls.notes.value,
       };
+      console.log(data);
       this.appointmentsService
         .createApprovedAppointment(data)
         .subscribe((response: HttpResponse<Response<any>>) => {
+          console.log('responseeeeeeee');
           if (response.body.success) {
             console.log(response.body.message);
             this.dialogRef.close(response.body.message);
@@ -197,6 +229,35 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
 
   getProfileImg(path: string): string {
     return this.profileService.getProfileImage(path);
+  }
+
+  onDateChange(value): void {
+    console.log(value);
+    console.log(this.appointmentControls.startTime.value);
+    let newStartDateTime = this.appointmentControls.startTime.value;
+    newStartDateTime = new Date(newStartDateTime).setDate(
+      new Date(value).getDate()
+    );
+    newStartDateTime = new Date(newStartDateTime).setMonth(
+      new Date(value).getMonth()
+    );
+    newStartDateTime = new Date(newStartDateTime).setFullYear(
+      new Date(value).getFullYear()
+    );
+    let newEndDateTime = this.appointmentControls.endTime.value;
+    newEndDateTime = new Date(newEndDateTime).setDate(
+      new Date(value).getDate()
+    );
+    newEndDateTime = new Date(newEndDateTime).setMonth(
+      new Date(value).getMonth()
+    );
+    newEndDateTime = new Date(newEndDateTime).setFullYear(
+      new Date(value).getFullYear()
+    );
+
+    this.appointmentControls.startTime.setValue(new Date(newStartDateTime));
+    this.appointmentControls.endTime.setValue(new Date(newEndDateTime));
+    console.log(2);
   }
 
   onNoClick(): void {

@@ -1,14 +1,15 @@
-<h1 mat-dialog-title>Appointment details</h1>
+<h1 mat-dialog-title>Detaliile programarii</h1>
 <div mat-dialog-content>
   <form id="appointment-form" [formGroup]="appointmentForm">
     <div class="patient-section">
       <img src="{{ image }}" alt="" />
       <div class="patient-informations">
         <mat-form-field appearance="standard" class="patient-filter">
-          <mat-label>Search</mat-label>
+          <mat-label>Cauta</mat-label>
           <input
             type="text"
             matInput
+            [disabled]="isTitleDisabled"
             [matAutocomplete]="auto"
             (keyup)="onSearchPatients($event)"
             formControlName="title"
@@ -39,31 +40,70 @@
     </div>
     <!-- <ng-template [ngIf]="id"> -->
     <div class="date-section">
-      <mat-form-field>
+      <mat-form-field color="primary">
         <input
           matInput
-          type="datetime-local"
-          placeholder="Start date"
+          [matDatepicker]="datePicker"
+          placeholder="Data"
           formControlName="startDate"
           [disabled]="areFieldsDisabled"
+          (dateChange)="onDateChange($event.target.value)"
         />
-        <mat-icon matSuffix color="primary">event</mat-icon>
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="datePicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #datePicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Inceput</mat-label>
+
+        <input
+          matTimepicker
+          #start="matTimepicker"
+          [strict]="false"
+          mode="24h"
+          placeholder="Please select time..."
+          required
+          formControlName="startTime"
+          (timeChange)="onChange($event)"
+        />
+        <mat-icon color="primary" matSuffix (click)="start.showDialog()"
+          >access_time</mat-icon
+        >
       </mat-form-field>
       <mat-form-field>
+        <mat-label>Sfarsit</mat-label>
+
+        <input
+          matTimepicker
+          #end="matTimepicker"
+          [strict]="false"
+          mode="24h"
+          placeholder="Please select time..."
+          required
+          formControlName="endTime"
+        />
+        <mat-icon color="primary" matSuffix (click)="end.showDialog()"
+          >access_time</mat-icon
+        >
+      </mat-form-field>
+      <!-- <mat-form-field>
         <input
           matInput
           type="datetime-local"
-          placeholder="End date"
+          placeholder="Ora incheierii"
           formControlName="endDate"
           [disabled]="areFieldsDisabled"
         />
         <mat-icon matSuffix color="primary">event</mat-icon>
-      </mat-form-field>
+      </mat-form-field> -->
     </div>
 
     <div class="notes-section">
       <mat-form-field>
-        <mat-label>Leave a note</mat-label>
+        <mat-label>Lasa un comentariu</mat-label>
         <textarea
           class="notes-textarea"
           matInput
@@ -72,11 +112,11 @@
         ></textarea>
       </mat-form-field>
     </div>
-    <!-- </ng-template> -->
+    <div *ngIf="data?.reason">Motivul programarii: {{ data?.reason }}</div>
   </form>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Close</button>
+  <button mat-button (click)="onNoClick()">Inchide</button>
   <div class="right-side-action-buttons">
     <button
       mat-button
@@ -86,7 +126,7 @@
       [disabled]="areFieldsDisabled"
       *ngIf="data.id"
     >
-      Delete
+      Sterge
       <mat-icon matSuffix>delete_forever</mat-icon>
     </button>
     <button
@@ -95,9 +135,9 @@
       mat-flat-button
       color="primary"
       class="save-button"
-      [disabled]="areFieldsDisabled || isSaveButtonDisabled"
+      [disabled]="areFieldsDisabled"
     >
-      Save
+      Salveaza
       <mat-icon matSuffix>save</mat-icon>
     </button>
   </div>

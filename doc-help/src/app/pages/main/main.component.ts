@@ -63,28 +63,30 @@ export class MainComponent implements OnInit {
     public dialog: MatDialog,
     private router: Router,
     private store: Store
-    ) {}
+  ) {}
 
   ngOnInit(): void {
-    this.store.select(state => state.user).pipe(take(1)).subscribe( user => this.isAuthenticated = !!user ? true : false)
+    this.store
+      .select((state) => state.user)
+      .pipe(take(1))
+      .subscribe((user) => (this.isAuthenticated = !!user ? true : false));
   }
 
   openAuthDialog() {
     const authDialog = this.dialog.open(AuthDialogComponent, {
-      data: { title: 'Sign in'},
+      data: { title: 'Logheaza-te' },
       minWidth: '350px',
       minHeight: '250px',
-      disableClose: true
+      disableClose: true,
     });
 
-    authDialog.afterClosed().pipe(
-      take(1)
-    ).subscribe(result => {
-        if(result.isLogged) {
+    authDialog
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((result) => {
+        if (result.isLogged) {
           this.router.navigate(['/dashboard']);
         }
-      }
-    );
+      });
   }
 }
- 

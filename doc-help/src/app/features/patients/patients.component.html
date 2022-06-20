@@ -1,46 +1,36 @@
 <div class="patients-page">
   <div class="filters-container">
-    <mat-form-field class="name-filter">
-      <mat-label>Patient name</mat-label>
+    <mat-form-field class="name-filter" appearance="fill">
+      <mat-label>Filtreaza informatiile</mat-label>
       <mat-icon matSuffix color="primary">search</mat-icon>
-      <input matInput />
-    </mat-form-field>
-    <mat-form-field color="primary" class="date-filter">
-      <mat-label>Choose a date</mat-label>
-      <input matInput [matDatepicker]="picker" [max]="currentDate" />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="picker"
-        color="primary"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+      <input matInput (keyup)="applyFilter($event)" />
     </mat-form-field>
   </div>
   <div class="table-container">
     <div class="mat-elevation-z8 noselect">
       <table mat-table [dataSource]="dataSource" class="history-table">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <th mat-header-cell *matHeaderCellDef>Nume si prenume</th>
           <td mat-cell *matCellDef="let history">{{ history.name }}</td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
-          <th mat-header-cell *matHeaderCellDef>Phone</th>
+          <th mat-header-cell *matHeaderCellDef>Numar telefon</th>
           <td mat-cell *matCellDef="let history">{{ history.phone }}</td>
         </ng-container>
 
         <ng-container matColumnDef="date">
-          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <th mat-header-cell *matHeaderCellDef>Data programarii</th>
           <td mat-cell *matCellDef="let history">{{ history.date }}</td>
         </ng-container>
 
         <ng-container matColumnDef="start_hour">
-          <th mat-header-cell *matHeaderCellDef>Start hour</th>
+          <th mat-header-cell *matHeaderCellDef>Ora inceperii</th>
           <td mat-cell *matCellDef="let history">{{ history.startHour }}</td>
         </ng-container>
 
         <ng-container matColumnDef="end_hour">
-          <th mat-header-cell *matHeaderCellDef>End hour</th>
+          <th mat-header-cell *matHeaderCellDef>Ora incheierii</th>
           <td mat-cell *matCellDef="let history">{{ history.endHour }}</td>
         </ng-container>
 
@@ -63,6 +53,7 @@
       <mat-paginator
         [pageSizeOptions]="[5, 10]"
         color="primary"
+        itemsPerPageLabel="Pacienti pe pagina"
       ></mat-paginator>
     </div>
   </div>

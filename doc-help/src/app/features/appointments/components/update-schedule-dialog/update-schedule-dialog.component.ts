@@ -8,10 +8,8 @@ import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ScheduleService } from 'src/app/shared/services/schedule/schedule.service';
-import { ThrowStmt } from '@angular/compiler';
-import { fakeAsync } from '@angular/core/testing';
-import { getMatIconFailedToSanitizeUrlError } from '@angular/material/icon';
 import { VacationService } from 'src/app/shared/services/vacation/vacation.service';
+import { days } from 'src/app/shared/constants/constants';
 
 @Component({
   selector: 'app-update-schedule-dialog',
@@ -45,15 +43,6 @@ export class UpdateScheduleDialogComponent implements OnInit {
     this.scheduleService
       .getMySchedule()
       .subscribe((response: HttpResponse<Response<any>>) => {
-        var days = [
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday',
-          'Sunday',
-        ];
         for (let index = 0; index < 7; index++) {
           this.scheduleList = [
             ...this.scheduleList,
@@ -294,8 +283,8 @@ export class UpdateScheduleDialogComponent implements OnInit {
         });
         console.log(this.vacationList);
         if (this.vacationList.length > 0) {
-          this.initVacationFormGroup();
           console.log(this.vacationFormGroup);
+          this.initVacationFormGroup();
         }
       });
   }
@@ -364,7 +353,6 @@ export class UpdateScheduleDialogComponent implements OnInit {
 
   isVacationSaved(index: number): boolean {
     const intervals = this.vacationFormGroup.get('intervals') as FormArray;
-
     const interval = intervals.at(index) as FormGroup;
 
     if (interval.value.id === -1) {
@@ -373,9 +361,9 @@ export class UpdateScheduleDialogComponent implements OnInit {
     const fcStart = new Date(interval.value.startDate);
     const fcEnd = new Date(interval.value.endDate);
     if (
-      fcStart.getDate() !==
-        new Date(this.vacationList[index].startDate).getDate() ||
-      fcEnd.getDate() !== new Date(this.vacationList[index].endDate).getDate()
+      fcStart.getTime() !==
+        new Date(this.vacationList[index].startDate).getTime() ||
+      fcEnd.getTime() !== new Date(this.vacationList[index].endDate).getTime()
     ) {
       return false;
     }

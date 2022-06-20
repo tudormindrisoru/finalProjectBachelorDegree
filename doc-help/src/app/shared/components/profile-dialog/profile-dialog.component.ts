@@ -39,7 +39,7 @@ export class ProfileDialogComponent implements OnInit, OnDestroy {
   onClickOk(): any {
     let result = { success: true };
 
-    if (this.title === 'Invite doctor' && this.selectedDoctor) {
+    if (this.title === 'Invita doctor' && this.selectedDoctor) {
       result['doctor'] = this.selectedDoctor;
     }
     return JSON.stringify(result);

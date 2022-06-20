@@ -1,24 +1,24 @@
-<h1 mat-dialog-title>Add office</h1>
+<h1 mat-dialog-title>Adauga cabinet</h1>
 <div mat-dialog-content>
   <mat-vertical-stepper [linear]="true" #stepper>
     <mat-step [stepControl]="firstStepForm">
       <form [formGroup]="firstStepForm">
-        <ng-template matStepLabel>Office name</ng-template>
+        <ng-template matStepLabel>Numele cabinetului</ng-template>
         <mat-form-field>
-          <mat-label>Office name</mat-label>
+          <mat-label>Numele cabinetului</mat-label>
           <input matInput formControlName="officeName" required />
           <mat-icon matSuffix color="primary">business_center</mat-icon>
         </mat-form-field>
         <div>
-          <button mat-button matStepperNext>Next</button>
+          <button mat-button matStepperNext>Inainte</button>
         </div>
       </form>
     </mat-step>
     <mat-step [stepControl]="secondStepForm">
       <form [formGroup]="secondStepForm">
-        <ng-template matStepLabel>Office address</ng-template>
+        <ng-template matStepLabel>Adresa cabinetului</ng-template>
         <mat-form-field>
-          <mat-label>Address</mat-label>
+          <mat-label>Adresa</mat-label>
           <!-- <input matInput formControlName="address" ngx-google-places-autocomplete [options]="autocompleteOptions" #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)" -->
           <!-- required> -->
           <mat-icon matSuffix color="primary">pin_drop</mat-icon>
@@ -39,16 +39,16 @@
           <app-map [lat]="lat" [lng]="lng" style="width: 100%"></app-map>
         </div>
         <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
+          <button mat-button matStepperPrevious>Inapoi</button>
+          <button mat-button matStepperNext>Inainte</button>
         </div>
       </form>
     </mat-step>
     <mat-step [stepControl]="thirdStepForm">
       <form [formGroup]="thirdStepForm">
-        <ng-template matStepLabel>Code received via SMS</ng-template>
+        <ng-template matStepLabel>Cod primit prin SMS</ng-template>
         <mat-form-field>
-          <mat-label>Code</mat-label>
+          <mat-label>Cod</mat-label>
           <input
             matInput
             formControlName="validationCode"
@@ -58,21 +58,21 @@
           <mat-icon matSuffix color="primary">pin</mat-icon>
         </mat-form-field>
         <div>
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
+          <button mat-button matStepperPrevious>Inapoi</button>
+          <button mat-button matStepperNext>Inainte</button>
         </div>
       </form>
     </mat-step>
     <mat-step>
-      <ng-template matStepLabel>Done</ng-template>
-      <p>You are now done.</p>
+      <ng-template matStepLabel>Finalizare</ng-template>
+      <p>Datele cabinetului au fost salvate.</p>
       <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="onSaveOffice()">Save office</button>
+        <button mat-button matStepperPrevious>Inapoi</button>
+        <button mat-button (click)="onSaveOffice()">Salveaza</button>
       </div>
     </mat-step>
   </mat-vertical-stepper>
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">Close</button>
+  <button mat-button (click)="onNoClick()">Inchide</button>
 </div>

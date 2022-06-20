@@ -3,9 +3,10 @@
    height: 100%;
    display: flex;
    flex-direction: column;
+   overflow-y: auto;
 
    & > .doctor-search-card {
-        max-width: 500px;
+        max-width: 850px;
         align-self: center;
         margin-top: 50px;
         display: flex;
@@ -16,4 +17,191 @@
             margin: 0px 4px;
         }
    }
+
+   & > .appointment-request-card {
+        align-self: center;
+        margin-top: 50px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex-direction: row;
+        padding-top: 50px;
+
+       & > .title {
+           position: absolute;
+           top:0;
+           left: 0;
+           right: 0;
+           width: 100%;
+           height: 25px;
+           background-color: #64b3f4;
+           color: #fff;
+           display: flex;
+           flex-direction: column;
+           border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            height: 30px;
+            align-items: center;
+            padding-top: 10px;
+       }
+
+       & > .doctor-informations {
+            height: 250x;
+            display: flex;
+            flex-direction: column;
+
+            & > .image {
+            align-self: center;
+            position: relative;
+            border-radius: 50%;
+            img {
+                width: 105px;
+                height: 105px;
+                border-radius: 50%;  
+                object-fit: cover;
+                border: 4px transparent solid;
+            }
+
+            }
+
+            & > .details {
+                align-self: center;
+                text-align: center;
+                color:#64b3f4;
+                font-size: 16px;
+                font-weight: 400;
+
+                & > p {
+                    display: flex;
+                    justify-content: center;
+                    
+                    & > mat-icon {
+                        font-size: 16px;
+                        margin-top: 1px;
+                    }
+
+                    margin-bottom: 4px;
+                    
+                }
+            }
+
+       }
+
+       & > .appointment-informations {
+           display: flex;
+           flex-direction: column;
+           margin-top: 12px;
+           margin: 0 50px;
+
+        & > .schedule {
+            display: flex;
+            flex-direction: column;
+            margin: 4px 0px;
+        }
+        
+           & > button {
+               color: #fff;
+               margin-bottom: 12px;
+           }
+       }
+
+       & > .office-informations {
+           color: #64b3f4;
+            & > .address {
+                display: flex;
+                margin-bottom: 4px;
+                overflow-wrap: break-word;
+            }
+       }
+   }
+
+   & > .last-appointments-card {
+        width: 850px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-self: center;
+        margin: 40px 0px;
+
+        & >.appointments-wrapper {
+            display: flex;
+            flex-direction: column;
+
+            & >.appointment {
+                display: flex;
+                flex-direction: row;
+                margin: 5px 0px;
+
+                & > p {
+                    margin: 0px 10px;
+                    width: 150px;
+                    & >.mat-icon {
+                        color: #64b3f4 !important; 
+                    }
+                }
+
+                & > p.rating-container {
+                    border: 2px solid #64b3f4;
+                    border-radius: 20px;
+                    text-align: center;
+                }
+            }
+            & > .title {
+                margin: 10px 0px;
+                font-weight: 500;
+                display: flex;
+                flex-direction: row;
+                & > p {
+                    margin: 0px 10px;
+                    width: 150px;
+                }
+            }
+        }
+   }
+}
+
+@media only screen and (max-width: 968px) {
+    .appointment-requests-container {
+        & > .doctor-search-card {
+            max-width: 500px;
+        }
+     }
+}
+
+@media only screen and( max-width: 900px) {
+    .appointment-requests-container {
+    
+        & > .appointment-request-card {
+            margin-top: 50px;
+            flex-direction: column;
+            height: 400px;
+            overflow-y: scroll;
+            display: block;
+        }
+     }
+}
+
+
+@media only screen and (max-width: 600px) {
+    .appointment-requests-container {
+        & > .doctor-search-card {
+            max-width: 250px;
+            height: 300px;
+           
+        }
+
+        & > .appointment-request-card {
+            flex-direction: column;
+            height: 250px;
+            overflow: scroll;
+        }
+     }
+}
+
+@media only screen and (max-width: 400px) {
+    .appointment-requests-container {
+        & > .appointment-request-card {
+            width: 285px;
+        }
+    }
 }

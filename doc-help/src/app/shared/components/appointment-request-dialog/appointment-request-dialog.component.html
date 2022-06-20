@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Solicita programare</h1>
+<div mat-dialog-content>
+  <mat-form-field appearance="fill" class="reason-textarea">
+    <mat-label>Motivul programarii</mat-label>
+    <textarea
+      matInput
+      placeholder="Descrieti pe scurt motivul programarii"
+      #reason
+    ></textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-button mat-dialog-close>Inchide</button>
+  <button
+    mat-raised-button
+    mat-dialog-close
+    cdkFocusInitial
+    color="primary"
+    (click)="request(reason.value)"
+  >
+    Solicita
+  </button>
+</div>

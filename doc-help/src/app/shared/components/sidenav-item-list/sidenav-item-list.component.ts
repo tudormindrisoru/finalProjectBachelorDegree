@@ -41,6 +41,7 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
   itemList = [];
   toggleButton = {};
   pendingAppointments: Appointment[];
+  appointments$;
   user;
 
   ngOnInit(): void {
@@ -49,37 +50,35 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe((user) => (this.user = user ?? null));
     console.log(this.user);
-    this.notificationService
-      .getPendingAppointments()
-      .subscribe((response: HttpResponse<Response<Appointment[]>>) => {
-        if (response.body.success) {
-          this.pendingAppointments = response.body.message;
-        }
-      });
+    // this.notificationService
+    //   .getPendingAppointments()
+    //   .subscribe((response: HttpResponse<Response<Appointment[]>>) => {
+    //     if (response.body.success) {
+    //       this.pendingAppointments = response.body.message;
+    //       this.notificationService.appointmentNotifications$.next(
+    //         response.body.message
+    //       );
+    //     }
+    //   });
     this.itemList = [
       {
-        icon: 'notifications',
-        label: 'Notifications',
-        onClick: () => this.toggleNotificationPopup(),
-      },
-      {
         icon: 'medical_services',
-        label: 'Find a doctor',
+        label: 'Cauta un doctor',
         onClick: () => this.redirectTo('dashboard/appointment-requests'),
       },
       {
         icon: 'event_note',
-        label: 'Appointments',
+        label: 'Programari',
         onClick: () => this.redirectTo('dashboard/appointments'),
       },
       {
         icon: 'settings',
-        label: 'Profile',
+        label: 'Setari',
         onClick: () => this.redirectTo('dashboard/profile'),
       },
       {
         icon: 'people',
-        label: 'Patient history',
+        label: 'Istoricul pacientilor',
         onClick: () => this.redirectTo('dashboard/patients'),
       },
     ];
@@ -87,26 +86,6 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
       icon: this.openAction ? 'navigate_next' : 'navigate_before',
       label: this.openAction ? 'Extend' : 'Collapse',
     };
-    console.log('init subscriber');
-    this.subscriber = this.notificationService
-      .getEventSentEvent()
-      .subscribe((data) => {
-        const result: Notification = JSON.parse(JSON.parse(data.data).msg);
-        if (!!result) {
-          if (result.type === NOTIFICATION_TYPE.APPOINTMENT_REQUEST) {
-            this.notificationService
-              .getPendingAppointmentById(result.message.entryId)
-              .subscribe((response: HttpResponse<Response<Appointment>>) => {
-                if (response.body.success) {
-                  this.pendingAppointments.unshift(response.body.message);
-                }
-              });
-          }
-          if (result.type === NOTIFICATION_TYPE.OFFICE_INVITE) {
-            console.log('office invite');
-          }
-        }
-      });
   }
 
   get isNotificationOpen(): boolean {
@@ -114,9 +93,6 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
   }
 
   redirectTo(url: string): void {
-    if (this.isNotificationOpen) {
-      this.onCloseNotificationPopup();
-    }
     this.router.navigate([`/${url}`]);
   }
 
@@ -124,52 +100,7 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
     this.notificationService.onToggleNotifications();
   }
 
-  onAcceptAppointmentRequest(id): void {
-    this.appointmentService
-      .approveAppointment(id)
-      .subscribe((response: HttpResponse<Response<string>>) => {
-        if (response.body.success) {
-          const index = this.pendingAppointments.findIndex(
-            (element: Appointment) => element.id === id
-          );
-          if (index !== -1) {
-            this.pendingAppointments = this.pendingAppointments.splice(
-              index + 1,
-              1
-            );
-          }
-        }
-      });
-  }
-
-  onRejectAppointmentRequest(id): void {
-    this.appointmentService
-      .rejectAppointment(id)
-      .subscribe((response: HttpResponse<Response<string>>) => {
-        if (response.body.success) {
-          console.log('notifications = ', this.pendingAppointments);
-          const index = this.pendingAppointments.findIndex(
-            (element: Appointment) => element.id === id
-          );
-          console.log(index);
-          if (index !== -1) {
-            this.pendingAppointments = this.pendingAppointments.splice(
-              index + 1,
-              1
-            );
-          }
-        }
-      });
-  }
-
-  onCloseNotificationPopup() {
-    this.toggleNotificationPopup();
-  }
-
   onToggleClick(): void {
-    if (this.isNotificationOpen) {
-      this.onCloseNotificationPopup();
-    }
     this.toggleEvent.emit();
   }
 

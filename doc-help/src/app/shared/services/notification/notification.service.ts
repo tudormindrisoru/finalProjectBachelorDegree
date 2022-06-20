@@ -6,11 +6,13 @@ import { catchError, first } from 'rxjs/operators';
 import { Appointment, Response } from 'src/app/shared/models/models';
 import { environment } from 'src/environments/environment';
 import { SseService } from '../sse/sse.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class NotificationService {
   private _isShown: boolean = false;
-  private _notifications: Appointment[];
+
+  private _appointmentNotifications: Appointment[];
   private readonly SERVER_URL = environment.apiUrl;
   private readonly PENDING_APPOINTMENTS_URL =
     this.SERVER_URL + '/appointments/pending';
@@ -19,6 +21,9 @@ export class NotificationService {
     // tslint:disable-next-line: object-literal-key-quotes
     Accept: 'application/json',
   };
+
+  public appointmentNotifications$: BehaviorSubject<Appointment[]> =
+    new BehaviorSubject([]);
 
   constructor(
     private http: HttpClient,
@@ -36,9 +41,9 @@ export class NotificationService {
     return headerReq;
   }
 
-  getPendingAppointments(): Observable<Response<Notification[]>> {
+  getPendingAppointments(): Observable<Response<Appointment[]>> {
     return this.http
-      .get<HttpResponse<Response<Notification[]>>>(
+      .get<HttpResponse<Response<Appointment[]>>>(
         this.PENDING_APPOINTMENTS_URL,
         {
           observe: 'response',
@@ -77,7 +82,11 @@ export class NotificationService {
   }
 
   get appointments(): Appointment[] {
-    return this._notifications || undefined;
+    return this._appointmentNotifications || undefined;
+  }
+
+  set appointments(value: Appointment[]) {
+    this._appointmentNotifications = value;
   }
 
   onToggleNotifications(): void {

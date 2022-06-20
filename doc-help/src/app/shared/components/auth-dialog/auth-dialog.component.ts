@@ -8,8 +8,7 @@ import { SignUpComponent } from '../sign-up/sign-up.component';
 import { AuthService } from '../../services/auth/auth.service';
 import { UpdateUser } from 'src/app/store/actions/user.actions';
 import { User, Response } from '../../models/models';
-import { Router } from '@angular/router';
-import { HttpResponse, HttpHeaders } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-auth-dialog',
@@ -26,7 +25,7 @@ export class AuthDialogComponent implements OnInit {
   signInType: string = 'Normal';
 
   get title(): string {
-    return this._title || 'Sign in';
+    return this._title || 'Logheaza-te';
   }
   set title(newTitle) {
     this._title = newTitle;
@@ -36,7 +35,7 @@ export class AuthDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<AuthDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private authService: AuthService,
-    private store: Store,
+    private store: Store
   ) {
     this._title = data.title;
   }
@@ -48,11 +47,11 @@ export class AuthDialogComponent implements OnInit {
   }
 
   switchToSignUp(): void {
-    this.title = 'Sign up';
+    this.title = 'Inregistreaza-te';
   }
 
   switchToSignIn(): void {
-    this.title = 'Sign in';
+    this.title = 'Logheaza-te';
   }
 
   isNormalSignInFormValid(): boolean {
@@ -107,7 +106,7 @@ export class AuthDialogComponent implements OnInit {
   }
 
   signInSMS(): void {
-    if(this.getSmsStep() === 1) {
+    if (this.getSmsStep() === 1) {
       this.sendSMS();
     } else if (this.getSmsStep() === 2) {
       this.sendCode();
@@ -148,9 +147,12 @@ export class AuthDialogComponent implements OnInit {
       if (this.getSmsStep() === 2 && data.phone && data.code) {
         this.authService.smsSingInSecondStep(data).subscribe((response) => {
           console.log(response);
-          if(response.body.success && response.headers.get('Authorization')) {
+          if (response.body.success && response.headers.get('Authorization')) {
             this.login(response.body.message);
-            localStorage.setItem('Authorization', response.headers.get('Authorization'));
+            localStorage.setItem(
+              'Authorization',
+              response.headers.get('Authorization')
+            );
             this.cancelDialog(true);
           }
         });
@@ -166,9 +168,12 @@ export class AuthDialogComponent implements OnInit {
         .authWithEmailAndPassword({ email, password })
         .subscribe((response: HttpResponse<Response<User>>) => {
           console.log(response);
-          if(response.body.success && response.headers.get('Authorization')) {
+          if (response.body.success && response.headers.get('Authorization')) {
             this.login(response.body.message);
-            localStorage.setItem('Authorization', response.headers.get('Authorization'));
+            localStorage.setItem(
+              'Authorization',
+              response.headers.get('Authorization')
+            );
             this.cancelDialog(true);
           }
         });
@@ -185,7 +190,11 @@ export class AuthDialogComponent implements OnInit {
         phone: this.signUpComponent.signUpFormGroup.get('phone').value,
       };
       this.authService.register(data).subscribe((response) => {
-        console.log(response);
+        if (response.body.success) {
+          console.log('sms 1');
+          this.signUpComponent.registerStep =
+            this.signUpComponent.registerStep + 1;
+        }
       });
     }
   }
@@ -197,7 +206,11 @@ export class AuthDialogComponent implements OnInit {
         phone: this.signUpComponent.signUpFormGroup.get('phone').value,
       };
       this.authService.validateRegistration(data).subscribe((response) => {
-        console.log(response);
+        if (response.body.success) {
+          console.log('sms 2');
+          this.signUpComponent.registerStep =
+            this.signUpComponent.registerStep + 1;
+        }
       });
     }
   }
@@ -205,7 +218,6 @@ export class AuthDialogComponent implements OnInit {
   onRegister(): void {
     if (this.signUpComponent.registerStep === 1) {
       this.registerStep1();
-      this.signUpComponent.registerStep = this.signUpComponent.registerStep + 1;
     } else {
       this.registerStep2();
     }
@@ -216,6 +228,6 @@ export class AuthDialogComponent implements OnInit {
   }
 
   cancelDialog(isLogged): void {
-    this.dialogRef.close({isLogged: isLogged});
+    this.dialogRef.close({ isLogged: isLogged });
   }
 }

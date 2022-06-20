@@ -1,5 +1,5 @@
 <div class="feature-page">
-  <mat-card class="profile-card">
+  <mat-card class="profile-card" *ngIf="user; else isLoading">
     <div class="left-side">
       <input
         type="file"
@@ -10,22 +10,22 @@
       <div class="profile-image noselect">
         <img src="{{ getProfileImg(user.photo) }}" alt="" />
         <div class="profile-second-layer" (click)="onPhotoChange(imageInput)">
-          <span>CHANGE PHOTO</span>
+          <span>Schimba poza</span>
         </div>
       </div>
       <div class="info">
         <form class="column-form" [formGroup]="userFormGroup">
           <div class="fields">
-            <mat-form-field>
-              <mat-label>First name</mat-label>
+            <mat-form-field appearance="fill">
+              <mat-label>Nume</mat-label>
               <input matInput formControlName="firstName" required />
             </mat-form-field>
-            <mat-form-field>
-              <mat-label>Last name</mat-label>
+            <mat-form-field appearance="fill">
+              <mat-label>Prenume</mat-label>
               <input matInput formControlName="lastName" required />
             </mat-form-field>
-            <mat-form-field>
-              <mat-label>Phone number</mat-label>
+            <mat-form-field appearance="fill">
+              <mat-label>Numar telefon</mat-label>
               <input
                 type="tel"
                 matInput
@@ -43,7 +43,7 @@
             class="material-button"
             (click)="openDialog('Save user')"
           >
-            Save
+            Salveaza
             <mat-icon>save</mat-icon>
           </button>
         </form>
@@ -51,19 +51,19 @@
     </div>
     <div class="right-side">
       <h3 class="info-label">
-        Doctor's informations
+        Informatii doctor
         <span>
           <mat-icon
             color="primary"
             matTooltipPosition="above"
-            matTooltip="To become a doctor, fill in the information below."
+            matTooltip="Pentru a deveni doctor in aplicatie, completeaza campurile de mai jos."
             >info_outline</mat-icon
           >
         </span>
       </h3>
       <form class="doctor-info-form" [formGroup]="doctorFormGroup">
-        <mat-form-field>
-          <mat-label>Specialty</mat-label>
+        <mat-form-field appearance="fill">
+          <mat-label>Specialitate</mat-label>
           <mat-select formControlName="specialty" value="specialty" required>
             <mat-option
               *ngFor="let specialty of specialties"
@@ -76,17 +76,19 @@
           <mat-error *ngIf="doctorControls.specialty.invalid">
             {{
               doctorControls.specialty.errors.required
-                ? "*Specialty is required."
+                ? "*Campul specialitate este necesar."
                 : ""
             }}
           </mat-error>
         </mat-form-field>
-        <mat-form-field>
-          <mat-label>Unique doctor identification code</mat-label>
+        <mat-form-field appearance="fill">
+          <mat-label>Codul unic de identificare a medicului</mat-label>
           <input matInput formControlName="cuim" required />
           <mat-error *ngIf="doctorControls.cuim.invalid">
             {{
-              doctorControls.cuim.errors.required ? "*CUIM is required." : ""
+              doctorControls.cuim.errors.required
+                ? "*Campul codul unic de identificare a medicului este necesar."
+                : ""
             }}
           </mat-error>
         </mat-form-field>
@@ -97,17 +99,18 @@
         class="save-doctor-info-button"
         [disabled]="isDoctorInfoSaveButtonDisabled"
         (click)="openDialog('Save doctor')"
+        [ngStyle]="{ color: 'white' }"
       >
-        Save<mat-icon>save</mat-icon>
+        Salveaza<mat-icon>save</mat-icon>
       </button>
-      <div>
+      <div *ngIf="doctor">
         <h3 class="info-label">
-          Office informations
+          Informatii cabinet
           <span>
             <mat-icon
               color="primary"
               matTooltipPosition="above"
-              matTooltip="To join an office you must add one or accept an invitation to join."
+              matTooltip="Pentru a fi afiliat unui cabinet trebuie sa creezi unul sau sa accepti invitatia de afiliere la un cabinet."
               >info_outline</mat-icon
             >
           </span>
@@ -116,28 +119,8 @@
         <div class="office-information-container">
           <div class="office-left-side">
             <form [formGroup]="officeFormGroup" class="column-form">
-              <!-- <mat-form-field>
-                <mat-label>Address</mat-label>
-                <input
-                  matInput
-                  formControlName="address"
-                  [disabled]="!ownerCheck"
-                  required
-                  ngx-google-places-autocomplete
-                  [options]="options"
-                  #autocompleteRef
-                  (onAddressChange)="handleAddressChange($event)"
-                />
-                <mat-error *ngIf="officeControls.address.invalid">
-                  {{
-                    officeControls.address.errors.required
-                      ? "*Addreess is required."
-                      : ""
-                  }}
-                </mat-error>
-              </mat-form-field> -->
-              <mat-form-field>
-                <mat-label>Name</mat-label>
+              <mat-form-field appearance="fill">
+                <mat-label>Nume cabinet</mat-label>
                 <input
                   matInput
                   formControlName="name"
@@ -147,31 +130,53 @@
                 <mat-error *ngIf="officeControls.name.invalid">
                   {{
                     officeControls.name.errors.required
-                      ? "*Office name is required."
+                      ? "*Campul numele cabinetului este necesar."
                       : ""
                   }}
                 </mat-error>
               </mat-form-field>
-              <mat-form-field>
-                <mat-label>Address</mat-label>
-                <input matInput formControlName="address" required />
+
+              <mat-form-field appearance="fill">
+                <mat-label>Adresa</mat-label>
+                <input
+                  type="text"
+                  placeholder="Cauta"
+                  matInput
+                  formControlName="address"
+                  [matAutocomplete]="auto"
+                  required
+                  (keyup)="onAddressSearch($event)"
+                />
                 <mat-error *ngIf="officeControls.address.invalid">
                   {{
                     officeControls.address.errors.required
-                      ? "*Address is invalid or required."
+                      ? "*Campul adresa cabinetului este necesar."
                       : ""
                   }}
                 </mat-error>
+                <mat-autocomplete
+                  autoActiveFirstOption
+                  #auto="matAutocomplete"
+                  (optionSelected)="onAddressSelect($event.option.value)"
+                >
+                  <mat-option
+                    *ngFor="let option of addressOptions"
+                    matTooltip="{{ option.address }}"
+                    [value]="option"
+                    >{{ option?.address }}</mat-option
+                  >
+                </mat-autocomplete>
               </mat-form-field>
             </form>
           </div>
           <div class="office-right-side">
             <div class="here-maps-container">
               <app-map
-                [lat]="latitude"
-                [lng]="longitude"
-                (notify)="handleMapChange($event)"
+                [lat]="office?.latitude"
+                [lng]="office?.longitude"
+                (notify)="getAddressOptions($event)"
                 class="here-map"
+                #map
               ></app-map>
             </div>
           </div>
@@ -184,7 +189,7 @@
             class="material-button"
             (click)="openDialog('Remove office')"
           >
-            Remove
+            Sterge
             <mat-icon>delete_forever</mat-icon>
           </button>
           <button
@@ -194,12 +199,12 @@
             class="material-button"
             (click)="addOffice()"
           >
-            Save
+            Salveaza
             <mat-icon>save</mat-icon>
           </button>
         </div>
         <div class="affiliated-doctors">
-          <h3 class="info-label">Doctors</h3>
+          <h3 class="info-label">Doctori afiliati</h3>
           <div class="doctors-list noselect" *ngIf="office && office.doctors">
             <div *ngFor="let d of office.doctors" class="doctor-wrapper">
               <div class="doctor-container">
@@ -211,11 +216,11 @@
                 />
                 <div
                   class="office-owner-shield"
-                  *ngIf="doctor.id === office.administratorId"
+                  *ngIf="d.id === office.administratorId"
                 >
                   <mat-icon
                     matTooltipPosition="below"
-                    matTooltip="Administrator of the office."
+                    matTooltip="Administratorul cabinetului."
                     color="primary"
                     >health_and_safety</mat-icon
                   >
@@ -227,7 +232,11 @@
               *ngIf="doctor.id === office.administratorId"
             >
               <div class="doctor-container">
-                <div class="add-doctor" (click)="openDialog('Invite doctor')">
+                <div
+                  class="add-doctor"
+                  (click)="openDialog('Invita doctor')"
+                  matTooltip="Invita un medic sa se afilieze cabinetului tau."
+                >
                   <mat-icon color="primary">add</mat-icon>
                 </div>
               </div>
@@ -237,123 +246,7 @@
       </div>
     </div>
   </mat-card>
+  <ng-template #isLoading>
+    <app-loader></app-loader>
+  </ng-template>
 </div>
-
-<!-- <div class="feature-page">
-    <div class="profile-info-wrapper">
-        <mat-card class="profile-info-card">
-            <input type="file" style="display:none;" #imageInput (change)="selectPhoto($event)">
-            <div class="profile-image noselect">
-                <img src={{profileImage}} alt="">
-                <div class="profile-second-layer" (click)="onPhotoChange(imageInput)">
-                  <span>CHANGE PHOTO</span>
-                </div>
-            </div>
-            <div class="info">
-                <form class="user-info-form" [formGroup]="userInfoFormGroup">
-                  <div class="fields">
-                    <mat-form-field>
-                      <mat-label>First name</mat-label>
-                      <input matInput formControlName="firstName" required>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <mat-label>Last name</mat-label>
-                      <input matInput formControlName="lastName" required>
-                    </mat-form-field>
-                    <mat-form-field>
-                      <mat-label>Cell phone</mat-label>
-                      <input type="tel" matInput placeholder="ex 40000000" formControlName="phone" required>
-                      <mat-icon matSuffix color="primary">smartphone</mat-icon>
-                    </mat-form-field>
-                  </div>
-                    <button mat-flat-button color="primary" class="material-button">Save changes</button>
-                </form>
-            </div>
-        </mat-card>
-        <mat-card class="main-info-card">
-          <div class="account-bedge">
-            <span>Inactive doctor</span>
-          </div>
-          <form [formGroup]="mainInfoFormGroup" class="main-info-form">
-            <div class="fields">
-              <div class="right-side">
-
-                <h3 class="info-label">
-                  Doctor informations
-                  <span>
-                    <mat-icon color="primary">info_outline</mat-icon>
-                  </span>
-                </h3>
-                <mat-form-field>
-                  <mat-label>Speciality</mat-label>
-                  <mat-select formControlName="specialty" required>
-                    <mat-option *ngFor="let specialty of specialties" [value]="specialty">
-                      {{ specialty }}
-                    </mat-option>
-                  </mat-select>
-                  <mat-icon matSuffix color="primary">task_alt</mat-icon>
-                </mat-form-field>
-                <mat-form-field>
-                  <mat-label>CUIM</mat-label>
-                  <input matInput formControlName="cuim" required>
-                </mat-form-field>
-              </div>
-            </div>
-            <button mat-raised-button color="primary" class="material-button">Save changes</button>
-          </form>
-        </mat-card>
-    </div>
-    <div class="office">
-      <mat-card class="office-card">
-        <div class="office-card-buttons" *ngIf="!office">
-          <button mat-raised-button color="primary" class="material-button office-card-button" (click)="onOpenAddOfficeDialog()">
-            <mat-icon>add</mat-icon>
-            Add office
-          </button>
-          <button mat-raised-button color="primary" class="material-button office-card-button" (click)="onOpenJoinOfficeDialog()">
-            <mat-icon>add</mat-icon>
-            Join an office
-          </button>
-        </div>
-        <div class="office-card-content">
-          <div class="no-offices-message" *ngIf="!office; else officeExist">
-            <span>
-              No office added 
-            </span>
-          </div>
-          <ng-template #officeExist>
-            <div class="details">
-              <div class="edit-button" *ngIf="office.you.isOfficeOwner">
-                <button mat-button class="material-button">
-                  <mat-icon color="primary">save</mat-icon>
-                </button>
-              </div>
-              <div class="content-container">
-                <div class="office-map-location">
-                  <div class="agm-container">
-                    <agm-map [latitude]="officeDataFormGroup.value.latitude" [longitude]="officeDataFormGroup.value.longitude" style="width:100%;" [zoom]="16">
-                      <agm-marker [latitude]="officeDataFormGroup.value.latitude" [longitude]="officeDataFormGroup.value.longitude"></agm-marker>
-                    </agm-map>
-                  </div>
-                </div>
-
-                <form [formGroup]="officeDataFormGroup" class="form-map-informations">
-                  <mat-form-field>
-                    <mat-label>Office name</mat-label>
-                    <input matInput formControlName="officeName" required>
-                    <mat-icon matSuffix color="primary">business_center</mat-icon>
-                  </mat-form-field>
-                  <mat-form-field>
-                    <mat-label>Address</mat-label>
-                    <mat-icon matSuffix color="primary">pin_drop</mat-icon>
-                  </mat-form-field>
-
-
-                </form>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-      </mat-card>
-    </div>
-</div> -->

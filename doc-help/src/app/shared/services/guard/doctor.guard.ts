@@ -21,7 +21,7 @@ export class DoctorGuard implements CanLoad {
       .subscribe((user) => {
         console.log(user);
         if (!user) {
-          this.router.navigate(['/sign-in']);
+          this.router.navigate(['/']);
         } else {
           if (!!user.doctorId) {
             isDoctor = true;

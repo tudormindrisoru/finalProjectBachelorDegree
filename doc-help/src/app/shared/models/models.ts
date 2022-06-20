@@ -26,6 +26,7 @@ export interface Office {
   longitude?: number;
   latitude?: number;
   administratorId?: number;
+  city?: string;
   doctors?: Doctor[];
 }
 
@@ -38,6 +39,7 @@ export interface Appointment {
   notes?: string;
   isApproved?: boolean;
   patient?: User;
+  reason?: string;
 }
 
 export interface Response<T> {
@@ -72,4 +74,11 @@ export interface Notification {
     doctorId: number;
     entryId: number;
   };
+}
+
+export interface SearchResult {
+  address: string;
+  county: string;
+  lat: number;
+  lng: number;
 }

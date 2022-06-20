@@ -29,4 +29,9 @@
       </mat-drawer-content>
     </mat-drawer-container>
   </div>
+
+  <app-notifications
+    *ngIf="office$ | async"
+    [doctorId]="user?.docId"
+  ></app-notifications>
 </div>

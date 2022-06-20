@@ -22,7 +22,11 @@
 
 .notification-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
+
+    & > button {
+        margin-left: 4px;
+    }
 }
 
 .mat-divider {
@@ -61,4 +65,10 @@
 
 .approve-button {
     color: #fff;
+}
+
+.appointment-section {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    padding: 10px;
 }

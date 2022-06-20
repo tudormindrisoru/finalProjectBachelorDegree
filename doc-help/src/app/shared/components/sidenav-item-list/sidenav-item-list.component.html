@@ -1,7 +1,19 @@
 <div class="sidenav-item-list">
   <ul [ngStyle]="{ 'text-align': openAction ? 'center' : 'inherit' }">
     <li *ngFor="let item of itemList" (click)="item.onClick()">
-      <mat-icon>{{ item.icon }}</mat-icon>
+      <mat-icon
+        [matBadgeHidden]="
+          !(notificationService.appointmentNotifications$$ | async) ||
+          (notificationService.appointmentNotifications$$ | async).length ===
+            0 ||
+          item.icon !== 'notifications'
+        "
+        [matBadge]="
+          (notificationService.appointmentNotifications$$ | async)?.length
+        "
+        matBadgeColor="warn"
+        >{{ item.icon }}</mat-icon
+      >
       <span *ngIf="useLabels">{{ item.label }}</span>
     </li>
     <li (click)="onToggleClick()" *ngIf="toggleButton">

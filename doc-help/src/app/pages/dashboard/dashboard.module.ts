@@ -1,7 +1,6 @@
 import { MapComponent } from './../../shared/components/map/map.component';
 import { PatientsService } from './../../features/patients/patients.service';
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
@@ -22,6 +21,8 @@ import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin
 import interactionPlugin from '@fullcalendar/interaction'; // a plugin
 import timeGridPlugin from '@fullcalendar/timegrid'; // a plugin
 import bootstrapPlugin from '@fullcalendar/bootstrap'; // a plugin
+import { NgxMaterialRatingModule } from 'ngx-material-rating';
+import { NgxRangeModule } from 'ngx-range';
 import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
 import { CalendarEventDetailsDialogComponent } from 'src/app/features/appointments/components/calendar-event-details-dialog/calendar-event-details-dialog.component';
 import { ProfileService } from 'src/app/shared/services/profile/profile.service';
@@ -29,6 +30,8 @@ import { ScheduleService } from 'src/app/shared/services/schedule/schedule.servi
 import { MatTimepickerModule } from 'mat-timepicker';
 import { NotificationService } from 'src/app/shared/services/notification/notification.service';
 import { AppointmentRequestsComponent } from 'src/app/features/appointment-requests/appointment-requests.component';
+import { NotificationsComponent } from 'src/app/shared/components/notifications/notifications.component';
+import { LoaderComponent } from 'src/app/shared/components/loader/loader.component';
 
 FullCalendarModule.registerPlugins([
   // register FullCalendar plugins
@@ -47,8 +50,10 @@ FullCalendarModule.registerPlugins([
     SidenavItemListComponent,
     CalendarViewComponent,
     NotificationsPopupComponent,
+    NotificationsComponent,
     AppointmentRequestsComponent,
     MapComponent,
+    LoaderComponent,
 
     //DIALOGS
     AddOfficeDialogComponent,
@@ -62,6 +67,8 @@ FullCalendarModule.registerPlugins([
     ReactiveFormsModule,
     FullCalendarModule,
     MatTimepickerModule,
+    NgxMaterialRatingModule,
+    NgxRangeModule,
   ],
   providers: [
     PatientsService,

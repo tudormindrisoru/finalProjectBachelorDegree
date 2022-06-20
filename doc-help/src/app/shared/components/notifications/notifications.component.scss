@@ -1,0 +1,16 @@
+:host {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    bottom: 25px;
+    right: 25px;
+    background-color: #64b3f4;
+    z-index: 3;
+    border-radius: 50%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+    cursor: pointer;
+}

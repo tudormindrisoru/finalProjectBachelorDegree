@@ -7,26 +7,30 @@ import { AuthDialogComponent } from './shared/components/auth-dialog/auth-dialog
 import { AuthGuard } from './shared/services/guard/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: MainComponent,
+  {
+    path: '',
+    component: MainComponent,
     children: [
       {
         path: 'sign-in',
-        component: AuthDialogComponent
-      }
-    ]
+        component: AuthDialogComponent,
+      },
+    ],
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),
-    canActivate: [ AuthGuard ],
-    canLoad: [ AuthGuard ]
+    loadChildren: () =>
+      import('./pages/dashboard/dashboard.module').then(
+        (m) => m.DashboardModule
+      ),
+    canActivate: [AuthGuard],
   },
   { path: 'not-found', component: PageNotFoundComponent },
-  { path: '**', redirectTo: '/not-found', pathMatch: 'full' }
+  { path: '**', redirectTo: '/not-found', pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

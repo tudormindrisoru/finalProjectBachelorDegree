@@ -51,6 +51,20 @@ export class VacationService {
       );
   }
 
+  getDoctorVacationByDoctorId(id: number): Observable<Response<Vacation[]>> {
+    return this.http
+      .get<HttpResponse<Response<Vacation[]>>>(this.VACATION_URL + `/${id}`, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(
+          this.snackbarHandlerService.handleError('GET_DOCTOR_VACATION')
+        )
+      );
+  }
+
   saveVacation(vacation: Vacation): Observable<Response<any>> {
     console.log(vacation);
     if (vacation.id < 0) {
