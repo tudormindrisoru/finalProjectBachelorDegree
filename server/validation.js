@@ -1,4 +1,5 @@
 const Joi = require("@hapi/joi");
+const { schema } = require("@hapi/joi/lib/compile");
 
 const passwordLogInValidation = (request) => {
   const schema = Joi.object({
@@ -73,6 +74,7 @@ const officeValidation = (request) => {
     latitude: Joi.number().required(),
     longitude: Joi.number().required(),
     oName: Joi.string().required(),
+    city: Joi.string().required(),
   });
   return schema.validate(request);
 };
@@ -82,6 +84,16 @@ const officeInvitationValidation = (request) => {
     doctorId: Joi.number().required(),
     officeId: Joi.number().required(),
   });
+  return schema.validate(request);
+};
+
+const officeInvitationResponse = (request) => {
+  const schema = Joi.object({
+    officeId: Joi.number().required(),
+    invitationId: Joi.number().required(),
+    response: Joi.boolean().required(),
+  });
+
   return schema.validate(request);
 };
 
@@ -103,6 +115,18 @@ const createAppointmentValidation = (request) => {
   return schema.validate(request);
 };
 
+const requestAppointmentValidation = (request) => {
+  const schema = Joi.object({
+    doctorId: Joi.number().required(),
+    officeId: Joi.number().required(),
+    date: Joi.date().required(),
+    startTime: Joi.number().required(),
+    endTime: Joi.number().required(),
+    reason: Joi.string(),
+  });
+  return schema.validate(request);
+};
+
 const updateAppointmentValidation = (request) => {
   const schema = Joi.object({
     id: Joi.date().required(),
@@ -118,6 +142,16 @@ const approveAppointmentValidation = (request) => {
     id: Joi.number().required(),
     isApproved: Joi.boolean().required(),
   });
+  return schema.validate(request);
+};
+
+const appointmentReviewValidation = (request) => {
+  const schema = Joi.object({
+    appointmentId: Joi.number().required(),
+    text: Joi.string().required(),
+    points: Joi.number().min(1).max(5).required(),
+  });
+
   return schema.validate(request);
 };
 
@@ -149,6 +183,14 @@ const vacationValidation = (request) => {
   return schema.validate(request);
 };
 
+const setRatingValidation = (request) => {
+  const schema = Joi.object({
+    appointmentId: Joi.number().required(),
+    points: Joi.number().required(),
+  });
+  return schema.validate(request);
+};
+
 module.exports = {
   passwordLogInValidation,
   phoneLogInStep1Validation,
@@ -160,11 +202,15 @@ module.exports = {
   updateDoctorValidation,
   officeValidation,
   officeInvitationValidation,
+  officeInvitationResponse,
   approvedAppointmentsValidation,
   createAppointmentValidation,
+  requestAppointmentValidation,
   updateAppointmentValidation,
   workingHoursIntervalValidation,
   scheduleValidation,
   vacationValidation,
   approveAppointmentValidation,
+  appointmentReviewValidation,
+  setRatingValidation,
 };

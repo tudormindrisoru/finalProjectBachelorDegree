@@ -26,9 +26,9 @@ const storage = multer.diskStorage({
 const fileFilter = (req, file, cb) => {
   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
     cb(null, true);
-  } else {
-    cb(new Error("The uploaded file format should be jpeg or png."), false);
+    return;
   }
+  cb(new Error("The uploaded file format should be jpeg or png."), false);
 };
 const upload = multer({
   storage: storage,
@@ -37,35 +37,23 @@ const upload = multer({
 });
 
 router.get("/", verifyToken, async (req, res) => {
-  try {
-    const name = req.query.name;
-    console.log("NAMEE = ", name);
-    if (!!name) {
-      const result = await User.findAllByName(name, req.user.id);
-      if (result.success) {
-        res.set({
-          "Content-Type": "application/json",
-          Authorization: req.headers.authorization,
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Expose-Headers": "*",
-        });
-      }
-      res.status(result.status).send(result);
-    } else {
-      res
-        .status(404)
-        .send(
-          new Response(
-            404,
-            false,
-            "User name is missing. Add a name in query request."
-          ).getResponse()
-        );
+  const name = req.query.name;
+  if (!!name) {
+    const result = await User.findAllByName(name, req.user.id);
+    if (result.success) {
     }
-  } catch (error) {
-    console.error(new Error(error));
-    res.status(500).send(new Response(500, false, error).getResponse());
+    res.status(result.status).send(result);
+    return;
   }
+  res
+    .status(404)
+    .send(
+      new Response(
+        404,
+        false,
+        "User name is missing. Add a name in query request."
+      ).getResponse()
+    );
 });
 
 router.put(
@@ -73,42 +61,23 @@ router.put(
   verifyToken,
   upload.single("photo"),
   async (req, res) => {
-    try {
-      const photoPath = req.file.path.replace("\\", "/");
-      console.log("photo path = ", photoPath);
-      const result = await User.updatePhotoById(req.user.id, photoPath);
-      if (result.success) {
-        res.set({
-          "Content-Type": "application/json",
-          Authorization: req.headers.authorization,
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Expose-Headers": "*",
-        });
-      }
-      res.status(result.status).send(result);
-    } catch (error) {
-      console.error(new Error(error));
-      res.status(500).send(new Response(500, false, error).getResponse());
-    }
+    const photoPath = req.file.path.replace("\\", "/");
+    const result = await User.updatePhotoById(req.user.id, photoPath);
+    res.status(result.status).send(result);
   }
 );
 
 router.put("/", verifyToken, async (req, res) => {
-  try {
-    const { error } = updateUserValidation(req.body);
-    if (error) {
-      res.status(400).send(new Response(400, false, error).getResponse());
-    } else {
-      if (Object.keys(req.body).length > 0) {
-        console.log("PUT USER");
-        const result = await User.updateUserById(req.body, req.user.id);
-        res.status(result.status).send(result);
-      }
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(new Response(500, false, "error").getResponse());
+  const { error } = updateUserValidation(req.body);
+  if (error) {
+    res
+      .status(400)
+      .send(new Response(400, false, error.details[0].message).getResponse());
+    return;
   }
+  console.log("PUT USER");
+  const result = await User.updateUserById(req.body, req.user.id);
+  res.status(result.status).send(result);
 });
 
 module.exports = router;

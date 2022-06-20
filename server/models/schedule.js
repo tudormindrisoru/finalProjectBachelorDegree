@@ -54,7 +54,7 @@ class Schedule {
       return new Response(
         400,
         false,
-        "Schedule could not be created!"
+        "Programul nu a putut fi creat!"
       ).getResponse();
     } catch (error) {
       console.error(error);
@@ -67,16 +67,16 @@ class Schedule {
       const SQL_UPDATE = `UPDATE schedules SET startTime = ${schedule.start}, endTime = ${schedule.end} WHERE doctorId = ${doctorId} AND id = ${schedule.id}`;
       const result = await db.execute(SQL_UPDATE);
       if (!!result && result[0] && result[0].affectedRows === 1) {
-        return new Response(200, true, "Schedule updated.").getResponse();
+        return new Response(200, true, "Program actualizat.").getResponse();
       }
       return new Response(
         404,
         false,
-        "Schedule could not be updated."
+        "Programul nu a putut fi actualizat."
       ).getResponse();
     } catch (error) {
       console.error(error);
-      return new Response(500, false, "Something went wrong.").getResponse();
+      return new Response(500, false, "Eroare de server.").getResponse();
     }
   }
 
@@ -88,17 +88,17 @@ class Schedule {
         return new Response(
           200,
           true,
-          "Schedule interval removed successfully."
+          "Program sters cu succes."
         ).getResponse();
       }
       return new Response(
         400,
         false,
-        "Shedule interval could not be deleted."
+        "Programul nu a putut fi sters."
       ).getResponse();
     } catch (error) {
       console.error(error);
-      return new Response(500, false, "Something went wrong.").getResponse();
+      return new Response(500, false, "Eroare de server.").getResponse();
     }
   }
 }

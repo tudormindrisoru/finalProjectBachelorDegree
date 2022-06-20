@@ -17,28 +17,48 @@ class Doctor {
   }
 
   async save() {
-    const INSERT_DOCTOR_SQL = `INSERT INTO doctors(cuim, specialty) VALUES("${this._cuim}","${this._specialty}")`;
-    const doctor = await db.execute(INSERT_DOCTOR_SQL);
-    console.log(doctor);
-    if (doctor && doctor[0][0]) {
-      return new Response(201, true, new Doctor(...doctor[0][0])).getResponse();
-    } else {
-      return new Response(404, false, "Doctor not found.").getResponse();
+    try {
+      const INSERT_DOCTOR_SQL = `INSERT INTO doctors(cuim, specialty) VALUES("${this._cuim}","${this._specialty}")`;
+      const doctor = await db.execute(INSERT_DOCTOR_SQL);
+      if (doctor && doctor[0][0]) {
+        return new Response(
+          201,
+          true,
+          new Doctor(...doctor[0][0])
+        ).getResponse();
+      }
+      return new Response(
+        404,
+        false,
+        "Doctorul nu a putut fi gasit."
+      ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Eroare de server!").getResponse();
     }
   }
 
   static async update(id, doctorChanges) {
-    const UPDATE_DOCTOR_SQL = `UPDATE doctors SET cuim = '${doctorChanges.cuim}', specialty='${doctorChanges.specialty}' WHERE id=${id};`;
-    const doctor = await db.execute(UPDATE_DOCTOR_SQL);
-    console.log(doctor);
-    if (doctor && doctor[0].affectedRows === 1) {
+    try {
+      const UPDATE_DOCTOR_SQL = `UPDATE doctors SET cuim = '${doctorChanges.cuim}', specialty='${doctorChanges.specialty}' WHERE id=${id};`;
+      const doctor = await db.execute(UPDATE_DOCTOR_SQL);
+      console.log(doctor);
+      if (doctor && doctor[0].affectedRows === 1) {
+        return new Response(
+          200,
+          true,
+          "Doctor information changed"
+        ).getResponse();
+      }
       return new Response(
-        200,
-        true,
-        "Doctor information changed"
+        404,
+        false,
+        "Doctorul nu a fost gasit."
       ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Erorare de server!").getResponse();
     }
-    return new Response(404, false, "Doctor not found.").getResponse();
   }
 
   static async findOneByUserId(id) {
@@ -53,9 +73,12 @@ class Doctor {
           specialty: specialty,
           officeId: officeId,
         }).getResponse();
-      } else {
-        return new Response(404, false, "Doctor not found.").getResponse();
       }
+      return new Response(
+        404,
+        false,
+        "Doctorul nu a fost gasit."
+      ).getResponse();
     } catch (err) {
       console.error(err);
       return new Response(500, false, err).getResponse();
@@ -118,7 +141,25 @@ class Doctor {
       ).getResponse();
     } catch (error) {
       console.error(error);
-      return new Response(500, false, "Somethig went wrong").getResponse();
+      return new Response(500, false, "Eroare de server.").getResponse();
+    }
+  }
+
+  static async getDoctorReviews(docId) {
+    try {
+      const GET_SQL = `SELECT r.id, r.points, r.text FROM doctors d JOIN appointments a ON d.id = a.doctorId JOIN reviews r ON r.id = a.reviewId WHERE a.reviewId IS NOT NULL AND d.id = ${docId}`;
+      const result = await db.execute(GET_SQL);
+      if (!!result) {
+        return new Response(200, true, result[0]).getResponse();
+      }
+      return new Response(
+        404,
+        false,
+        "Recenziile nu au putut fi preluate."
+      ).getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Eroare de server").getResponse();
     }
   }
 }

@@ -22,14 +22,13 @@ class User {
       }${d.getDate()} ${d.getHours() < 10 ? "0" : ""}${d.getHours()}:${
         d.getMinutes() < 10 ? "0" : ""
       }${d.getMinutes()}`;
-      console.log(createdDate, encryptedPassword);
       const SQL = `INSERT INTO 
             users(firstName,lastName,email,password,phone,createdAt) 
             VALUES('${this.firstName}','${this.lastName}','${this.email}','${encryptedPassword}','${this.phone}','${createdDate}');`;
 
       const user = await db.execute(SQL);
       if (user) {
-        return new Response(201, true, "User created!").getResponse();
+        return new Response(201, true, "Utilizator inregistrat!").getResponse();
       } else {
         return new Response(409, false, user[0][0]).getResponse();
       }
@@ -39,10 +38,10 @@ class User {
         return new Response(
           403,
           false,
-          "This user already exist."
+          "Utilizatorul exista deja sau necesita confirmare."
         ).getResponse();
       }
-      return new Response(500, false, "Something bad happened.").getResponse();
+      return new Response(500, false, "Server error.").getResponse();
     }
   }
 
@@ -81,7 +80,6 @@ class User {
       const SQL_USER_QUERY = `SELECT * FROM users WHERE email='${email}'`;
       const user = await db.execute(SQL_USER_QUERY);
       if (user) {
-        console.log(user[0][0]);
         if (user[0][0].isVerified) {
           console.log(bcrypt.decodeBase64(user[0][0].password));
           const passMatch = await bcrypt.compare(password, user[0][0].password);
@@ -94,18 +92,18 @@ class User {
           return new Response(
             403,
             false,
-            "This account is not verified!"
+            "Acest cont necesita verificare."
           ).getResponse();
         }
       }
       return new Response(
         404,
         false,
-        "Incorrect email or password!"
+        "E-mail sau parola incorecte!"
       ).getResponse();
     } catch (err) {
       console.log(err);
-      return new Response(500, false, "Something bad happened.").getResponse();
+      return new Response(500, false, "Eroare de server.").getResponse();
     }
   }
 
@@ -123,18 +121,14 @@ class User {
           return new Response(
             403,
             false,
-            "This user is not verified."
+            "Acest utilizator necesita verificare."
           ).getResponse();
         }
       }
-      return new Response(
-        404,
-        false,
-        "This user is not registered! Please register"
-      ).getResponse();
+      return new Response(404, false, "Utilizator inexistent.").getResponse();
     } catch (err) {
       console.log(err);
-      return new Response(500, false, "Something bad happened.").getResponse();
+      return new Response(500, false, "Eroare de server.").getResponse();
     }
   }
 
@@ -142,14 +136,13 @@ class User {
     try {
       const SQL_UPDATE_PHOTO = `UPDATE users SET photo = "${path}" WHERE id = ${id}`;
       const result = await db.execute(SQL_UPDATE_PHOTO);
-      console.log(result);
       if (!!result[0] && result[0].affectedRows === 1) {
         return new Response(200, true, { photo: path }).getResponse();
       }
       return new Response(
         400,
         false,
-        "The image could not be updated."
+        "Imaginea nu a putut fi schimbata."
       ).getResponse();
     } catch (err) {
       console.error(err);
@@ -170,7 +163,11 @@ class User {
         console.log("updated USER = ", updatedUser);
         return new Response(200, true, updatedUser[0][0]).getResponse();
       } else {
-        return new Response(404, false, "User not found.").getResponse();
+        return new Response(
+          404,
+          false,
+          "Utilizatorul nu a fost gasit."
+        ).getResponse();
       }
     } catch (error) {
       console.error(error);
@@ -210,13 +207,42 @@ class User {
       console.log(SQL_VALIDATE_USER);
       const [results, buff] = await db.execute(SQL_VALIDATE_USER);
       if (results && results.affectedRows) {
-        console.log(results);
         return true;
       }
       return false;
     } catch (err) {
       console.error(err);
       return false;
+    }
+  }
+
+  static async findOneById(id) {
+    try {
+      const GET_USER_SQL = `SELECT * FROM users WHERE id=${id} AND isVerified = 1`;
+      const user = await db.execute(GET_USER_SQL);
+      if (!!user && !!user[0] && !!user[0][0]) {
+        delete user[0][0].password;
+        return new Response(200, true, user[0][0]).getResponse();
+      }
+      return new Response(404, false, "Utilizatorul nu exista.").getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Eroare de server").getResponse();
+    }
+  }
+
+  static async findOneByDoctorId(id) {
+    try {
+      const GET_USER_SQL = `SELECT * FROM users WHERE docId=${id} AND isVerified = 1`;
+      const user = await db.execute(GET_USER_SQL);
+      if (!!user && !!user[0] && !!user[0][0]) {
+        delete user[0][0].password;
+        return new Response(200, true, user[0][0]).getResponse();
+      }
+      return new Response(404, false, "Utilizatorul nu exista.").getResponse();
+    } catch (error) {
+      console.error(error);
+      return new Response(500, false, "Eroare de server").getResponse();
     }
   }
 }

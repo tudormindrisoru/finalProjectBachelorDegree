@@ -10,13 +10,6 @@ const { workingHoursIntervalValidation } = require("../../../validation");
 const Schedule = require("../../../models/schedule");
 
 router.get("/intervals", verifyToken, async (req, res) => {
-  res.set({
-    "Content-Type": "application/json",
-    Authorization: req.headers.authorization,
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Expose-Headers": "*",
-  });
-
   const doctor = await Doctor.findOneByUserId(req.user.id);
   if (doctor.success) {
     const schedules = await Schedules.findAllSchedulesIntervalsByDoctorId(
@@ -24,41 +17,43 @@ router.get("/intervals", verifyToken, async (req, res) => {
     );
     console.log("SCHEDULES = ", schedules);
     res.status(schedules.status).send(schedules);
-  } else {
-    res.status(doctor.status).send(doctor);
+    return;
   }
+  res.status(doctor.status).send(doctor);
+});
+
+router.get("/:id", verifyToken, async (req, res) => {
+  if (!req.params.id) {
+    res
+      .status(400)
+      .send(new Response(400, false, "Id param is missing.").getResponse());
+    return;
+  }
+
+  const schedule = await Schedule.findAllSchedulesIntervalsByDoctorId(
+    req.params.id
+  );
+  res.status(schedule.status).send(schedule);
 });
 
 router.post("/intervals", verifyToken, async (req, res) => {
-  res.set({
-    "Content-Type": "application/json",
-    Authorization: req.headers.authorization,
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Expose-Headers": "*",
-  });
-
   const { error } = scheduleValidation(req.body);
   if (error) {
-    res.status(404).send(new Response(404, false, error).getResponse());
-  } else {
-    const doctor = await Doctor.findOneByUserId(req.user.id);
-    if (doctor.success) {
-      const schedule = await Schedule.create(req.body, doctor.message.id);
-      res.status(schedule.status).send(schedule);
-    } else {
-      res.status(doctor.status).send(doctor);
-    }
+    res
+      .status(404)
+      .send(new Response(404, false, error.details[0].message).getResponse());
+    return;
   }
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+  if (doctor.success) {
+    const schedule = await Schedule.create(req.body, doctor.message.id);
+    res.status(schedule.status).send(schedule);
+    return;
+  }
+  res.status(doctor.status).send(doctor);
 });
 
 router.put("/intervals", verifyToken, async (req, res) => {
-  res.set({
-    "Content-Type": "application/json",
-    Authorization: req.headers.authorization,
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Expose-Headers": "*",
-  });
-
   if (+req.body.id < 0) {
     console.log("body = ", req.body);
     res
@@ -66,30 +61,25 @@ router.put("/intervals", verifyToken, async (req, res) => {
       .send(
         new Response(404, false, "Id parameter is required.").getResponse()
       );
-  } else {
-    const { error } = scheduleValidation(req.body);
-    if (error) {
-      res.status(404).send(new Response(404, false, error).getResponse());
-    } else {
-      const doctor = await Doctor.findOneByUserId(req.user.id);
-      if (doctor.success) {
-        const schedule = await Schedule.update(req.body, doctor.message.id);
-        res.status(schedule.status).send(schedule);
-      } else {
-        res.status(doctor.status).send(doctor);
-      }
-    }
+    return;
   }
+  const { error } = scheduleValidation(req.body);
+  if (error) {
+    res
+      .status(404)
+      .send(new Response(404, false, error.details[0].message).getResponse());
+    return;
+  }
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+  if (doctor.success) {
+    const schedule = await Schedule.update(req.body, doctor.message.id);
+    res.status(schedule.status).send(schedule);
+    return;
+  }
+  res.status(doctor.status).send(doctor);
 });
 
 router.delete("/intervals/:id", verifyToken, async (req, res) => {
-  res.set({
-    "Content-Type": "application/json",
-    Authorization: req.headers.authorization,
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Expose-Headers": "*",
-  });
-
   if (+req.params.id < 0) {
     console.log("body = ", req.body);
     res
@@ -97,15 +87,15 @@ router.delete("/intervals/:id", verifyToken, async (req, res) => {
       .send(
         new Response(404, false, "Id parameter is required.").getResponse()
       );
-  } else {
-    const doctor = await Doctor.findOneByUserId(req.user.id);
-    if (doctor.success) {
-      const schedule = await Schedule.delete(req.params.id, doctor.message.id);
-      res.status(schedule.status).send(schedule);
-    } else {
-      res.status(doctor.status).send(doctor);
-    }
+    return;
   }
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+  if (doctor.success) {
+    const schedule = await Schedule.delete(req.params.id, doctor.message.id);
+    res.status(schedule.status).send(schedule);
+    return;
+  }
+  res.status(doctor.status).send(doctor);
 });
 
 module.exports = router;
