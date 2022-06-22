@@ -32,6 +32,7 @@ import { NotificationService } from 'src/app/shared/services/notification/notifi
 import { AppointmentRequestsComponent } from 'src/app/features/appointment-requests/appointment-requests.component';
 import { NotificationsComponent } from 'src/app/shared/components/notifications/notifications.component';
 import { LoaderComponent } from 'src/app/shared/components/loader/loader.component';
+import { DoctorGuard } from 'src/app/shared/services/guard/doctor.guard';
 
 FullCalendarModule.registerPlugins([
   // register FullCalendar plugins
@@ -76,6 +77,7 @@ FullCalendarModule.registerPlugins([
     ProfileService,
     ScheduleService,
     NotificationService,
+    DoctorGuard,
   ],
 })
 export class DashboardModule {}

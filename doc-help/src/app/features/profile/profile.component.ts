@@ -289,7 +289,11 @@ export class ProfileComponent implements OnInit {
             const doctorIndex = this.office?.doctors?.findIndex(
               (doc) => doc.id === this.user?.docId
             );
-            if (doctorIndex !== -1) {
+            if (
+              doctorIndex !== -1 &&
+              this.office &&
+              this.office.doctors.length > 0
+            ) {
               this.office.doctors[doctorIndex].user.photo = this.user.photo;
             }
           }

@@ -1,21 +1,11 @@
+import { OfficeState } from './../../../store/state/office.state';
+import { DoctorState } from './../../../store/state/doctor.state';
+import { UserState } from './../../../store/state/user.state';
 import { Store } from '@ngxs/store';
 import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
-import { HttpResponse } from '@angular/common/http';
 import { NotificationService } from './../../services/notification/notification.service';
-import {
-  Appointment,
-  Response,
-  Notification,
-  NOTIFICATION_TYPE,
-} from 'src/app/shared/models/models';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Appointment, Office } from 'src/app/shared/models/models';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { take } from 'rxjs/operators';
 
@@ -24,19 +14,35 @@ import { take } from 'rxjs/operators';
   templateUrl: './sidenav-item-list.component.html',
   styleUrls: ['./sidenav-item-list.component.scss'],
 })
-export class SidenavItemListComponent implements OnInit, OnDestroy {
+export class SidenavItemListComponent implements OnInit {
   @Input() useLabels: boolean;
   @Input() openAction: boolean;
   @Output() toggleEvent = new EventEmitter();
 
-  private subscriber;
-
+  office: Office;
   constructor(
     private router: Router,
     private notificationService: NotificationService,
-    private appointmentService: AppointmentsService,
     private store: Store
-  ) {}
+  ) {
+    this.store
+      .select((state) => state.office)
+      .subscribe((res) => {
+        this.office = res;
+        if (this.office) {
+          this.itemList.splice(2, 0, {
+            icon: 'event_note',
+            label: 'Programari',
+            onClick: () => this.redirectTo('dashboard/appointments'),
+          });
+          this.itemList.push({
+            icon: 'people',
+            label: 'Istoricul pacientilor',
+            onClick: () => this.redirectTo('dashboard/patients'),
+          });
+        }
+      });
+  }
 
   itemList = [];
   toggleButton = {};
@@ -50,46 +56,40 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe((user) => (this.user = user ?? null));
     console.log(this.user);
-    // this.notificationService
-    //   .getPendingAppointments()
-    //   .subscribe((response: HttpResponse<Response<Appointment[]>>) => {
-    //     if (response.body.success) {
-    //       this.pendingAppointments = response.body.message;
-    //       this.notificationService.appointmentNotifications$.next(
-    //         response.body.message
-    //       );
-    //     }
-    //   });
     this.itemList = [
       {
+        icon: 'logout',
+        label: 'Delogare',
+        onClick: () => this.logout(),
+      },
+      {
         icon: 'medical_services',
-        label: 'Cauta un doctor',
+        label: 'Caută un doctor',
         onClick: () => this.redirectTo('dashboard/appointment-requests'),
       },
       {
-        icon: 'event_note',
-        label: 'Programari',
-        onClick: () => this.redirectTo('dashboard/appointments'),
-      },
-      {
         icon: 'settings',
-        label: 'Setari',
+        label: 'Setări',
         onClick: () => this.redirectTo('dashboard/profile'),
       },
-      {
-        icon: 'people',
-        label: 'Istoricul pacientilor',
-        onClick: () => this.redirectTo('dashboard/patients'),
-      },
     ];
+
     this.toggleButton = {
       icon: this.openAction ? 'navigate_next' : 'navigate_before',
-      label: this.openAction ? 'Extend' : 'Collapse',
+      label: this.openAction ? 'Extinde' : 'Minimizează',
     };
   }
 
   get isNotificationOpen(): boolean {
     return this.notificationService.isShown;
+  }
+
+  logout(): void {
+    localStorage.removeItem(localStorage.getItem('Authorization'));
+    this.store.reset(UserState);
+    this.store.reset(DoctorState);
+    this.store.reset(OfficeState);
+    this.redirectTo('/');
   }
 
   redirectTo(url: string): void {
@@ -102,9 +102,5 @@ export class SidenavItemListComponent implements OnInit, OnDestroy {
 
   onToggleClick(): void {
     this.toggleEvent.emit();
-  }
-
-  ngOnDestroy(): void {
-    this.subscriber.unsubscribe();
   }
 }

@@ -1,5 +1,5 @@
 const router = require("express").Router();
-// const uniqid = require('uniqid');
+
 const Doctor = require("../../models/Doctor");
 const Office = require("../../models/office");
 // const Affiliation = require('../../models/Affiliation');

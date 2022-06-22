@@ -144,42 +144,52 @@
   </mat-card>
 
   <mat-card class="last-appointments-card">
-    <mat-card-title>
-      {{
-        lastAppointments?.length > 1
-          ? "Ultimele " + lastAppointments?.length + " programari"
-          : "Ultima programare"
-      }}</mat-card-title
+    <ng-template
+      [ngIf]="lastAppointments?.length === 0"
+      [ngIfElse]="appointmentsToShow"
     >
-    <div *ngIf="lastAppointments" class="appointments-wrapper">
-      <div class="appointment title">
-        <p>Nume si prenume</p>
-        <p>Specialitate</p>
-        <p>Data programarii</p>
-        <p>Ora de inceput si sfarsit</p>
-        <p>Recenzie</p>
+      <h3 style="text-align: center">
+        Nu sunt programări precendente de afisat.
+      </h3>
+    </ng-template>
+    <ng-template #appointmentsToShow>
+      <mat-card-title>
+        {{
+          lastAppointments?.length > 1
+            ? "Ultimele " + lastAppointments?.length + " programari"
+            : "Ultima programare"
+        }}</mat-card-title
+      >
+      <div *ngIf="lastAppointments" class="appointments-wrapper">
+        <div class="appointment title">
+          <p>Nume si prenume</p>
+          <p>Specialitate</p>
+          <p>Data programarii</p>
+          <p>Ora de inceput si sfarsit</p>
+          <p>Recenzie</p>
+        </div>
+        <div *ngFor="let appointment of lastAppointments" class="appointment">
+          <p>{{ appointment.firstName }} {{ appointment.lastName }}</p>
+          <p>{{ appointment.specialty }}</p>
+          <p>{{ appointment.startDate | date: "dd-MM-yyyy" }}</p>
+          <p>
+            {{ appointment.startDate | date: "hh:mm" }} -
+            {{ appointment.endDate | date: "hh:mm" }}
+          </p>
+          <p class="rating-container">
+            <ngx-material-rating
+              [color]="primary"
+              [dense]="true"
+              [readonly]="appointment?.points"
+              [max]="5"
+              [color]="warn"
+              [value]="appointment?.points"
+              (change)="onRatingChange(appointment, $event.value)"
+            >
+            </ngx-material-rating>
+          </p>
+        </div>
       </div>
-      <div *ngFor="let appointment of lastAppointments" class="appointment">
-        <p>{{ appointment.firstName }} {{ appointment.lastName }}</p>
-        <p>{{ appointment.specialty }}</p>
-        <p>{{ appointment.startDate | date: "dd-MM-yyyy" }}</p>
-        <p>
-          {{ appointment.startDate | date: "hh:mm" }} -
-          {{ appointment.endDate | date: "hh:mm" }}
-        </p>
-        <p class="rating-container">
-          <ngx-material-rating
-            [color]="primary"
-            [dense]="true"
-            [readonly]="appointment?.points"
-            [max]="5"
-            [color]="warn"
-            [value]="appointment?.points"
-            (change)="onRatingChange(appointment, $event.value)"
-          >
-          </ngx-material-rating>
-        </p>
-      </div>
-    </div>
+    </ng-template>
   </mat-card>
 </div>
