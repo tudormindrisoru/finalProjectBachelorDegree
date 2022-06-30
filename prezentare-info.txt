@@ -1,0 +1,7 @@
+prezentare:
+introducere,
+context,
+demo-uri (inregistare fara sunet a flow-urilor din aplicatie max 10 minute si vorbit peste demo),
+concluzii,
+contributii,
+viitoare posibile imbunatatiri
