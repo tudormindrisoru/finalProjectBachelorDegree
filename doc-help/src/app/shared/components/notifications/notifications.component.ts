@@ -1,3 +1,4 @@
+import { UpdateDoctorInfo } from './../../../store/actions/doctor.actions';
 import { NotificationService } from 'src/app/shared/services/notification/notification.service';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -22,7 +23,8 @@ import { first } from 'rxjs/operators';
 export class NotificationsComponent implements OnInit, OnDestroy {
   subscriber;
   pendingAppointments: Appointment[] = [];
-  doctor: Doctor;
+
+  officeInvitations: any[] = [];
   office: Office;
   constructor(
     private dialog: MatDialog,
@@ -30,14 +32,27 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     private store: Store
   ) {}
 
-  @Input() doctorId: number | undefined;
+  @Input() doctor: Doctor | undefined;
+
+  get bedgeNumber(): number {
+    return this.pendingAppointments.length + this.officeInvitations.length;
+  }
 
   ngOnInit(): void {
+    if (this.doctor.officeId) {
+      this.notificationService
+        .getPendingAppointments()
+        .subscribe((response: HttpResponse<Response<Appointment[]>>) => {
+          if (response.body.success) {
+            this.pendingAppointments = response.body.message;
+          }
+        });
+    }
     this.notificationService
-      .getPendingAppointments()
-      .subscribe((response: HttpResponse<Response<Appointment[]>>) => {
+      .getPendingOfficeInvitations()
+      .subscribe((response: HttpResponse<Response<any>>) => {
         if (response.body.success) {
-          this.pendingAppointments = response.body.message;
+          this.officeInvitations = response.body.message;
         }
       });
     this.subscriber = this.notificationService
@@ -45,15 +60,14 @@ export class NotificationsComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         const result: Notification = JSON.parse(JSON.parse(data.data).msg);
         if (!!result) {
-          if (result.type === NOTIFICATION_TYPE.APPOINTMENT_REQUEST) {
-            if (
-              result.message.doctorId &&
-              result.message.doctorId === this.doctorId
-            ) {
+          if (
+            result.type === NOTIFICATION_TYPE.APPOINTMENT_REQUEST &&
+            this.doctor.officeId
+          ) {
+            if (result.doctorId && result.doctorId === this.doctor.id) {
               this.notificationService
-                .getPendingAppointmentById(result.message.entryId)
+                .getPendingAppointmentById(result.entryId)
                 .subscribe((response: HttpResponse<Response<Appointment>>) => {
-                  console.log(response.body);
                   if (response.body.success) {
                     this.pendingAppointments.unshift(response.body.message);
                   }
@@ -61,27 +75,38 @@ export class NotificationsComponent implements OnInit, OnDestroy {
             }
           }
           if (result.type === NOTIFICATION_TYPE.OFFICE_INVITE) {
-            console.log('office invite');
+            if (!!result.doctorId && result.doctorId === this.doctor.id) {
+              this.notificationService
+                .getPendingOfficeInvitationById(result.entryId)
+                .subscribe((response: HttpResponse<Response<any>>) => {
+                  if (response.body.success) {
+                    this.officeInvitations.push(response.body.message);
+                  }
+                });
+            }
           }
         }
       });
-    console.log(this.subscriber);
   }
 
   openDialog(): void {
-    console.log('pendings = ', this.pendingAppointments);
     const dialogRef = this.dialog.open(NotificationsPopupComponent, {
-      width: '300px',
+      width: '350px',
       data: {
         appointments: this.pendingAppointments,
+        invitations: this.officeInvitations,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result.removedNotifications.length > 0) {
+      if (result.removeAppointmentNotifications.length > 0) {
         this.pendingAppointments = this.pendingAppointments.filter(
-          (a) => !result.removedNotifications.includes(a.id)
+          (a) => !result.removeAppointmentNotifications.includes(a.id)
         );
+      }
+
+      if (result.removeOfficeInvitationNotifications.length > 0) {
+        this.officeInvitations = [];
       }
     });
   }

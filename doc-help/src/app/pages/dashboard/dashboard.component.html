@@ -31,7 +31,8 @@
   </div>
 
   <app-notifications
-    *ngIf="office$ | async"
-    [doctorId]="user?.docId"
+    *ngIf="doctor$ | async"
+    [doctor]="doctor$ | async"
+    [office]="office$ | async"
   ></app-notifications>
 </div>

@@ -49,14 +49,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   addMarkOnMap(lat, lng): void {
     this.clearMarkers();
-    if (this.markersGroup) {
+    if (this.markersGroup && lat && lng) {
       const marker = new H.map.Marker({ lat, lng } as H.geo.Point);
       this.markersGroup.addObject(marker);
     }
   }
 
   addressSearch(value: string): any {
-    if (this.map && this.service) {
+    if (this.map && this.service && value !== '') {
       this.service.geocode(
         {
           q: value,
@@ -99,6 +99,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       });
       this.markersGroup = new H.map.Group();
       map.addObject(this.markersGroup);
+
       if (this.lat && this.lng) {
         this.addMarkOnMap(this.lat, this.lng);
       }

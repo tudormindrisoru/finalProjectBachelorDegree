@@ -30,8 +30,6 @@ export class DoctorGuard implements CanLoad, CanActivate {
   }
 
   canLoad(route: Route, segments: UrlSegment[]): boolean {
-    console.log('------------------------');
-
     return !!this.office;
   }
 
@@ -43,7 +41,6 @@ export class DoctorGuard implements CanLoad, CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    console.log('------------------------ 2');
     return !!this.office;
   }
 }

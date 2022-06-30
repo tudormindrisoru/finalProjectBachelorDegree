@@ -1,3 +1,5 @@
+import { UpdateDoctorInfo } from 'src/app/store/actions/doctor.actions';
+import { DoctorState } from './../../store/state/doctor.state';
 import { HttpResponse } from '@angular/common/http';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -9,6 +11,7 @@ import { Doctor, Office, Response, User } from 'src/app/shared/models/models';
 import { UpdateUser } from 'src/app/store/actions/user.actions';
 import { Observable } from 'rxjs';
 import { OfficeState } from 'src/app/store/state/office.state';
+import { ProfileService } from 'src/app/shared/services/profile/profile.service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -17,14 +20,15 @@ import { OfficeState } from 'src/app/store/state/office.state';
 export class DashboardComponent implements OnInit {
   @ViewChild('drawer', { static: false }) drawer: MatDrawer;
   user: User;
-  doctor: Doctor;
+  @Select(DoctorState) doctor$: Observable<Doctor>;
   @Select(OfficeState) office$: Observable<Office>;
   private initialSnapshot: any;
 
   constructor(
     private router: Router,
     private store: Store,
-    private authService: AuthService
+    private authService: AuthService,
+    private profileService: ProfileService
   ) {
     this.store
       .select((state) => state.user)
@@ -41,6 +45,17 @@ export class DashboardComponent implements OnInit {
           .subscribe((response: HttpResponse<Response<User>>) => {
             if (response.body.success) {
               this.store.dispatch(new UpdateUser(response.body.message));
+              if (response.body.message.docId) {
+                this.profileService
+                  .getDoctorInfo()
+                  .subscribe((response: HttpResponse<Response<Doctor>>) => {
+                    if (response.body.success) {
+                      this.store.dispatch(
+                        new UpdateDoctorInfo(response.body.message)
+                      );
+                    }
+                  });
+              }
             }
           });
       }

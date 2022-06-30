@@ -125,7 +125,6 @@ export class AuthDialogComponent implements OnInit {
         this.authService
           .smsSingInFirstStep({ phone: phone })
           .subscribe((response) => {
-            console.log(response);
             if (response.status === 201) {
               this.signInComponent.incrementSmsStep();
             }
@@ -146,7 +145,6 @@ export class AuthDialogComponent implements OnInit {
       };
       if (this.getSmsStep() === 2 && data.phone && data.code) {
         this.authService.smsSingInSecondStep(data).subscribe((response) => {
-          console.log(response);
           if (response.body.success && response.headers.get('Authorization')) {
             this.login(response.body.message);
             localStorage.setItem(
@@ -167,7 +165,6 @@ export class AuthDialogComponent implements OnInit {
       this.authService
         .authWithEmailAndPassword({ email, password })
         .subscribe((response: HttpResponse<Response<User>>) => {
-          console.log(response);
           if (response.body.success && response.headers.get('Authorization')) {
             this.login(response.body.message);
             localStorage.setItem(
@@ -191,7 +188,6 @@ export class AuthDialogComponent implements OnInit {
       };
       this.authService.register(data).subscribe((response) => {
         if (response.body.success) {
-          console.log('sms 1');
           this.signUpComponent.registerStep =
             this.signUpComponent.registerStep + 1;
         }
@@ -207,7 +203,6 @@ export class AuthDialogComponent implements OnInit {
       };
       this.authService.validateRegistration(data).subscribe((response) => {
         if (response.body.success) {
-          console.log('sms 2');
           this.signUpComponent.registerStep =
             this.signUpComponent.registerStep + 1;
         }

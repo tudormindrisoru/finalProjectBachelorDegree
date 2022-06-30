@@ -42,6 +42,7 @@ export class ProfileComponent implements OnInit {
   doctorFormGroup: FormGroup;
   officeFormGroup: FormGroup;
   addressOptions: SearchResult[] = [];
+  isLoading: boolean;
 
   @ViewChild('map') map: MapComponent;
 
@@ -64,23 +65,36 @@ export class ProfileComponent implements OnInit {
     private store: Store,
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+    this.isLoading = true;
+  }
+
+  get loading(): boolean {
+    return this.isLoading;
+  }
 
   async ngOnInit() {
     this.store
       .select((state) => state.user)
-      .pipe(first())
       .subscribe((user) => (this.user = user));
     this.store
       .select((state) => state.doctor)
-      .pipe(first())
       .subscribe((doctor) => (this.doctor = doctor));
     this.store
       .select((state) => state.office)
-      .pipe(first())
-      .subscribe((office) => (this.office = office));
-    // this.profileImage = this.profileService.getProfileImage(this.user.photo);
-    console.log('USER ', this.user);
+      .subscribe((office) => {
+        this.office = office;
+        if (this.officeFormGroup) {
+          this.officeFormGroup.controls.id.setValue(this.office.id);
+          this.officeFormGroup.controls.name.setValue(this.office.oName);
+          this.officeFormGroup.controls.address.setValue(this.office.address);
+          this.officeFormGroup.controls.latitude.setValue(this.office.latitude);
+          this.officeFormGroup.controls.longitude.setValue(
+            this.office.longitude
+          );
+        }
+      });
+
     if (!this.user) {
       if (!localStorage.getItem('Authorization')) {
         this.router.navigate(['/']);
@@ -107,12 +121,16 @@ export class ProfileComponent implements OnInit {
       lastName: new FormControl(this.user ? this.user.lastName : '', [
         Validators.required,
       ]),
-      phone: new FormControl(this.user ? this.user.phone : '', [
-        Validators.required,
-        Validators.minLength(10),
-        Validators.maxLength(10),
-      ]),
+      phone: new FormControl(
+        { value: this.user ? this.user.phone : '', disabled: true },
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(10),
+        ]
+      ),
     });
+    this.isLoading = false;
 
     this.doctorFormGroup = new FormGroup({
       cuim: new FormControl(
@@ -130,16 +148,17 @@ export class ProfileComponent implements OnInit {
     });
 
     this.officeFormGroup = new FormGroup({
+      id: new FormControl((this.office && this.office.id) || undefined),
       address: new FormControl((this.office && this.office.address) || '', [
         Validators.required,
       ]),
       name: new FormControl((this.office && this.office.oName) || '', [
         Validators.required,
       ]),
-      longitude: new FormControl((this.office && this.office.longitude) || '', [
+      longitude: new FormControl(this.office?.longitude || undefined, [
         Validators.required,
       ]),
-      latitude: new FormControl((this.office && this.office.latitude) || '', [
+      latitude: new FormControl(this.office?.latitude || undefined, [
         Validators.required,
       ]),
       city: new FormControl((this.office && this.office.city) || '', [
@@ -150,7 +169,6 @@ export class ProfileComponent implements OnInit {
     if (!!this.user?.docId) {
       this.store
         .select((state) => state.doctor)
-        .pipe(first())
         .subscribe((doc) => (this.doctor = doc));
       if (!this.doctor) {
         this.profileService
@@ -177,6 +195,7 @@ export class ProfileComponent implements OnInit {
                   this.office = response.body.message;
 
                   this.store.dispatch(new UpdateOfficeInfo(this.office));
+                  this.officeFormGroup.controls.id.setValue(this.office.id);
                   this.officeFormGroup.controls.name.setValue(
                     this.office.oName
                   );
@@ -242,8 +261,8 @@ export class ProfileComponent implements OnInit {
   get isDoctorInfoSaveButtonDisabled(): boolean {
     if (this.doctor) {
       if (
-        (this.doctorControls.cuim.value !== this.doctor.cuim ||
-          this.doctorControls.specialty.value !== this.doctor.specialty) &&
+        (this.doctorControls?.cuim?.value !== this.doctor?.cuim ||
+          this.doctorControls?.specialty?.value !== this.doctor?.specialty) &&
         this.doctorFormGroup.valid
       ) {
         return false;
@@ -285,16 +304,23 @@ export class ProfileComponent implements OnInit {
         .updatePhoto(file)
         .subscribe((response: HttpResponse<Response<any>>) => {
           if (response.body.success) {
-            this.user.photo = response.body.message.photo;
-            const doctorIndex = this.office?.doctors?.findIndex(
-              (doc) => doc.id === this.user?.docId
-            );
-            if (
-              doctorIndex !== -1 &&
-              this.office &&
-              this.office.doctors.length > 0
-            ) {
-              this.office.doctors[doctorIndex].user.photo = this.user.photo;
+            let userCopy = JSON.parse(JSON.stringify(this.user));
+            let officeCopy = JSON.parse(JSON.stringify(this.office));
+            userCopy.photo = response.body.message.photo;
+            this.store.dispatch(new UpdateUser(userCopy));
+            if (officeCopy) {
+              const doctorIndex = officeCopy?.doctors?.findIndex(
+                (doc) => doc.id === userCopy?.docId
+              );
+              if (
+                doctorIndex !== -1 &&
+                officeCopy &&
+                officeCopy.doctors.length > 0
+              ) {
+                officeCopy.doctors[doctorIndex].user.photo = userCopy.photo;
+
+                this.store.dispatch(new UpdateOfficeInfo(officeCopy));
+              }
             }
           }
         });
@@ -313,29 +339,54 @@ export class ProfileComponent implements OnInit {
         .saveUser(user)
         .subscribe((response: HttpResponse<Response<User>>) => {
           if (response.body.success || response.ok) {
-            this.user.firstName = this.userControls.firstName.value;
-            this.user.lastName = this.userControls.lastName.value;
-            this.user.phone = this.userControls.phone.value;
-            this.store.dispatch(new UpdateUser(this.user));
+            let userCopy = JSON.parse(JSON.stringify(this.user));
+
+            userCopy.firstName = this.userControls.firstName.value;
+            userCopy.lastName = this.userControls.lastName.value;
+            userCopy.phone = this.userControls.phone.value;
+            this.store.dispatch(new UpdateUser(userCopy));
           }
         });
     }
   }
-
   saveDoctor(): void {
+    if (this.doctor) {
+      this.updateDoctor();
+    } else {
+      this.addDoctor();
+    }
+  }
+
+  updateDoctor(): void {
     if (this.doctorFormGroup.valid) {
       let doctor: Doctor = {
         cuim: this.doctorControls.cuim.value,
         specialty: this.doctorControls.specialty.value,
       };
       this.profileService
-        .saveDoctor(doctor)
+        .updateDoctor(doctor)
         .subscribe((response: HttpResponse<Response<Doctor>>) => {
           if (response.body.success || response.ok) {
             this.doctor.cuim = doctor.cuim;
             this.doctor.specialty = doctor.specialty;
 
             this.store.dispatch(new UpdateDoctorInfo(this.doctor));
+          }
+        });
+    }
+  }
+
+  addDoctor(): void {
+    if (this.doctorFormGroup.valid) {
+      let doctor: Doctor = {
+        cuim: this.doctorControls.cuim.value,
+        specialty: this.doctorControls.specialty.value,
+      };
+      this.profileService
+        .addDoctor(doctor)
+        .subscribe((response: HttpResponse<Response<Doctor>>) => {
+          if (response.body.success || response.ok) {
+            this.store.dispatch(new UpdateDoctorInfo(response.body.message));
           }
         });
     }
@@ -351,12 +402,22 @@ export class ProfileComponent implements OnInit {
         city: this.officeControls.city.value,
       };
 
-      if (!this.office) {
+      if (!this.office?.id) {
         this.profileService
           .addOffice(office)
           .subscribe((response: HttpResponse<Response<Office>>) => {
-            if (response.body.success || response.ok) {
+            if (response.body.success) {
               this.office = response.body.message;
+              this.office.doctors = [
+                {
+                  id: this.doctor.id,
+                  user: {
+                    firstName: this.user.firstName,
+                    lastName: this.user.lastName,
+                    photo: this.user.photo,
+                  },
+                },
+              ];
               this.store.dispatch(new UpdateOfficeInfo(this.office));
             }
           });
@@ -374,7 +435,6 @@ export class ProfileComponent implements OnInit {
         .inviteDoctor(data)
         .subscribe((response: HttpResponse<Response<any>>) => {
           if (!!response.body && response.body.success) {
-            console.log(response.body);
           }
         });
     }
@@ -390,7 +450,7 @@ export class ProfileComponent implements OnInit {
           this.office.latitude = office.latitude;
           this.office.longitude = office.longitude;
           this.office.city = office.city;
-          console.log(this.office);
+
           this.store.dispatch(new UpdateOfficeInfo(this.office));
         }
       });
@@ -402,12 +462,12 @@ export class ProfileComponent implements OnInit {
         .removeOffice()
         .subscribe((response: HttpResponse<Response<any>>) => {
           if (response.body.success || response.ok) {
-            this.office = null;
             this.officeFormGroup.controls.name.setValue('');
             this.officeFormGroup.controls.address.setValue('');
             this.officeFormGroup.controls.latitude.setValue('');
             this.officeFormGroup.controls.longitude.setValue('');
-            this.store.dispatch(new RemoveOfficeInfo());
+            this.store.dispatch(new UpdateOfficeInfo(null));
+            this.map.clearMarkers();
           }
         });
     }
@@ -420,15 +480,13 @@ export class ProfileComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((data) => {
-      console.log('The dialog was closed', JSON.parse(data));
       data = JSON.parse(data);
-      console.log(data);
+
       if (data.success) {
-        console.log(title);
         if (title === 'Save user') {
           this.saveUser();
         }
-        if (title === 'Save doctor') {
+        if (title === 'Salveaza doctor') {
           this.saveDoctor();
         }
 
@@ -453,8 +511,13 @@ export class ProfileComponent implements OnInit {
   }
 
   onAddressSelect(result: SearchResult): void {
+    if (!this.office) {
+      this.office = {} as Office;
+    }
     this.officeFormGroup.controls['address'].setValue(result.address);
     this.officeFormGroup.controls['city'].setValue(result.county);
+    this.officeFormGroup.controls['longitude'].setValue(result.lng);
+    this.officeFormGroup.controls['latitude'].setValue(result.lat);
     this.office.longitude = result.lng;
     this.office.latitude = result.lat;
     this.office.city = result.county;

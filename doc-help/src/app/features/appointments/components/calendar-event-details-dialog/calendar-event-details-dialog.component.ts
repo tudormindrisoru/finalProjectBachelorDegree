@@ -4,7 +4,7 @@ import { ProfileService } from 'src/app/shared/services/profile/profile.service'
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { AppointmentsService } from 'src/app/shared/services/appointments/appointments.service';
 import { BehaviorSubject } from 'rxjs';
 
@@ -62,15 +62,9 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
-  onChange(event) {
-    console.log(event);
-  }
+  onChange(event) {}
+
   ngOnInit(): void {
-    // this.data.start = this.data.start.split('+')[0];
-    // if (!!this.data.id) {
-    //   this.data.end = this.data.end.split('+')[0];
-    // }
-    console.log('AICII = ', this.data);
     this.appointmentForm = new FormGroup({
       id: new FormControl(this.data && this.data.id ? this.data.id : null),
       title: new FormControl({
@@ -115,7 +109,6 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
     if (!!this.appointmentControls.id.value) {
       this.updateAppointment();
     } else {
-      console.log('CREATE APPOINTMENT 1');
       this.createAppointment();
     }
   }
@@ -150,21 +143,15 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
   }
 
   createAppointment(): void {
-    console.log(
-      !!this.selectedUser,
-      !this.isSaveButtonDisabled,
-      this.appointmentForm.valid
-    );
     if (
       !!this.selectedUser &&
       !this.isSaveButtonDisabled &&
       this.appointmentForm.valid
     ) {
       let { startTime, endTime } = this.appointmentControls;
-      startTime = this.dateToString(startTime.value);
 
-      endTime = this.dateToString(endTime.value);
-      console.log(startTime, endTime);
+      startTime = this.dateToString(startTime);
+      endTime = this.dateToString(endTime);
 
       const data = {
         patientId: this.selectedUser.id,
@@ -172,13 +159,11 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
         endDate: endTime,
         notes: this.appointmentControls.notes.value,
       };
-      console.log(data);
+
       this.appointmentsService
         .createApprovedAppointment(data)
         .subscribe((response: HttpResponse<Response<any>>) => {
-          console.log('responseeeeeeee');
           if (response.body.success) {
-            console.log(response.body.message);
             this.dialogRef.close(response.body.message);
           } else {
             this.onNoClick();
@@ -187,9 +172,7 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
     }
   }
 
-  onDeleteAppointment(): void {
-    console.log('DELETE');
-  }
+  onDeleteAppointment(): void {}
 
   onSearchPatients(e): void {
     const name = e.target.value;
@@ -219,7 +202,6 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
   }
 
   displayName(user: User): string {
-    console.log('USER=', user);
     if (!!user.firstName && !!user.lastName) {
       return user.firstName + ' ' + user.lastName;
     } else {
@@ -232,8 +214,6 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
   }
 
   onDateChange(value): void {
-    console.log(value);
-    console.log(this.appointmentControls.startTime.value);
     let newStartDateTime = this.appointmentControls.startTime.value;
     newStartDateTime = new Date(newStartDateTime).setDate(
       new Date(value).getDate()
@@ -257,7 +237,6 @@ export class CalendarEventDetailsDialogComponent implements OnInit {
 
     this.appointmentControls.startTime.setValue(new Date(newStartDateTime));
     this.appointmentControls.endTime.setValue(new Date(newEndDateTime));
-    console.log(2);
   }
 
   onNoClick(): void {

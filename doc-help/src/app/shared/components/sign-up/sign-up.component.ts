@@ -25,7 +25,15 @@ export class SignUpComponent implements OnInit {
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      phone: ['', Validators.required],
+      phone: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(
+            /^(?:(?:(?:00\s?|\+)40\s?|0)(?:7\d{2}\s?\d{3}\s?\d{3}|(21|31)\d{1}\s?\d{3}\s?\d{3}|((2|3)[3-7]\d{1})\s?\d{3}\s?\d{3}|(8|9)0\d{1}\s?\d{3}\s?\d{3}))$/
+          ),
+        ],
+      ],
       gdpr: [
         false,
         (control) => {

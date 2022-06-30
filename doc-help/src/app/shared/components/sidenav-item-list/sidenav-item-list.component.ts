@@ -18,31 +18,11 @@ export class SidenavItemListComponent implements OnInit {
   @Input() useLabels: boolean;
   @Input() openAction: boolean;
   @Output() toggleEvent = new EventEmitter();
-
-  office: Office;
   constructor(
     private router: Router,
     private notificationService: NotificationService,
     private store: Store
-  ) {
-    this.store
-      .select((state) => state.office)
-      .subscribe((res) => {
-        this.office = res;
-        if (this.office) {
-          this.itemList.splice(2, 0, {
-            icon: 'event_note',
-            label: 'Programari',
-            onClick: () => this.redirectTo('dashboard/appointments'),
-          });
-          this.itemList.push({
-            icon: 'people',
-            label: 'Istoricul pacientilor',
-            onClick: () => this.redirectTo('dashboard/patients'),
-          });
-        }
-      });
-  }
+  ) {}
 
   itemList = [];
   toggleButton = {};
@@ -64,19 +44,37 @@ export class SidenavItemListComponent implements OnInit {
       },
       {
         icon: 'medical_services',
-        label: 'Caută un doctor',
+        label: 'Cauta un doctor',
         onClick: () => this.redirectTo('dashboard/appointment-requests'),
       },
       {
         icon: 'settings',
-        label: 'Setări',
+        label: 'Setari',
         onClick: () => this.redirectTo('dashboard/profile'),
       },
     ];
 
+    this.store
+      .select((state) => state.doctor)
+      .subscribe((res) => {
+        if (res && res.officeId) {
+          if (this.itemList.length === 3) {
+            this.itemList.splice(2, 0, {
+              icon: 'event_note',
+              label: 'Programari',
+              onClick: () => this.redirectTo('dashboard/appointments'),
+            });
+            this.itemList.push({
+              icon: 'people',
+              label: 'Istoricul pacientilor',
+              onClick: () => this.redirectTo('dashboard/patients'),
+            });
+          }
+        }
+      });
     this.toggleButton = {
       icon: this.openAction ? 'navigate_next' : 'navigate_before',
-      label: this.openAction ? 'Extinde' : 'Minimizează',
+      label: this.openAction ? 'Extinde' : 'Minimizeaza',
     };
   }
 

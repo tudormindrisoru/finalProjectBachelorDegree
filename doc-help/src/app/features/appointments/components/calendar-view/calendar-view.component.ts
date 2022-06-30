@@ -72,7 +72,6 @@ export class CalendarViewComponent implements OnInit {
             const eventList = response.body.message.map(
               (element: Appointment) => {
                 // tslint:disable-next-line: no-unused-expression
-                console.log(element);
 
                 return {
                   id: element.id.toString(),
@@ -100,7 +99,6 @@ export class CalendarViewComponent implements OnInit {
     height: 525,
     editable: false,
     // eventDrop: function (eventDropInfo) {
-    //   console.log(eventDropInfo);
     // },
     allDaySlot: false,
     eventOverlap: false,
@@ -132,7 +130,6 @@ export class CalendarViewComponent implements OnInit {
   }
 
   handleEventClick(arg) {
-    console.log(arg.event.startStr, arg.event.endStr);
     const data = {
       start: arg.event.startStr,
       end: arg.event.endStr,
@@ -147,7 +144,6 @@ export class CalendarViewComponent implements OnInit {
   }
 
   onOpenEventDetailsDialog(arg): void {
-    console.log('arg ', arg);
     const dialogRef = this.dialog.open(CalendarEventDetailsDialogComponent, {
       width: '450px',
       data: arg,
@@ -162,7 +158,6 @@ export class CalendarViewComponent implements OnInit {
   }
 
   onAddAppointment(appointmnet): void {
-    console.log('onAddAppointment =', appointmnet);
     const data = {
       start: appointmnet.startDate,
       end: appointmnet.endDate,

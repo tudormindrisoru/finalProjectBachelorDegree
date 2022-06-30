@@ -9,6 +9,7 @@ import { environment } from 'src/environments/environment';
 @Injectable()
 export class ProfileService {
   private readonly SERVER_URL = environment.apiUrl;
+  private readonly DOCTORS_URL = this.SERVER_URL + '/doctors';
   private headerDict = {
     'Content-Type': 'application/json',
     // tslint:disable-next-line: object-literal-key-quotes
@@ -91,10 +92,9 @@ export class ProfileService {
       );
   }
 
-  saveDoctor(data): Observable<Response<Doctor>> {
-    const UPDATE_DOCTOR_INFO_URL = this.SERVER_URL + '/doctors';
+  updateDoctor(data): Observable<Response<Doctor>> {
     return this.http
-      .put<HttpResponse<Response<Doctor>>>(UPDATE_DOCTOR_INFO_URL, data, {
+      .put<HttpResponse<Response<Doctor>>>(this.DOCTORS_URL, data, {
         observe: 'response',
         headers: new HttpHeaders(this.jsonAuthHeader()),
       })
@@ -103,6 +103,18 @@ export class ProfileService {
         catchError(
           this.snackbarHandlerService.handleError('UPDATE_DOCTOR_INFO')
         )
+      );
+  }
+
+  addDoctor(data): Observable<Response<Doctor>> {
+    return this.http
+      .post<HttpResponse<Response<Doctor>>>(this.DOCTORS_URL, data, {
+        observe: 'response',
+        headers: new HttpHeaders(this.jsonAuthHeader()),
+      })
+      .pipe(
+        first(),
+        catchError(this.snackbarHandlerService.handleError('ADD_DOCTOR_INFO'))
       );
   }
 
@@ -137,7 +149,7 @@ export class ProfileService {
   }
 
   removeOffice(): Observable<Response<any>> {
-    const OFFICE_URL = this.SERVER_URL + '/office';
+    const OFFICE_URL = this.SERVER_URL + `/offices`;
     return this.http
       .delete<HttpResponse<Response<any>>>(OFFICE_URL, {
         observe: 'response',
@@ -152,7 +164,7 @@ export class ProfileService {
   }
 
   getDoctorsWithoutOffice(name): Observable<Response<Doctor[]>> {
-    const DOCTOR_URL = this.SERVER_URL + `/doctors/search-to-invite/${name}`;
+    const DOCTOR_URL = this.SERVER_URL + `/doctors/search/${name}`;
     return this.http
       .get<HttpResponse<Response<Doctor[]>>>(DOCTOR_URL, {
         observe: 'response',

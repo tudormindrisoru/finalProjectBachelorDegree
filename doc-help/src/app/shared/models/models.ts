@@ -70,10 +70,8 @@ export enum NOTIFICATION_TYPE {
 
 export interface Notification {
   type: NOTIFICATION_TYPE;
-  message: {
-    doctorId: number;
-    entryId: number;
-  };
+  doctorId: number;
+  entryId: number;
 }
 
 export interface SearchResult {

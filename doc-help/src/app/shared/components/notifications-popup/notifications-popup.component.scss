@@ -15,7 +15,7 @@
     margin-bottom: 0px !important;
 }
 
-.notification {
+.appointment-notification {
     width: 100%;
     height: auto;
 }
@@ -67,8 +67,22 @@
     color: #fff;
 }
 
-.appointment-section {
+.appointment-section, .invite-section {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     padding: 10px;
+}
+
+.invite-section {
+    & > p {
+        word-wrap: break-word;
+        text-align: center;
+    }
+
+    & > .invite-actions { 
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
 }

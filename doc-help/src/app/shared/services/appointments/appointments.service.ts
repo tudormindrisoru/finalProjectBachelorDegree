@@ -160,7 +160,6 @@ export class AppointmentsService {
   }
 
   rejectAppointment(id: number): Observable<Response<string>> {
-    console.log(this.jsonAuthHeader());
     return this.http
       .patch<HttpResponse<Response<any>>>(
         this.APPOINTMENT_URL + `/reject`,

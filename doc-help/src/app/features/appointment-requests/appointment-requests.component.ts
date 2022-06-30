@@ -114,13 +114,12 @@ export class AppointmentRequestsComponent implements OnInit {
           this.lastAppointments = response.body.message;
           let reviews = '';
           response.body.message.forEach((elem) => {
-            console.log(elem);
             if (!!elem.reviewId) {
               reviews += `,${elem.reviewId}`;
             }
           });
           reviews = reviews.slice(1);
-          console.log(reviews);
+
           if (reviews !== '') {
             this.appointmentsService
               .getRatings(reviews)
@@ -148,8 +147,6 @@ export class AppointmentRequestsComponent implements OnInit {
         if (response.body.success) {
           this.officeList = response.body.message;
           this.isOfficeFieldDisabled = false;
-          console.log(this.isOfficeFieldDisabled);
-          // this.specialtyList = response.body.message.map((element) => element);
         }
       });
   }
@@ -186,7 +183,7 @@ export class AppointmentRequestsComponent implements OnInit {
 
   onOfficeSelectionChange($event) {
     this.selectedOffice = $event.value;
-    console.log($event.value);
+
     this.appointmentsService
       .getDoctorsOptions($event.value.id)
       .subscribe((response: HttpResponse<Response<any[]>>) => {
@@ -226,7 +223,6 @@ export class AppointmentRequestsComponent implements OnInit {
           for (let obj in response.body.message) {
             this.selectedDoctor.schedule.push(response.body.message[obj]);
           }
-          console.log(this.selectedDoctor.schedule);
         }
       });
     this.vacationService
@@ -234,7 +230,6 @@ export class AppointmentRequestsComponent implements OnInit {
       .subscribe((response: HttpResponse<Response<Vacation[]>>) => {
         if (response.body.success) {
           this.selectedDoctor.vacation = response.body.message;
-          console.log('VACATIONS = ', this.selectedDoctor.vacation);
         }
       });
   }
@@ -277,7 +272,6 @@ export class AppointmentRequestsComponent implements OnInit {
       this.selectedDoctor?.vacation &&
       this.selectedDoctor?.vacation.length > 0
     ) {
-      console.log(d);
       for (const v of this.selectedDoctor.vacation) {
         if (
           new Date(v.startDate).getTime() <= date &&
@@ -325,8 +319,6 @@ export class AppointmentRequestsComponent implements OnInit {
   }
 
   openAppointmentRequestDialog(index) {
-    console.log(index);
-    console.log(this.selectedDoctor.appointmentOptions[index]);
     this.dialog.open(AppointmentRequestDialogComponent, {
       width: '350px',
       data: {
@@ -339,7 +331,6 @@ export class AppointmentRequestsComponent implements OnInit {
   }
 
   onRatingChange(a, v) {
-    console.log(a, v);
     this.appointmentsService
       .setRating(a.id, v)
       .subscribe((response: HttpResponse<Response<string>>) => {

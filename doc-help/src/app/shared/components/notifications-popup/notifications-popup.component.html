@@ -1,10 +1,41 @@
 <h1 mat-dialog-title>Notificari</h1>
 <div mat-dialog-content class="notification-content">
   <div
-    *ngIf="appointments && appointments?.length > 0; else noAppointments"
+    *ngIf="appointments || invitations; else noNotfications"
     class="notification"
   >
-    <div *ngFor="let a of appointments; let i = index" class="notification">
+    <div
+      class="invite-notification"
+      *ngFor="let invitation of invitations; let i = index"
+    >
+      <mat-divider *ngIf="i !== 0"></mat-divider>
+      <div class="invite-section">
+        <span> Invitatie de afiliere la cabinetul {{ invitation.oName }}</span>
+        <div class="invite-actions">
+          <button
+            (click)="onInvitationReject(invitation.inviteId)"
+            mat-raised-button
+            class="reject-button"
+          >
+            <mat-icon>cancel</mat-icon>
+            Respinge
+          </button>
+          <button
+            (click)="onInvitationAccept(invitation.inviteId)"
+            mat-raised-button
+            color="primary"
+            class="approve-button"
+          >
+            <mat-icon>check</mat-icon>
+            Accepta
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      *ngFor="let a of appointments; let i = index"
+      class="appointment-notification"
+    >
       <mat-divider *ngIf="i !== 0"></mat-divider>
       <div class="appointment-section" *ngIf="a">
         <div class="patient-name">
@@ -23,6 +54,7 @@
           <div style="margin-bottom: 4px">
             Ora incheierii: {{ a?.endDate | date: "HH:mm" }}
           </div>
+          <div style="margin-bottom: 4px">Motiv: {{ a?.reason }}</div>
         </div>
         <div class="notification-actions">
           <button
@@ -31,7 +63,7 @@
             class="reject-button"
           >
             <mat-icon>cancel</mat-icon>
-            Reject
+            Respinge
           </button>
           <button
             (click)="onAcceptAppointmentRequest(a.id)"
@@ -40,13 +72,13 @@
             class="approve-button"
           >
             <mat-icon>check</mat-icon>
-            Accept
+            Accepta
           </button>
         </div>
       </div>
     </div>
   </div>
-  <ng-template #noAppointments>
+  <ng-template #noNotfications>
     <p>Nu ai nici o notificare.</p>
   </ng-template>
 </div>

@@ -56,7 +56,6 @@ export class PatientsComponent implements OnInit {
   }
 
   initTableData(): void {
-    // console.log(this.appointments);
     this.appointments.forEach((element: Appointment) => {
       const startH = new Date(element.startDate).getHours();
       const startM = new Date(element.startDate).getMinutes();
@@ -79,22 +78,19 @@ export class PatientsComponent implements OnInit {
       this.tableData.push(data as HistoryAppointmentsTableRow);
     });
 
-    // console.log('data loaded: ',tableData);
     // this.dataSource = new MatTableDataSource<HistoryAppointmentsTableRow>(tableData);
     this.initPaginator();
   }
 
   onReportPatient(event: Event, history) {
     event.stopPropagation();
-    console.log(event, history);
+
     const HISTORY_INDEX = this.tableData.findIndex(
       (element) => element.id === history.id
     );
   }
 
-  onRowClick(row: any): void {
-    console.log(row);
-  }
+  onRowClick(row: any): void {}
 
   get currentDate(): Date {
     return new Date();

@@ -1,5 +1,5 @@
 <div class="feature-page">
-  <mat-card class="profile-card" *ngIf="user; else isLoading">
+  <mat-card class="profile-card" *ngIf="!loading && user; else isLoading">
     <div class="left-side">
       <input
         type="file"
@@ -26,18 +26,11 @@
             </mat-form-field>
             <mat-form-field appearance="fill">
               <mat-label>Numar telefon</mat-label>
-              <input
-                type="tel"
-                matInput
-                placeholder="ex 40000000"
-                formControlName="phone"
-                required
-              />
+              <input type="tel" matInput formControlName="phone" required />
               <mat-icon matSuffix color="primary">smartphone</mat-icon>
             </mat-form-field>
           </div>
           <button
-            [disabled]="isUserSaveButtonDisabled"
             mat-flat-button
             color="primary"
             class="material-button"
@@ -98,7 +91,7 @@
         color="primary"
         class="save-doctor-info-button"
         [disabled]="isDoctorInfoSaveButtonDisabled"
-        (click)="openDialog('Save doctor')"
+        (click)="openDialog('Salveaza doctor')"
         [ngStyle]="{ color: 'white' }"
       >
         Salveaza<mat-icon>save</mat-icon>
@@ -127,7 +120,7 @@
                   [disabled]="!ownerCheck"
                   required
                 />
-                <mat-error *ngIf="officeControls.name.invalid">
+                <mat-error *ngIf="officeControls?.name?.invalid">
                   {{
                     officeControls.name.errors.required
                       ? "*Campul numele cabinetului este necesar."
@@ -147,7 +140,7 @@
                   required
                   (keyup)="onAddressSearch($event)"
                 />
-                <mat-error *ngIf="officeControls.address.invalid">
+                <mat-error *ngIf="officeControls?.address?.invalid">
                   {{
                     officeControls.address.errors.required
                       ? "*Campul adresa cabinetului este necesar."
@@ -161,7 +154,7 @@
                 >
                   <mat-option
                     *ngFor="let option of addressOptions"
-                    matTooltip="{{ option.address }}"
+                    matTooltip="{{ option?.address }}"
                     [value]="option"
                     >{{ option?.address }}</mat-option
                   >
@@ -203,7 +196,7 @@
             <mat-icon>save</mat-icon>
           </button>
         </div>
-        <div class="affiliated-doctors">
+        <div class="affiliated-doctors" *ngIf="!!office">
           <h3 class="info-label">Doctori afiliati</h3>
           <div class="doctors-list noselect" *ngIf="office && office.doctors">
             <div *ngFor="let d of office.doctors" class="doctor-wrapper">

@@ -16,6 +16,8 @@ export class NotificationService {
   private readonly SERVER_URL = environment.apiUrl;
   private readonly PENDING_APPOINTMENTS_URL =
     this.SERVER_URL + '/appointments/pending';
+  private readonly PENDING_OFFICE_INVITATION_URL =
+    this.SERVER_URL + '/offices/invite';
   private headerDict = {
     'Content-Type': 'application/json',
     // tslint:disable-next-line: object-literal-key-quotes
@@ -72,6 +74,69 @@ export class NotificationService {
         catchError(
           this.snackbarHandlerService.handleError(
             'GET_PENDING APPOINTMENT_BY_ID'
+          )
+        )
+      );
+  }
+
+  getPendingOfficeInvitations(): Observable<Response<Appointment[]>> {
+    return this.http
+      .get<HttpResponse<Response<Appointment[]>>>(
+        this.PENDING_OFFICE_INVITATION_URL,
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        catchError(
+          this.snackbarHandlerService.handleError(
+            'GET_PENDING_OFFICE_INVITATIONS'
+          )
+        )
+      );
+  }
+
+  getPendingOfficeInvitationById(
+    id: number
+  ): Observable<Response<Notification>> {
+    return this.http
+      .get<HttpResponse<Response<Notification[]>>>(
+        this.PENDING_OFFICE_INVITATION_URL + `/${id}`,
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        catchError(
+          this.snackbarHandlerService.handleError(
+            'GET_PENDING_OFFICE_INVITATION_BY_ID'
+          )
+        )
+      );
+  }
+
+  respondToOfficeInvitation(
+    response: number,
+    officeInviteId: number
+  ): Observable<Response<any>> {
+    return this.http
+      .patch<HttpResponse<Response<any>>>(
+        this.PENDING_OFFICE_INVITATION_URL,
+        { response: response, officeInviteId: officeInviteId },
+        {
+          observe: 'response',
+          headers: new HttpHeaders(this.jsonAuthHeader()),
+        }
+      )
+      .pipe(
+        first(),
+        catchError(
+          this.snackbarHandlerService.handleError(
+            'PUT_PENDING_OFFICE_INVITATION_BY_ID'
           )
         )
       );

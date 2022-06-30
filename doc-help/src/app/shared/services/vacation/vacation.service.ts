@@ -66,7 +66,6 @@ export class VacationService {
   }
 
   saveVacation(vacation: Vacation): Observable<Response<any>> {
-    console.log(vacation);
     if (vacation.id < 0) {
       return this.createVacation(vacation);
     }

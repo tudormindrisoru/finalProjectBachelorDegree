@@ -55,14 +55,6 @@ export class AddOfficeDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  //   public handleAddressChange(address: Address) {
-  //     this.markerLat = address.geometry.location.lat();
-  //     this.markerLng = address.geometry.location.lng();
-  //     this.lat = this.markerLat;
-  //     this.lng = this.markerLng;
-  //     console.log(address);
-  // }
-
   handleMapChange(event: H.map.ChangeEvent) {
     if (event.newValue.lookAt) {
       const lookAt = event.newValue.lookAt;
@@ -72,7 +64,5 @@ export class AddOfficeDialogComponent implements OnInit {
     }
   }
 
-  onSaveOffice() {
-    console.log('TO BE CONTINUE');
-  }
+  onSaveOffice() {}
 }

@@ -81,13 +81,12 @@ export class ScheduleService {
       .pipe(
         first(),
         tap((result) => {
-          console.log('test', result);
           const r = {
             message: result.ok
-              ? 'Schedule interval created successfully.'
+              ? 'Intervalul a fost adaugat cu succes.'
               : undefined,
           } as Response<string>;
-          console.log(r);
+
           if (r.message) {
             this.snackbarHandlerService.handleSuccess(r);
           }
@@ -170,11 +169,11 @@ export class ScheduleService {
       )
     ) {
       this.snackbarHandlerService.handleInfo(
-        'Interval start time is higher than end time.'
+        'Intervalul de inceput trebuie sa fie mai mic decat cel de final.'
       );
       return false;
     }
-    console.log('alreadySaved = ', alreadySavedIntervals);
+
     const intervalOverlappingIndex = alreadySavedIntervals.value.findIndex(
       (element) =>
         (element.id !== intervalToSubmit.id ||
@@ -195,13 +194,12 @@ export class ScheduleService {
               this.hourToNumber(element.end)))
     );
     if (intervalOverlappingIndex !== -1) {
-      console.log(intervalToSubmit, intervalOverlappingIndex);
       this.snackbarHandlerService.handleInfo(
-        'Interval overlapping with other interval.'
+        'Intervalul ales se suprapune cu alte intervale.'
       );
       return false;
     }
-    console.log('asda');
+
     return true;
   }
 
@@ -214,10 +212,7 @@ export class ScheduleService {
     }
     const hours = total > 0 ? Math.floor(total / 60) : 0;
     const minutes = total - hours * 60;
-    console.log(
-      scheduleIntervals,
-      hours + 'h' + (minutes > 0 ? ' ' + minutes + 'm' : '')
-    );
+
     return hours + 'h' + (minutes > 0 ? ' ' + minutes + 'm' : '');
   }
 }

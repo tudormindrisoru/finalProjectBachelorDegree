@@ -32,11 +32,10 @@ export class UpdateScheduleDialogComponent implements OnInit {
   // tslint:disable-next-line: typedef
   async ngOnInit() {
     await this.getAllScheduleIntervals();
-    console.log('this');
+
     await this.getAllVacations();
 
     // this.initScheduleFormGroup();
-    // this.initVacationFormGroup();
   }
 
   async getAllScheduleIntervals() {
@@ -269,11 +268,9 @@ export class UpdateScheduleDialogComponent implements OnInit {
     this.vacationFormGroup = this.fb.group({
       intervals: intervalArray,
     });
-    console.log(this.vacationFormGroup.value, this.vacationList);
   }
 
   async getAllVacations() {
-    this.vacationList = [];
     this.vacationService
       .getMyVacations()
       .subscribe((response: HttpResponse<Response<Vacation[]>>) => {
@@ -281,11 +278,7 @@ export class UpdateScheduleDialogComponent implements OnInit {
           const [_, value] = entry;
           this.vacationList.push(value);
         });
-        console.log(this.vacationList);
-        if (this.vacationList.length > 0) {
-          console.log(this.vacationFormGroup);
-          this.initVacationFormGroup();
-        }
+        this.initVacationFormGroup();
       });
   }
 
@@ -343,7 +336,7 @@ export class UpdateScheduleDialogComponent implements OnInit {
           const vacationIndexInList = this.vacationList.findIndex(
             (v) => v.id === id
           );
-          console.log(vacationIndex, vacationIndexInList);
+
           if (vacationIndexInList) {
             this.vacationList.splice(vacationIndexInList, 1);
           }

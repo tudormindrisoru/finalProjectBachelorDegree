@@ -31,7 +31,6 @@ export class AppointmentRequestDialogComponent implements OnInit {
       .requestAppointment(data)
       .subscribe((response: HttpResponse<Response<string>>) => {
         if (response.body.success) {
-          console.log(response.body.message);
         }
       });
   }
