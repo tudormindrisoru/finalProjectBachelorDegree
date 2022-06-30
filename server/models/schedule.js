@@ -21,12 +21,10 @@ class Schedule {
       const GET_SCHEDULES = `SELECT id, weekDay, startTime, endTime FROM schedules WHERE doctorId = ${doctorId}`;
       const result = await db.execute(GET_SCHEDULES);
       if (!!result && !!result[0]) {
-        console.log("length = ", result[0].length);
         if (result[0].length > 0) {
           const schedules = await result[0].reduce(function (groups, item) {
             groups[+item.weekDay] = groups[item.weekDay] || [];
             groups[+item.weekDay].push(item);
-            console.log(groups);
             return groups;
           }, {});
           return new Response(200, true, schedules).getResponse();

@@ -16,45 +16,7 @@ const {
 } = require("../../validation");
 const Sse = require("../../models/sse");
 const User = require("../../models/user");
-
-router.put("/", verifyToken, async (req, res) => {
-  const { error } = approveAppointmentValidation(req.body);
-  if (error) {
-    res
-      .status(404)
-      .send(new Response(404, false, error.details[0].message).getResponse());
-    return;
-  }
-  const id = req.user.id;
-  const doctor = await Doctor.findOneByUserId(id);
-  const user = await User.findOneById(req.user.id);
-  if (doctor.success) {
-    if (!!doctor.message.officeId) {
-      const appointment = await Appointment.getPendingAppointmentById(
-        doctor.message.id,
-        req.body.id
-      );
-      const approveResult = await Appointment.approveAppointment(
-        doctor.message.id,
-        req.body.id
-      );
-      console.log(appointment);
-      res.status(approveResult.status).send(approveResult);
-      // await sendSMS(
-      //   `Programarea dumneavoastra la medicul ${user.message.firstName} ${user.message.lastName} a fost aprobata.`,
-      //   appointment.message.patient.phone
-      // );
-      return;
-    }
-    res
-      .status(403)
-      .send(
-        new Response(403, false, "Doctor without affiliation.").getResponse()
-      );
-    return;
-  }
-  res.status(doctor.status).send(doctor);
-});
+const schedule = require("node-schedule");
 
 router.post("/review", verifyToken, async (req, res) => {
   const { error } = appointmentReviewValidation(req.body);
@@ -84,23 +46,35 @@ router.patch("/approve", verifyToken, async (req, res) => {
   const user = await User.findOneById(req.user.id);
   if (doctor.success) {
     if (!!doctor.message.officeId) {
-      const approvedAppointment = await Appointment.approveAppointment(
-        doctor.message.id,
-        id
-      );
-
       const appointment = await Appointment.getPendingAppointmentById(
         doctor.message.id,
         id
       );
-      console.log("app ", appointment.message);
+
       if (appointment.success) {
-        // await sendSMS(
-        //   `Programarea dumneavoastra la medicul ${user.message.firstName} ${user.message.lastName} a fost aprobata.`,
-        //   appointment.message.patient.phone
-        // );
+        const approvedAppointment = await Appointment.approveAppointment(
+          doctor.message.id,
+          id
+        );
+        if (approvedAppointment.success) {
+          await sendSMS(
+            `Programarea dumneavoastra la medicul ${user.message.firstName} ${user.message.lastName} a fost aprobata.`,
+            appointment.message.patient.phone
+          );
+
+          const sendDate = new Date(appointment.message.startDate);
+          sendDate.setHours(sendDate.getHours() - 1);
+          schedule.scheduleJob(sendDate, function () {
+            // await sendSMS(
+            //   `Aveti o programare intr-o ora la doctorul ${user.message.firstName} ${user.message.lastName}.`,
+            //   appointment.message.patient.phone
+            // );
+          });
+        }
+        res.status(approvedAppointment.status).send(approvedAppointment);
+        return;
       }
-      res.status(approvedAppointment.status).send(approvedAppointment);
+      res.status(appointment.status).send(appointment);
       return;
     }
     res
@@ -128,30 +102,37 @@ router.patch("/reject", verifyToken, async (req, res) => {
   const user = await User.findOneById(req.user.id);
   if (doctor.success) {
     if (!!doctor.message.officeId) {
-      const rejectResult = await Appointment.rejectAppointment(
-        doctor.message.id,
-        id
-      );
-
       const appointment = await Appointment.getPendingAppointmentById(
         doctor.message.id,
         id
       );
-      console.log("app ", appointment.message);
       if (appointment.success) {
-        // await sendSMS(
-        //         `Programarea dumneavoastra la medicul ${user.message.firstName} ${user.message.lastName} a fost refuzata.`,
-        //         appointment.message.patient.phone
-        //       );
+        const rejectResult = await Appointment.rejectAppointment(
+          doctor.message.id,
+          id
+        );
+
+        await sendSMS(
+          `Programarea dumneavoastra la medicul ${user.message.firstName} ${user.message.lastName} a fost refuzata.`,
+          appointment.message.patient.phone
+        );
+        res.status(rejectResult.status).send(rejectResult);
+        return;
       }
-      res.status(rejectResult.status).send(rejectResult);
+      res
+        .status(404)
+        .send(
+          new Response(
+            404,
+            false,
+            "Cererea de programare nu a fost gasita."
+          ).getResponse()
+        );
       return;
     }
     res
       .status(403)
-      .send(
-        new Response(403, false, "Doctor without affiliation.").getResponse()
-      );
+      .send(new Response(403, false, "Doctor neafiliat.").getResponse());
     return;
   }
   res.status(doctor.status).send(doctor);
@@ -169,7 +150,6 @@ router.get("/approved", verifyToken, async (req, res) => {
   const doctor = await Doctor.findOneByUserId(id);
   if (doctor.success) {
     if (!!doctor.message.officeId) {
-      console.log(doctor.message);
       const appointments = await Appointment.getAllApprovedAppointments(
         doctor.message.id,
         req.query.startDate,
@@ -208,9 +188,15 @@ router.post("/approved", verifyToken, async (req, res) => {
           officeId: office.message.id,
           ...req.body,
         };
-        console.log("test data ", data);
         const appointment = await Appointment.save(data);
         res.status(appointment.status).send(appointment);
+
+        if (appointment.success) {
+          // await sendSMS(
+          //   `Aveti o programare la medicul ${doctor.message.firstName} ${doctor.message.lastName} la data ${new Date(appointment.message.startDate).toLocaleString()}.`,
+          //   appointment.message.patient.phone
+          // );
+        }
         return;
       }
 
@@ -257,7 +243,7 @@ router.put("/approved", verifyToken, async (req, res) => {
     res.status(doctor.status).send(doctor);
     return;
   }
-  res.status(400, false, "Invalid user id.");
+  res.status(400, false, "Datele utilizatorului invalide.");
 });
 
 router.get("/pending", verifyToken, async (req, res) => {
@@ -293,7 +279,7 @@ router.get("/pending/:id", verifyToken, async (req, res) => {
   }
   res
     .status(404)
-    .send(new Response(404, false, "Id si required!").getResponse());
+    .send(new Response(404, false, "Id-ul este necesar").getResponse());
 });
 
 router.get("/free-slots", verifyToken, async (req, res) => {
@@ -302,11 +288,7 @@ router.get("/free-slots", verifyToken, async (req, res) => {
     res
       .status(400)
       .send(
-        new Response(
-          400,
-          false,
-          "Date query parameter is requried."
-        ).getResponse()
+        new Response(400, false, "Parametrul date este necesar.").getResponse()
       );
     return;
   }
@@ -384,7 +366,7 @@ router.post("/ratings", verifyToken, async (req, res) => {
       .send(new Response(404, false, error.details[0].message).getResponse());
     return;
   }
-  console.log("REQ BODY ", req.body);
+  c;
   const ratingAdded = await Appointment.setRating(
     req.body.appointmentId,
     req.body.points

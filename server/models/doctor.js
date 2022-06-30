@@ -1,6 +1,6 @@
 const db = require("../config/db");
 const Response = require("../models/response");
-
+const { encrypt, decrypt } = require("../utils");
 class Doctor {
   _id;
   _cuim;
@@ -16,21 +16,37 @@ class Doctor {
     ];
   }
 
-  async save() {
+  static async save(userId, specialty, cuim) {
     try {
-      const INSERT_DOCTOR_SQL = `INSERT INTO doctors(cuim, specialty) VALUES("${this._cuim}","${this._specialty}")`;
-      const doctor = await db.execute(INSERT_DOCTOR_SQL);
-      if (doctor && doctor[0][0]) {
+      const GET_USER_SQL = `SELECT docId FROM users WHERE id =${userId}`;
+      const user = await db.execute(GET_USER_SQL);
+      if (!!user && !!user[0] && !!user[0][0].docId) {
         return new Response(
-          201,
-          true,
-          new Doctor(...doctor[0][0])
+          404,
+          false,
+          "Ai deja datele doctorului completate"
         ).getResponse();
+      }
+      console.log("cuim , specialty", cuim, specialty);
+      const INSERT_DOCTOR_SQL = `INSERT INTO doctors(cuim, specialty) VALUES("${cuim}","${specialty}")`;
+      const doctor = await db.execute(INSERT_DOCTOR_SQL);
+      console.log(doctor);
+      if (!!doctor && !!doctor[0] && doctor[0].affectedRows === 1) {
+        console.log("IN IF");
+        const UPDATE_USER_SQL = `UPDATE users SET docId = ${doctor[0].insertId} WHERE id = ${userId}`;
+        const updateRes = await db.execute(UPDATE_USER_SQL);
+        if (!!updateRes && !!updateRes[0] && updateRes[0].affectedRows === 1) {
+          const GET_DOCTOR = `SELECT * FROM doctors WHERE id = ${doctor[0].insertId}`;
+          const result = await db.execute(GET_DOCTOR);
+          if (!!result && result[0] && result[0][0]) {
+            return new Response(201, true, result[0][0]).getResponse();
+          }
+        }
       }
       return new Response(
         404,
         false,
-        "Doctorul nu a putut fi gasit."
+        "Doctorul nu a putut fi adaugat."
       ).getResponse();
     } catch (error) {
       console.error(error);
@@ -87,7 +103,17 @@ class Doctor {
 
   static async findAllWithoutAffiliation(name) {
     try {
-      const GET_DOCTORS_SQL = `SELECT u.firstName, u.lastName, u.photo, u.phone, d.id, d.specialty FROM users u JOIN doctors d ON u.docId = d.id WHERE (u.firstName LIKE '${name}%' OR u.lastName LIKE '${name}%') AND d.officeId IS NULL;`;
+      const GET_DOCTORS_SQL = `SELECT ${decrypt(
+        "u.firstName"
+      )} as 'firstName' ,${decrypt(
+        "u.lastName"
+      )} as 'lastName', u.photo,${decrypt(
+        "u.phone"
+      )} as 'phone', d.id, d.specialty FROM users u JOIN doctors d ON u.docId = d.id WHERE (${decrypt(
+        "u.firstName"
+      )} LIKE '${name}%' OR ${decrypt(
+        "u.firstName"
+      )} LIKE '${name}%') AND d.officeId IS NULL;`;
       const doctors = await db.execute(GET_DOCTORS_SQL);
       let res = [];
       if (!!doctors[0] && doctors[0].length > 0) {
@@ -114,7 +140,13 @@ class Doctor {
   static async getPatientHistory(doctorId) {
     //TO DO: update this request to get user form
     try {
-      const SQL_GET_PATIENT_HISTORY = `SELECT u.firstName, u.lastName, u.phone, u.photo, u.email, a.patientId, a.startDate, a.endDate, a.notes FROM users u JOIN appointments a ON a.patientId = u.id WHERE a.doctorId = ${doctorId} ORDER BY a.startDate DESC`;
+      const SQL_GET_PATIENT_HISTORY = `SELECT ${decrypt(
+        "u.firstName"
+      )} as 'firstName', ${decrypt("u.lastName")} as 'lastName' ,${decrypt(
+        "u.phone"
+      )} as 'phone', u.photo, ${decrypt(
+        "u.email"
+      )} as 'email', a.patientId, a.startDate, a.endDate, a.notes FROM users u JOIN appointments a ON a.patientId = u.id WHERE a.doctorId = ${doctorId} ORDER BY a.startDate DESC`;
       const result = await db.execute(SQL_GET_PATIENT_HISTORY);
       if (!!result && !!result[0]) {
         const mappedRes = result[0].map((e) => {

@@ -1,7 +1,7 @@
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 const saltRounds = 3;
-
+const { encrypt, decrypt } = require("../utils");
 const Response = require("./response");
 
 class User {
@@ -15,6 +15,23 @@ class User {
 
   async save() {
     try {
+      const CHECK_EXISTANCE = `SELECT id FROM users WHERE (${decrypt(
+        "email"
+      )} = '${this.email}' OR ${decrypt("phone")} = '${
+        this.phone
+      }') AND isVerified = 0`;
+      const exists = await db.execute(CHECK_EXISTANCE);
+      if (
+        !!exists &&
+        !!exists[0] &&
+        !!exists[0][0] &&
+        exists[0][0].length > 0
+      ) {
+        const DELETE_USER = `DELETE FROM users WHERE id = ${exists[0][0].id}`;
+        const DELETE_PHONE_AUTH = `DELETE FROM phone_auths WHERE phone = ${this.phone}`;
+        const deletePhoneAuths = await db.execute(DELETE_PHONE_AUTH);
+        const deleteUserResult = await db.execute(DELETE_USER);
+      }
       const encryptedPassword = await bcrypt.hash(this.password, saltRounds);
       const d = new Date();
       const createdDate = `${d.getFullYear()}-${d.getMonth() + 1}-${
@@ -24,8 +41,11 @@ class User {
       }${d.getMinutes()}`;
       const SQL = `INSERT INTO 
             users(firstName,lastName,email,password,phone,createdAt) 
-            VALUES('${this.firstName}','${this.lastName}','${this.email}','${encryptedPassword}','${this.phone}','${createdDate}');`;
-
+            VALUES(${encrypt(this.firstName)},${encrypt(
+        this.lastName
+      )},${encrypt(this.email)},'${encryptedPassword}',${encrypt(
+        this.phone
+      )},'${createdDate}');`;
       const user = await db.execute(SQL);
       if (user) {
         return new Response(201, true, "Utilizator inregistrat!").getResponse();
@@ -54,7 +74,17 @@ class User {
 
   static async findAllByName(name, id) {
     try {
-      const GET_USERS_SQL = `SELECT * FROM users WHERE (firstName LIKE '${name}%' OR lastName LIKE '${name}%') AND isVerified = 1 AND id != ${id}`;
+      const GET_USERS_SQL = `SELECT id,${decrypt(
+        "firstName"
+      )} as 'firstName',${decrypt("lastName")} as 'lastName',${decrypt(
+        "email"
+      )} as 'email', ${decrypt(
+        "phone"
+      )} as 'phone',docId,photo,createdAt,isVerified FROM users WHERE (${decrypt(
+        "firstName"
+      )} LIKE '${name}%' OR ${decrypt(
+        "lastName"
+      )} LIKE '${name}%') AND isVerified = 1 AND id != ${id}`;
       const users = await db.execute(GET_USERS_SQL);
       let res = [];
       if (!!users[0] && users[0].length > 0) {
@@ -77,11 +107,18 @@ class User {
 
   static async findOneByEmailAndPass(email, password) {
     try {
-      const SQL_USER_QUERY = `SELECT * FROM users WHERE email='${email}'`;
+      const SQL_USER_QUERY = `SELECT id,${decrypt(
+        "firstName"
+      )} as 'firstName',${decrypt("lastName")} as 'lastName',${decrypt(
+        "email"
+      )} as 'email', ${decrypt(
+        "phone"
+      )} as 'phone',docId,password,photo,createdAt,isVerified FROM users WHERE ${decrypt(
+        "email"
+      )}='${email}'`;
       const user = await db.execute(SQL_USER_QUERY);
       if (user) {
         if (user[0][0].isVerified) {
-          console.log(bcrypt.decodeBase64(user[0][0].password));
           const passMatch = await bcrypt.compare(password, user[0][0].password);
           if (passMatch) {
             delete user[0][0].password;
@@ -109,13 +146,18 @@ class User {
 
   static async findOneByPhone(phone) {
     try {
-      console.log("findOneByPhone= ", phone);
-      const SQL_USER_QUERY = `SELECT * FROM users WHERE phone='${phone}'`;
+      const SQL_USER_QUERY = `SELECT id,${decrypt(
+        "firstName"
+      )} as 'firstName',${decrypt("lastName")} as 'lastName',${decrypt(
+        "email"
+      )} as 'email', ${decrypt(
+        "phone"
+      )} as 'phone',docId,photo,createdAt,isVerified FROM users WHERE ${decrypt(
+        "phone"
+      )}='${phone}'`;
       const user = await db.execute(SQL_USER_QUERY);
       if (user) {
-        console.log(user[0][0]);
         if (user[0][0].isVerified) {
-          delete user[0][0].password;
           return new Response(200, true, user[0][0]).getResponse();
         } else {
           return new Response(
@@ -154,13 +196,11 @@ class User {
     try {
       const SQL_UDDATE_USER =
         `UPDATE users SET ` +
-        (data.firstName ? `firstName='${data.firstName}',` : "") +
-        (data.lastName ? `lastName='${data.lastName}', ` : "") +
-        (data.phone ? `phone='${data.phone}'` : "") +
+        (data.firstName ? `firstName=${encrypt(data.firstName)},` : "") +
+        (data.lastName ? `lastName=${encrypt(data.lastName)} ` : "") +
         ` WHERE id=${id};`;
       const updatedUser = await db.execute(SQL_UDDATE_USER);
       if (updatedUser[0].affectedRows === 1) {
-        console.log("updated USER = ", updatedUser);
         return new Response(200, true, updatedUser[0][0]).getResponse();
       } else {
         return new Response(
@@ -177,7 +217,17 @@ class User {
 
   static async filterUsersByName(name) {
     try {
-      const GET_DOCTORS_SQL = `SELECT * FROM users WHERE (firstName LIKE '${name}%' OR lastName LIKE '${name}%') AND isVerified=1;`;
+      const GET_DOCTORS_SQL = `SELECT id,${decrypt(
+        "firstName"
+      )} as 'firstName',${decrypt("lastName")} as 'lastName',${decrypt(
+        "email"
+      )} as 'email', ${decrypt(
+        "phone"
+      )} as 'phone',docId,photo,createdAt,isVerified FROM users WHERE (${decrypt(
+        "firstName"
+      )} LIKE '${name}%' OR ${decrypt(
+        "lastName"
+      )} LIKE '${name}%') AND isVerified=1;`;
       const users = await db.execute(GET_DOCTORS_SQL);
       let res = [];
       if (!!doctors[0] && doctors[0].length > 0) {
@@ -203,8 +253,9 @@ class User {
 
   async validate() {
     try {
-      const SQL_VALIDATE_USER = `UPDATE users SET isVerified = 1 WHERE phone='${this.phone}'`;
-      console.log(SQL_VALIDATE_USER);
+      const SQL_VALIDATE_USER = `UPDATE users SET isVerified = 1 WHERE ${decrypt(
+        "phone"
+      )}='${this.phone}'`;
       const [results, buff] = await db.execute(SQL_VALIDATE_USER);
       if (results && results.affectedRows) {
         return true;
@@ -218,10 +269,15 @@ class User {
 
   static async findOneById(id) {
     try {
-      const GET_USER_SQL = `SELECT * FROM users WHERE id=${id} AND isVerified = 1`;
+      const GET_USER_SQL = `SELECT id,${decrypt(
+        "firstName"
+      )} as 'firstName',${decrypt("lastName")} as 'lastName',${decrypt(
+        "email"
+      )} as 'email', ${decrypt(
+        "phone"
+      )} as 'phone',docId,photo,createdAt,isVerified FROM users WHERE id=${id} AND isVerified = 1`;
       const user = await db.execute(GET_USER_SQL);
       if (!!user && !!user[0] && !!user[0][0]) {
-        delete user[0][0].password;
         return new Response(200, true, user[0][0]).getResponse();
       }
       return new Response(404, false, "Utilizatorul nu exista.").getResponse();
@@ -233,10 +289,15 @@ class User {
 
   static async findOneByDoctorId(id) {
     try {
-      const GET_USER_SQL = `SELECT * FROM users WHERE docId=${id} AND isVerified = 1`;
+      const GET_USER_SQL = `SELECT id,${decrypt(
+        "firstName"
+      )} as 'firstName',${decrypt("lastName")} as 'lastName',${decrypt(
+        "email"
+      )} as 'email', ${decrypt(
+        "phone"
+      )} as 'phone',docId,photo,createdAt,isVerified FROM users WHERE docId=${id} AND isVerified = 1`;
       const user = await db.execute(GET_USER_SQL);
       if (!!user && !!user[0] && !!user[0][0]) {
-        delete user[0][0].password;
         return new Response(200, true, user[0][0]).getResponse();
       }
       return new Response(404, false, "Utilizatorul nu exista.").getResponse();

@@ -191,6 +191,14 @@ const setRatingValidation = (request) => {
   return schema.validate(request);
 };
 
+const putOfficeInvitation = (request) => {
+  const schema = Joi.object({
+    response: Joi.number().min(0).max(1).required(),
+    officeInviteId: Joi.number().required(),
+  });
+  return schema.validate(request);
+};
+
 module.exports = {
   passwordLogInValidation,
   phoneLogInStep1Validation,
@@ -213,4 +221,5 @@ module.exports = {
   approveAppointmentValidation,
   appointmentReviewValidation,
   setRatingValidation,
+  putOfficeInvitation,
 };

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { verifyToken } = require("../../middlewares/auth");
-const scheduleController = require("./schedule/schedule-controller");
-const vacationController = require("./vacation/vacation-controller");
+const scheduleController = require("../schedule/schedule-controller");
+const vacationController = require("../vacation/vacation-controller");
 
 const {
   postDoctorValidation,
@@ -33,8 +33,11 @@ router.post("/", verifyToken, async (req, res) => {
       .send(new Response(400, false, error.details[0].message).getResponse());
     return;
   }
-  const doctor = new Doctor(null, req.body.cuim, req.body.specialty, null);
-  const dbResponse = await doctor.save();
+  const dbResponse = await Doctor.save(
+    req.user.id,
+    req.body.specialty,
+    req.body.cuim
+  );
   res.status(dbResponse.status).send(dbResponse);
 });
 
@@ -55,7 +58,7 @@ router.put("/", verifyToken, async (req, res) => {
   res.status(doctor.status).send(doctor);
 });
 
-router.get("/search-to-invite/:name", verifyToken, async (req, res) => {
+router.get("/search/:name", verifyToken, async (req, res) => {
   const name = req.params.name;
   if (!!name) {
     const doctors = await Doctor.findAllWithoutAffiliation(name);
@@ -84,9 +87,5 @@ router.get("/patient-history", verifyToken, async (req, res) => {
   }
   res.status(doctor.status).send(doctor);
 });
-
-// router.get("/reviews", verifyToken, async (req, res) => {
-
-// });
 
 module.exports = router;

@@ -24,7 +24,6 @@ class Sse {
   }
 
   static async emitEvent(message) {
-    console.log("emit , ", message);
     Stream.emit("push", "message", { msg: JSON.stringify(message) });
   }
 }

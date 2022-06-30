@@ -13,12 +13,7 @@ app.use(
 
 dotenv.config();
 
-const authController = require("./routes/auth/auth-controller");
-const userController = require("./routes/user/user-controller");
-const doctorController = require("./routes/doctor/doctor-controller");
-const officeController = require("./routes/office/office-controller");
-const appointmentController = require("./routes/appointment/appointment-controller");
-const sseController = require("./routes/sse/sse-controller");
+const routes = require("./routes/routes");
 
 // middlewares
 app.use(express.json());
@@ -36,12 +31,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use(process.env.PHOTOS_DIR, express.static("photos"));
-app.use("/api/auth", authController);
-app.use("/api/doctors", doctorController);
-app.use("/api/users", userController);
-app.use("/api/offices", officeController);
-app.use("/api/appointments", appointmentController);
-app.use("/api/sse", sseController);
-//  app.use('/api/patient', patientController);
+app.use("/api", routes);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));

@@ -1,11 +1,11 @@
-const { verifyToken } = require("../../../middlewares/auth");
+const { verifyToken } = require("../../middlewares/auth");
 const router = require("express").Router();
 
-const Doctor = require("../../../models/doctor");
-const Vacation = require("../../../models/vacation");
-const Response = require("../../../models/response");
+const Doctor = require("../../models/doctor");
+const Vacation = require("../../models/vacation");
+const Response = require("../../models/response");
 
-const { vacationValidation } = require("../../../validation");
+const { vacationValidation } = require("../../validation");
 
 router.get("/:id", verifyToken, async (req, res) => {
   const doctorId = req.params.id;
@@ -17,7 +17,6 @@ router.get("/:id", verifyToken, async (req, res) => {
       );
     return;
   }
-  console.log("ID vacation = ", doctorId);
   const vacations = await Vacation.getVacationsByDoctorId(doctorId);
   res.status(vacations.status).send(vacations);
 });
@@ -45,7 +44,6 @@ router.post("/", verifyToken, async (req, res) => {
   const doctor = await Doctor.findOneByUserId(req.user.id);
   if (doctor.success) {
     const vacation = await Vacation.create(req.body, doctor.message.id);
-    console.log(vacation);
     res.status(vacation.status).send(vacation);
     return;
   }

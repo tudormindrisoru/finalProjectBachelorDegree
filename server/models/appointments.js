@@ -1,7 +1,7 @@
 const db = require("../config/db");
 const Response = require("../models/response");
 const Vacation = require("../models/vacation");
-
+const { encrypt, decrypt } = require("../utils");
 class Appointment {
   id;
   doctorId;
@@ -33,7 +33,6 @@ class Appointment {
   }
 
   static convertDateToString(date) {
-    console.log("DATE = ", date);
     const result =
       new Date(date).getFullYear().toString() +
       "-" +
@@ -46,31 +45,34 @@ class Appointment {
         ? "0" + new Date(date).getDate()
         : new Date(date).getDate()
       ).toString();
-    console.log("result DATE = ", result);
+
     return result;
   }
 
   static convertTimeToString(time) {
-    console.log("TIME = ", time);
     const result =
       (Math.floor(time / 60).toString().length < 2
         ? "0" + Math.floor(time / 60)
         : Math.floor(time / 60)) +
       ":" +
       ((time % 60).toString().length < 2 ? "0" + (time % 60) : time % 60);
-    console.log("TIME result =", result);
+
     return result;
   }
 
   static async getAllApprovedAppointments(docId, startDate, endDate) {
     try {
       const start = Appointment.convertDateToString(startDate);
-      // .toISOString().split('T')[0] + ' ' + new Date(startDate).toISOString().split('T')[1].split('.')[0];
+
       const end = Appointment.convertDateToString(endDate);
-      // .toISOString().split('T')[0] + ' ' +new Date(endDate).toISOString().split('T')[1].split('.')[0];
-      // end+= (' ' + end.split('.')[0]);
-      console.log(start, " ", end);
-      const GET_APPOINTMENTS_SQL = `SELECT u.firstName, u.lastName, u.photo, u.phone, a.doctorId, a.officeId, a.patientId, a.startDate, a.endDate, a.notes, a.reason, a.id FROM appointments a JOIN users u ON a.patientId = u.id WHERE a.doctorId=${docId} AND ((a.startDate BETWEEN DATE_FORMAT('${start}', "%Y-%m-%d %H:%i:%s") AND DATE_FORMAT('${end}', "%Y-%m-%d %H:%i:%s")) OR (a.endDate BETWEEN DATE_FORMAT('${start}', "%Y-%m-%d %H:%i:%s") AND DATE_FORMAT('${end}', "%Y-%m-%d %H:%i:%s"))) AND isApproved=1`;
+
+      const GET_APPOINTMENTS_SQL = `SELECT ${decrypt(
+        "u.firstName"
+      )} as 'firstName', ${decrypt(
+        "u.lastName"
+      )} as 'lastName', u.photo, ${decrypt(
+        "u.phone"
+      )} as 'phone', a.doctorId, a.officeId, a.patientId, a.startDate, a.endDate, a.notes, a.reason, a.id FROM appointments a JOIN users u ON a.patientId = u.id WHERE a.doctorId=${docId} AND ((a.startDate BETWEEN DATE_FORMAT('${start}', "%Y-%m-%d %H:%i:%s") AND DATE_FORMAT('${end}', "%Y-%m-%d %H:%i:%s")) OR (a.endDate BETWEEN DATE_FORMAT('${start}', "%Y-%m-%d %H:%i:%s") AND DATE_FORMAT('${end}', "%Y-%m-%d %H:%i:%s"))) AND isApproved=1`;
       const appointments = await db.execute(GET_APPOINTMENTS_SQL);
       let res = appointments && appointments[0] ? appointments[0] : [];
       if (res.length > 0) {
@@ -92,7 +94,6 @@ class Appointment {
             },
           };
         });
-        console.log(res);
       }
       return new Response(200, true, res).getResponse();
     } catch (err) {
@@ -103,7 +104,6 @@ class Appointment {
 
   static async save(data) {
     try {
-      console.log("DATA ", data);
       if (
         new Date(data.startDate).getTime() > new Date(data.endDate).getTime()
       ) {
@@ -114,8 +114,7 @@ class Appointment {
         ).getResponse();
       }
       const GET_APPOINTMENTS_SQL = `SELECT * FROM appointments WHERE (startDate >= '${data.startDate}' AND startDate < '${data.endDate}') OR (endDate > '${data.startDate}' AND endDate <= '${data.endDate}') OR (startDate <= '${data.startDate}' AND '${data.endDate}' <= endDate)`;
-      console.log("save appointment = ", data);
-      console.log(GET_APPOINTMENTS_SQL);
+
       const appointments = await db.execute(GET_APPOINTMENTS_SQL);
 
       if (!!appointments && !!appointments[0] && !!appointments[0][0]) {
@@ -136,7 +135,7 @@ class Appointment {
         };
 
         const INSERT_APPOINTMENT_SQL = `INSERT INTO appointments (doctorId, officeId, patientId, startDate, endDate, notes, isApproved) VALUES(${data.doctorId},${data.officeId}, ${data.patientId},'${data.startDate}', '${data.endDate}','${data.notes}',1)`;
-        console.log("INSERT APPOINTMENsT SQL = ", INSERT_APPOINTMENT_SQL);
+
         const insertExecution = await db.execute(INSERT_APPOINTMENT_SQL);
         if (!!insertExecution && !!insertExecution[0]) {
           const get_appointment = `SELECT * FROM appointments WHERE doctorId = ${data.doctorId} AND patientId = ${data.patientId} ORDER BY id DESC LIMIT 1`;
@@ -146,7 +145,15 @@ class Appointment {
             appointmment_res[0] &&
             appointmment_res[0][0]
           ) {
-            const get_patient = `SELECT id,firstName,lastName,email,phone,photo FROM users WHERE id = ${appointmment_res[0][0].patientId}`;
+            const get_patient = `SELECT id, ${decrypt(
+              "firstName"
+            )} as 'firstName', ${decrypt("lastName")} as 'lastName', ${decrypt(
+              "email"
+            )} as 'email', ${decrypt(
+              "phone"
+            )} as 'phone',photo FROM users WHERE id = ${
+              appointmment_res[0][0].patientId
+            }`;
             const patient = await db.execute(get_patient);
             let result = appointmment_res[0][0];
             delete result.patientId;
@@ -174,6 +181,9 @@ class Appointment {
     }
   }
 
+  // ${this.convertDateToString(appointment.startDate)} ${new Date(appointment.startDate).toLocaleTimeString()}
+  // ${this.convertDateToString(appointment.endDate)} ${new Date(appointment.endDate).toLocaleTimeString()}
+
   static async update(appointment) {
     try {
       if (
@@ -186,15 +196,32 @@ class Appointment {
           "Data de start trebuie sa fie mai mica decat cea de sfarsit."
         ).getResponse();
       }
-      const GET_APPOINTMENTS_SQL = `SELECT * FROM appointments WHERE (startDate >= '${appointment.startDate}' AND startDate < '${appointment.endDate}') OR (endDate > '${appointment.startDate}' AND endDate <= '${appointment.endDate}') OR (startDate <= '${appointment.startDate}' AND '${appointment.endDate}' <= endDate) AND id != ${appointment.id}`;
-      console.log("save appointment = ", appointment);
-      console.log(GET_APPOINTMENTS_SQL);
+      const GET_APPOINTMENTS_SQL = `SELECT * FROM appointments WHERE (startDate >= '  ${this.convertDateToString(
+        appointment.startDate
+      )} ${new Date(
+        appointment.startDate
+      ).toLocaleTimeString()}' AND startDate < '${this.convertDateToString(
+        appointment.endDate
+      )} ${new Date(
+        appointment.endDate
+      ).toLocaleTimeString()}') OR (endDate > '${this.convertDateToString(
+        appointment.startDate
+      )} ${new Date(
+        appointment.startDate
+      ).toLocaleTimeString()}' AND endDate <= '${this.convertDateToString(
+        appointment.endDate
+      )} ${new Date(
+        appointment.endDate
+      ).toLocaleTimeString()}') OR (startDate <= '${this.convertDateToString(
+        appointment.startDate
+      )} ${new Date(
+        appointment.startDate
+      ).toLocaleTimeString()}' AND '${this.convertDateToString(
+        appointment.endDate
+      )} ${new Date(
+        appointment.endDate
+      ).toLocaleTimeString()}' <= endDate) AND id != ${appointment.id}`;
       const appointments = await db.execute(GET_APPOINTMENTS_SQL);
-      console.log("appointment get resp = ", appointments[0][0]);
-      console.log(
-        "EXIST = ",
-        !!appointments && !!appointments[0] && !!appointments[0][0]
-      );
       if (!!appointments && !!appointments[0] && !!appointments[0][0]) {
         return new Response(
           409,
@@ -225,7 +252,6 @@ class Appointment {
         )}  ${new Date(appointment.endDate).toLocaleTimeString()}', notes='${
           appointment.notes
         }' WHERE id = ${appointment.id} AND isApproved = 1`;
-        console.log("UPDATE APPOINTMENT SQL = ", UPDATE_APPOINTMENT_SQL);
         const updateRes = await db.execute(UPDATE_APPOINTMENT_SQL);
         if (!!updateRes && !!updateRes[0] && updateRes[0].affectedRows === 1) {
           return new Response(
@@ -249,9 +275,12 @@ class Appointment {
 
   static async getAllPendingAppointments(doctorId) {
     try {
-      const GET_NOT_APPROVED_APPOINTMENTS_SQL = `SELECT a.id, a.startDate, a.endDate, a.notes, a.isApproved, p.id AS 'patientId' ,p.firstName, p.lastName, p.phone, p.photo FROM appointments a JOIN users p ON a.patientId = p.id WHERE a.isApproved IS NULL AND a.doctorId = ${doctorId}`;
+      const GET_NOT_APPROVED_APPOINTMENTS_SQL = `SELECT a.id, a.startDate, a.endDate, a.notes, a.reason, a.isApproved, p.id AS 'patientId' , ${decrypt(
+        "p.firstName"
+      )} as 'firstName', ${decrypt("p.lastName")} as 'lastName', ${decrypt(
+        "p.phone"
+      )} as 'phone', p.photo FROM appointments a JOIN users p ON a.patientId = p.id WHERE a.isApproved IS NULL AND a.doctorId = ${doctorId}`;
       const result = await db.execute(GET_NOT_APPROVED_APPOINTMENTS_SQL);
-      console.log("181 ", result);
       if (!!result && result[0]) {
         const mappedResult = result[0].map((element) => {
           return {
@@ -260,6 +289,7 @@ class Appointment {
             endDate: element.endDate,
             notes: element.notes,
             isApproved: element.isApproved,
+            reason: element.reason,
             patient: {
               id: element.patientId,
               firstName: element.firstName,
@@ -334,8 +364,11 @@ class Appointment {
 
   static async getPendingAppointmentById(doctorId, appointmentId) {
     try {
-      const SQL_GET_PENDING_APPOINTMENT = `SELECT a.id, a.startDate, a.endDate, a.notes, a.isApproved, p.id AS 'patientId' ,p.firstName, p.lastName, p.phone, p.photo FROM appointments a JOIN users p ON a.patientId = p.id WHERE a.isApproved IS NULL AND a.doctorId = ${doctorId} AND a.id = ${appointmentId}`;
-      console.log(SQL_GET_PENDING_APPOINTMENT);
+      const SQL_GET_PENDING_APPOINTMENT = `SELECT a.id, a.reason, a.startDate, a.endDate, a.notes, a.isApproved, p.id AS 'patientId' , ${decrypt(
+        "p.firstName"
+      )} as 'firstName',${decrypt("p.lastName")} as 'lastName' ,${decrypt(
+        "p.phone"
+      )} as 'phone', p.photo FROM appointments a JOIN users p ON a.patientId = p.id WHERE a.isApproved IS NULL AND a.doctorId = ${doctorId} AND a.id = ${appointmentId}`;
       const result = await db.execute(SQL_GET_PENDING_APPOINTMENT);
       if (!!result && !!result[0] && !!result[0][0]) {
         const pendingRequest = {
@@ -344,6 +377,7 @@ class Appointment {
           endDate: result[0][0].endDate,
           notes: result[0][0].notes,
           isApproved: result[0][0].isApproved,
+          reason: result[0][0].reason,
           patient: {
             id: result[0][0].patientId,
             firstName: result[0][0].firstName,
@@ -368,10 +402,8 @@ class Appointment {
   static async getFreeSlotsByDate(date, doctorId) {
     try {
       const d = Vacation.convertDate(date);
-      console.log("DATE = ", date, d);
       const GET_VACATION = `SELECT * FROM vacations WHERE startDate >= '${d}' AND endDate <= '${d}' AND doctorId = ${doctorId}`;
       const vacations = await db.execute(GET_VACATION);
-      console.log("VACATIONS = ", vacations[0]);
       if (!!vacations && vacations[0].length > 0) {
         return new Response(
           409,
@@ -382,7 +414,6 @@ class Appointment {
       const day = new Date(d).getDay() - 1;
       const GET_SCHEDULE = `SELECT * FROM schedules WHERE weekDay = ${day} AND doctorId = ${doctorId}`;
       const schedule = await db.execute(GET_SCHEDULE);
-      console.log("schedule = ", schedule[0]);
       if (!!schedule && schedule[0].length > 0) {
         let doctorSchedule = schedule[0].map((elem) => {
           return {
@@ -390,9 +421,11 @@ class Appointment {
             endTime: elem.endTime,
           };
         });
-        const GET_APPOINTMENTS_SQL = `SELECT startDate, endDate FROM appointments WHERE startDate > CURDATE() AND doctorId =${doctorId} AND isApproved !=0`;
+        doctorSchedule.sort(function (a, b) {
+          return a.startTime - b.startTime;
+        });
+        const GET_APPOINTMENTS_SQL = `SELECT startDate, endDate FROM appointments WHERE startDate > CURDATE() AND doctorId =${doctorId} AND ( isApproved = 1 OR isApproved IS NULL)`;
         const appointments = await db.execute(GET_APPOINTMENTS_SQL);
-        console.log("appointmnets = ", appointments[0]);
         let options = [];
         doctorSchedule.forEach((elem) => {
           let { startTime, endTime } = elem;
@@ -404,7 +437,7 @@ class Appointment {
 
         if (!!appointments && appointments[0].length > 0) {
           appointments[0].forEach((elem) => {
-            if (Vacation.convertDate(elem.startDate) === d) {
+            if (Vacation.convertDate(new Date(elem.startDate)) === d) {
               const hours = {
                 start: new Date(elem.startDate).getHours(),
                 end: new Date(elem.endDate).getHours(),
@@ -432,7 +465,6 @@ class Appointment {
 
   static async createAppointmentRequest(patientId, data) {
     try {
-      console.log("data = ", data);
       let startD = new Date(data.date);
       let endD = new Date(data.date);
       startD = new Date(startD).setHours(Math.floor(data.startTime / 60));
@@ -447,8 +479,7 @@ class Appointment {
         Appointment.convertDateToString(endD) +
         " " +
         Appointment.convertTimeToString(data.endTime);
-      console.log(start, end);
-      const GET_APPOINTMENTS_SQL = `SELECT * FROM appointments WHERE (startDate >= '${start}' AND startDate < '${end}') OR (endDate > '${start}' AND endDate <= '${end}') OR (startDate <= '${start}' AND '${end}' <= endDate)`;
+      const GET_APPOINTMENTS_SQL = `SELECT * FROM appointments WHERE (isApproved = 1 OR isApproved IS NULL) AND ((startDate >= '${start}' AND startDate < '${end}') OR (endDate > '${start}' AND endDate <= '${end}') OR (startDate <= '${start}' AND '${end}' <= endDate))`;
       const appointments = await db.execute(GET_APPOINTMENTS_SQL);
       if (!!appointments && appointments[0].length > 0) {
         return new Response(
@@ -461,15 +492,10 @@ class Appointment {
       const INSERT_APPOINTMENT_SQL = `INSERT INTO appointments(doctorId, officeId, patientId, startDate, endDate, reason) VALUES(${data.doctorId},${data.officeId},${patientId}, '${start}', '${end}','${data.reason}')`;
       const result = await db.execute(INSERT_APPOINTMENT_SQL);
       if (!!result && result[0].affectedRows === 1) {
-        const GET_ID = `SELECT id FROM appointments WHERE startDate ='${start}' AND endDate = '${end}' AND doctorId = ${data.doctorId} AND patientId = ${patientId}`;
-        const result = await db.execute(GET_ID);
-        if (!!result && result[0][0]) {
-          return new Response(200, true, {
-            result: "Solicitare creata.",
-            id: result[0][0].id,
-          }).getResponse();
-        }
-        // return new Response(200, true, "Solicitare creata.").getResponse();
+        return new Response(200, true, {
+          result: "Solicitare creata.",
+          id: result[0].insertId,
+        }).getResponse();
       }
       return new Response(
         400,
@@ -522,8 +548,11 @@ class Appointment {
 
   static async getLastFiveApprovedAppointmentsByPatientId(patientId) {
     try {
-      const GET_SQL = `SELECT a.id, a.doctorId, u.firstName, u.lastName, d.specialty, a.startDate, a.endDate, a.reason, a.reviewId FROM appointments a JOIN doctors d ON a.doctorId = d.id JOIN users u ON u.docId = d.id WHERE d.id = a.doctorId AND a.patientId = ${patientId} AND CURRENT_TIMESTAMP() > a.endDate AND a.isApproved = 1 ORDER BY id DESC LIMIT 5`;
-      console.log(GET_SQL);
+      const GET_SQL = `SELECT a.id, a.doctorId, ${decrypt(
+        "u.firstName"
+      )} as 'firstName',${decrypt(
+        "u.lastName"
+      )} as 'lastName', d.specialty, a.startDate, a.endDate, a.reason, a.reviewId FROM appointments a JOIN doctors d ON a.doctorId = d.id JOIN users u ON u.docId = d.id WHERE d.id = a.doctorId AND a.patientId = ${patientId} AND CURRENT_TIMESTAMP() > a.endDate AND a.isApproved = 1 ORDER BY id DESC LIMIT 5`;
       const result = await db.execute(GET_SQL);
       if (!!result && !!result[0]) {
         return new Response(200, true, result[0]).getResponse();
@@ -541,10 +570,8 @@ class Appointment {
 
   static async getRatingsById(ids) {
     try {
-      console.log("ids = ", ids);
       const GET_RATINGS = `SELECT id, points FROM reviews WHERE id IN(${ids})`;
       const result = await db.execute(GET_RATINGS);
-      console.log("ratings=", result[0]);
       if (!!result && !!result[0]) {
         return new Response(200, true, result[0]).getResponse();
       }

@@ -1,13 +1,12 @@
 const router = require("express").Router();
-const Response = require("../../../models/response");
-const Schedules = require("../../../models/schedule");
-const { verifyToken } = require("../../../middlewares/auth");
-const { scheduleValidation } = require("../../../validation");
+const Response = require("../../models/response");
+const Schedules = require("../../models/schedule");
+const { verifyToken } = require("../../middlewares/auth");
+const { scheduleValidation } = require("../../validation");
 
-const Doctor = require("../../../models/doctor");
+const Doctor = require("../../models/doctor");
 
-const { workingHoursIntervalValidation } = require("../../../validation");
-const Schedule = require("../../../models/schedule");
+const Schedule = require("../../models/schedule");
 
 router.get("/intervals", verifyToken, async (req, res) => {
   const doctor = await Doctor.findOneByUserId(req.user.id);
@@ -15,7 +14,7 @@ router.get("/intervals", verifyToken, async (req, res) => {
     const schedules = await Schedules.findAllSchedulesIntervalsByDoctorId(
       doctor.message.id
     );
-    console.log("SCHEDULES = ", schedules);
+
     res.status(schedules.status).send(schedules);
     return;
   }
@@ -55,7 +54,6 @@ router.post("/intervals", verifyToken, async (req, res) => {
 
 router.put("/intervals", verifyToken, async (req, res) => {
   if (+req.body.id < 0) {
-    console.log("body = ", req.body);
     res
       .status(404)
       .send(
@@ -81,7 +79,6 @@ router.put("/intervals", verifyToken, async (req, res) => {
 
 router.delete("/intervals/:id", verifyToken, async (req, res) => {
   if (+req.params.id < 0) {
-    console.log("body = ", req.body);
     res
       .status(404)
       .send(

@@ -2,6 +2,7 @@ const router = require("express").Router();
 
 const Doctor = require("../../models/Doctor");
 const Office = require("../../models/office");
+const Sse = require("../../models/sse");
 // const Affiliation = require('../../models/Affiliation');
 // const GeneratedAffiliationCode = require('../../models/GeneratedAffiliationCodes');
 
@@ -10,6 +11,7 @@ const {
   officeValidation,
   officeInvitationValidation,
   officeInvitationResponse,
+  putOfficeInvitation,
 } = require("../../validation");
 // const { getReturnableDoctorInfos } = require('../../helpers/shared-methods');
 // const { query } = require('express');
@@ -60,6 +62,80 @@ router.get("/doctors", verifyToken, async (req, res) => {
   res.status(doctors.status).send(doctors);
 });
 
+router.get("/invite/:id", verifyToken, async (req, res) => {
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+  const inviteId = +req.params.id;
+
+  if (doctor.success && !doctor.message.officeId) {
+    const invite = await Office.getOfficeInvitationById(inviteId);
+    res.status(invite.status).send(invite);
+    return;
+  }
+  res
+    .status(403)
+    .send(
+      new Response(
+        403,
+        false,
+        "Nu s-au putut gasi informatiile doctorului"
+      ).getResponse()
+    );
+});
+
+router.get("/invite", verifyToken, async (req, res) => {
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+
+  if (doctor.success && doctor.message.officeId) {
+    res.status(200).send(new Response(200, true, []).getResponse());
+    return;
+  }
+  if (doctor.success) {
+    const invites = await Office.getOfficeInvitationsByDoctorId(
+      doctor.message.id
+    );
+    res.status(invites.status).send(invites);
+    return;
+  }
+  res
+    .status(403)
+    .send(
+      new Response(
+        403,
+        false,
+        "Nu s-au putut gasi informatiile doctorului"
+      ).getResponse()
+    );
+});
+
+router.patch("/invite", verifyToken, async (req, res) => {
+  const { error } = putOfficeInvitation(req.body);
+  if (error) {
+    res
+      .status(404)
+      .send(new Response(404, false, error.details[0].message).getResponse());
+    return;
+  }
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+  if (doctor.success && !doctor.message.officeId) {
+    const respondToInvitation = await Office.respondToInvitation(
+      doctor.message.id,
+      req.body.officeInviteId,
+      req.body.response
+    );
+    res.status(respondToInvitation.status).send(respondToInvitation);
+    return;
+  }
+  res
+    .status(403)
+    .send(
+      new Response(
+        404,
+        false,
+        "Nu esti inregistrat ca si doctor."
+      ).getResponse()
+    );
+});
+
 router.get("/:id", verifyToken, async (req, res) => {
   const id = req.params.id;
   if (!id) {
@@ -96,7 +172,7 @@ router.post("/", verifyToken, async (req, res) => {
 
   const doctor = await Doctor.findOneByUserId(id);
   if (doctor.success && doctor.message.officeId) {
-    res.status(400).send("Doctor afiiliated to an another office.");
+    res.status(400).send("Doctorul este deja afiliat altui cabinet.");
     return;
   }
   const office = await Office.save(doctor.message.id, req.body);
@@ -121,6 +197,23 @@ router.post("/invite", verifyToken, async (req, res) => {
           req.body.doctorId,
           req.body.officeId
         );
+        if (invitation.success) {
+          Sse.emitEvent({
+            type: "OFFICE_INVITE",
+            doctorId: req.body.doctorId,
+            entryId: invitation.message.entryId,
+          });
+          res
+            .status(invitation.status)
+            .send(
+              new Response(
+                invitation.status,
+                invitation.success,
+                invitation.message.message
+              ).getResponse()
+            );
+          return;
+        }
         res.status(invitation.status).send(invitation);
         return;
       }
@@ -130,7 +223,7 @@ router.post("/invite", verifyToken, async (req, res) => {
           new Response(
             401,
             false,
-            "You are not authorized to send invitations."
+            "Nu esti autorizat sa trimiti invitatii de afiliere."
           ).getResponse()
         );
       return;
@@ -178,8 +271,8 @@ router.put("/", verifyToken, async (req, res) => {
 });
 
 router.delete("/", verifyToken, async (req, res) => {
-  const doctor = await Doctor.findOneByUserId(id);
-  if (doctor.success && doctor.message.officeId) {
+  const doctor = await Doctor.findOneByUserId(req.user.id);
+  if (doctor.success && !!doctor.message.officeId) {
     const office = await Office.getOneById(doctor.message.officeId);
     console.log(office.success, office.message.administratorId);
     if (
@@ -193,7 +286,10 @@ router.delete("/", verifyToken, async (req, res) => {
       res.status(deletedOffice.status).send(deletedOffice);
       return;
     }
-    res.status(office.status).send(office);
+
+    const removeAffiliation = await Office.removeAffiliation(doctor.message.id);
+
+    res.status(removeAffiliation.status).send(removeAffiliation);
     return;
   }
   res.status(doctor.status).send(doctor);

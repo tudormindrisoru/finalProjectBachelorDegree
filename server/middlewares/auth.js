@@ -5,7 +5,6 @@ function generateAccessToken(id) {
 }
 
 function decodeAccessToken(token) {
-  console.log(jwt_decode(token));
   return jwt_decode(token);
 }
 

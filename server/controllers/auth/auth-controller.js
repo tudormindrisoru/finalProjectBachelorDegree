@@ -59,7 +59,7 @@ router.post("/login-with-phone-step1", async (req, res) => {
   const phoneAuth = new PhoneAuth(req.body.phone, EXPIRATION_DATE);
   const addedRes = await phoneAuth.insertIntoDB();
   console.log("SMS = ", addedRes.message.code);
-
+  await sendSMS(addedRes.message.code, addedRes.message.phone);
   res
     .status(201)
     .send(
@@ -131,9 +131,7 @@ router.post("/register-step1", async (req, res) => {
       const phoneAuth = new PhoneAuth(req.body.phone, EXPIRATION_DATE);
       const addedRes = await phoneAuth.insertIntoDB();
       if (addedRes.status === 201) {
-        // TO DO: Use Twilio to send SMS to user.
-        console.log(addedRes.message.code, addedRes.message.phone);
-        // await sendSMS(addedRes.message.code, addedRes.message.phone);
+        await sendSMS(addedRes.message.code, addedRes.message.phone);
         schedule.scheduleJob(EXPIRATION_DATE, function () {
           phoneAuth.removeFromDB();
         });

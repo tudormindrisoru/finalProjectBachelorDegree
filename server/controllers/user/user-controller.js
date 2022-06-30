@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const arr = file.originalname.split(".");
     const extension = arr[arr.length - 1];
-    console.log(arr, extension);
+
     cb(
       null,
       new Date().toISOString().replace(/:/g, "-") +
@@ -75,7 +75,7 @@ router.put("/", verifyToken, async (req, res) => {
       .send(new Response(400, false, error.details[0].message).getResponse());
     return;
   }
-  console.log("PUT USER");
+
   const result = await User.updateUserById(req.body, req.user.id);
   res.status(result.status).send(result);
 });

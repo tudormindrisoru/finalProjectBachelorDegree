@@ -62,15 +62,14 @@ class Vacation {
       if (vacations.message.length > 0) {
         const overlap = vacations.message.find(
           (v) =>
-            (new Date(v.startDate).getDate() > new Date(startDate).getDate() &&
-              new Date(v.endDate).getDate() < new Date(endDate).getDate()) ||
-            (new Date(v.startDate).getDate() <= new Date(startDate).getDate() &&
-              new Date(v.endDate).getDate() >= new Date(endDate).getDate()) ||
-            (new Date(v.startDate).getDate() <= new Date(startDate).getDate() &&
-              new Date(v.endDate).getDate() > new Date(startDate).getDate() &&
-              new Date(v.endDate).getDate() < new Date(endDate).getDate())
+            (new Date(v.startDate).getTime() > new Date(startDate).getTime() &&
+              new Date(v.endDate).getTime() < new Date(endDate).getTime()) ||
+            (new Date(v.startDate).getTime() <= new Date(startDate).getTime() &&
+              new Date(v.endDate).getTime() >= new Date(endDate).getTime()) ||
+            (new Date(v.startDate).getTime() <= new Date(startDate).getTime() &&
+              new Date(v.endDate).getTime() > new Date(startDate).getTime() &&
+              new Date(v.endDate).getTime() < new Date(endDate).getTime())
         );
-        console.log("overlap = ", overlap);
         if (overlap) {
           return new Response(
             400,
@@ -103,7 +102,6 @@ class Vacation {
     try {
       const vacations = await Vacation.getAllVacations(doctorId);
       vacations.message = vacations.message.filter((v) => v.id !== vacationId);
-      console.log("----- WDB VACATIONS = ", vacations.message);
       let { startDate, endDate } = vacation;
       startDate = Vacation.convertDate(startDate);
       endDate = Vacation.convertDate(endDate);
